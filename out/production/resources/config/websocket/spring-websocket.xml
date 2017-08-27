@@ -1,0 +1,35 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:websocket="http://www.springframework.org/schema/websocket"
+       xsi:schemaLocation="
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/websocket http://www.springframework.org/schema/websocket/spring-websocket.xsd">
+
+    <bean id="gameSocketHandler" class="com.doopp.gauss.socket.handler.GameSocketHandler"/>
+    <websocket:handlers  allowed-origins="*">
+        <websocket:mapping path="/game-socket" handler="gameSocketHandler"/>
+        <websocket:handshake-interceptors>
+            <bean class="com.doopp.gauss.socket.utils.WebSocketHandshakeInterceptor" />
+        </websocket:handshake-interceptors>
+    </websocket:handlers>
+
+    <!--
+    <bean id="chatSocket" class="com.doopp.gauss.socket.handler.ChatSocketHandler"/>
+    <websocket:handlers  allowed-origins="*">
+        <websocket:mapping path="/chat-socket" handler="chatSocket"/>
+        <websocket:handshake-interceptors>
+            <bean class="com.doopp.gauss.socket.utils.WebSocketHandshakeInterceptor" />
+        </websocket:handshake-interceptors>
+    </websocket:handlers>
+
+
+    <bean id="roomSocket" class="com.doopp.gauss.socket.handler.RoomSocketHandler"/>
+    <websocket:handlers  allowed-origins="*">
+        <websocket:mapping path="/room-socket" handler="roomSocket"/>
+        <websocket:handshake-interceptors>
+            <bean class="com.doopp.gauss.socket.utils.WebSocketHandshakeInterceptor" />
+        </websocket:handshake-interceptors>
+    </websocket:handlers>
+    //-->
+
+</beans>

@@ -4,6 +4,7 @@
 /build
 /.gradle
 /.idea
+/*.iml
 
 ckeditor
 MANIFEST.MF

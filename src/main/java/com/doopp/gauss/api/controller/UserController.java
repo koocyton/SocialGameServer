@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 
 import com.doopp.gauss.api.entity.UserEntity;
 import com.doopp.gauss.api.helper.UploadFileHelper;
+import com.doopp.gauss.api.service.RoomService;
 import com.doopp.gauss.api.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,6 +30,9 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private RoomService roomService;
 
     /*
      * 获取当前用户信息
@@ -56,6 +60,27 @@ public class UserController {
             currentUser.setPortrait(portraitUrl);
         }
         // userDao.update(currentUser);
+        return currentUser.toJsonObject();
+    }
+
+    /*
+     * 随机加入房间
+     */
+    @ResponseBody
+    @RequestMapping(value = "user/join-room", method = RequestMethod.GET)
+    public JSONObject joinRoom(@ModelAttribute("currentUser") UserEntity currentUser,
+                               @RequestParam("rid") int roomId) {
+        roomService.joinRoom(currentUser, roomId);
+        return currentUser.toJsonObject();
+    }
+
+    /*
+     * 加入指定的房间
+     */
+    @ResponseBody
+    @RequestMapping(value = "user/join-room", method = RequestMethod.GET)
+    public JSONObject randomJoinRoom(@ModelAttribute("currentUser") UserEntity currentUser) {
+        roomService.joinRoom(currentUser, 0);
         return currentUser.toJsonObject();
     }
 
