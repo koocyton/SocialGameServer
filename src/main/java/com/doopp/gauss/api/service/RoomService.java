@@ -10,4 +10,6 @@ import com.doopp.gauss.api.entity.UserEntity;
 public interface RoomService {
 
     boolean joinRoom(UserEntity user, int roomId);
+
+    boolean leaveRoom(Long userId);
 }

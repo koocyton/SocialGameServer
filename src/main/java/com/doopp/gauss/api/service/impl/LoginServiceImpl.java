@@ -64,7 +64,7 @@ public class LoginServiceImpl implements LoginService {
     public boolean registerLogin(String account, HttpSession httpSession) {
         UserEntity currentUser = userDao.fetchByAccount(account);
         httpSession.setAttribute("currentUser", currentUser);
-        logger.info(" >>> " + currentUser);
+        // logger.info(" >>> " + currentUser);
         // 哈哈，尝试给长连接发一个消息
         webSocketService.sendStringToUser(currentUser.getAccount() + " 重登录，连接被重置", currentUser.getId());
         webSocketService.disconnectSocket(currentUser.getId());
