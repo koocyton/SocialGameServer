@@ -10,13 +10,11 @@ public interface RoomDao {
 
     void create(RoomEntity roomEntity);
 
-    void delete(int id);
+    void delete(int roomId);
 
-    boolean adduser(UserEntity userEntity);
+    void update(RoomEntity roomEntity);
 
-    boolean deleteUser(Long userId);
+    Long count();
 
-    boolean changeRoomOwner(UserEntity userEntity);
-
-    RoomEntity get();
+    RoomEntity fetchById(long id);
 }

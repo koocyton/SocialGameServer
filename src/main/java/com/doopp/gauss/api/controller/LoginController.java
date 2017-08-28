@@ -7,9 +7,14 @@ import com.doopp.gauss.api.service.WebSocketService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import redis.clients.jedis.ShardedJedisPool;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * 登录界面
@@ -20,13 +25,16 @@ import javax.servlet.http.HttpSession;
 @RequestMapping(value = "api/v1/")
 public class LoginController {
 
-    // private static final Logger logger = LoggerFactory.getLogger(LoginServiceImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(LoginController.class);
 
     @Autowired
     private LoginService loginService;
 
     @Autowired
     private RestResponseService restResponse;
+
+    @Resource
+    private ShardedJedisPool shardedJedisPool;
 
     /*
      * 提交登录
@@ -37,6 +45,9 @@ public class LoginController {
                             HttpSession httpSession,
                             @RequestParam("account") String account,
                             @RequestParam("password") String password) {
+
+        logger.info(" >>> " + shardedJedisPool);
+
         // 校验用户名，密码
         if (!loginService.checkLoginRequest(account, password)) {
             // 告诉客户端密码错误

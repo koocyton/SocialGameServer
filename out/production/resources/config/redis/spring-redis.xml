@@ -9,7 +9,7 @@
     <context:property-placeholder location="classpath*:config/tomcat.webapp.root.properties" />
 
     <!-- 配置JedisPoolConfig相关参数 -->
-    <bean id="poolConfig" class="redis.clients.jedis.JedisPoolConfig">
+    <bean id="jedisPoolConfig" class="redis.clients.jedis.JedisPoolConfig">
         <property name="maxTotal" value="${spring.redis.pool.maxTotal}" />
         <property name="maxIdle" value="${spring.redis.pool.maxIdle}" />
         <property name="minIdle" value="${spring.redis.pool.minIdle}" />
@@ -23,7 +23,7 @@
     <!-- 配置redis服务器信息 -->
     <bean id="connectionFactory"
           class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory">
-        <property name="poolConfig" ref="poolConfig" />
+        <property name="poolConfig" ref="jedisPoolConfig" />
         <property name="hostName" value="${spring.redis.host}" />
         <property name="port" value="${spring.redis.port}" />
         <property name="password" value="${spring.redis.password}" />
@@ -52,16 +52,6 @@
             </bean>
         </property>
         //-->
-    </bean>
-
-    <!-- 配置redis连接池 -->
-    <bean class="redis.clients.jedis.JedisPool">
-        <constructor-arg ref="poolConfig" />
-        <constructor-arg value="${spring.redis.host}" />
-        <constructor-arg type="int" value="${spring.redis.port}" />
-        <constructor-arg type="int" value="${spring.redis.timeout}" />
-        <constructor-arg type="java.lang.String" value="${spring.redis.password}" />
-        <constructor-arg type="int" value="${spring.redis.database}" />
     </bean>
 
 </beans>

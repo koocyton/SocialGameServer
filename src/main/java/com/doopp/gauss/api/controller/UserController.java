@@ -67,9 +67,9 @@ public class UserController {
      * 随机加入房间
      */
     @ResponseBody
-    @RequestMapping(value = "user/join-room", method = RequestMethod.GET)
+    @RequestMapping(value = "user/join-room/{roomId}", method = RequestMethod.GET)
     public JSONObject joinRoom(@ModelAttribute("currentUser") UserEntity currentUser,
-                               @RequestParam("rid") int roomId) {
+                               @PathVariable("roomId") int roomId) {
         roomService.joinRoom(currentUser, roomId);
         return currentUser.toJsonObject();
     }
