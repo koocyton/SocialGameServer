@@ -52,21 +52,7 @@ public class RoomEntity implements Serializable {
         return userList;
     }
 
-    public void addUser(UserEntity userEntity) {
-        int size = userList.size();
-        for(int ii=0; ii<=size; ii++) {
-            if (ii==size || userList.get(ii)==null) {
-                userList.add(ii, userEntity);
-            }
-        }
-    }
-
-    public void delUser(Long userId) {
-        int size = userList.size();
-        for(int ii=0; ii<=size; ii++) {
-            if (userList.get(ii).getId().equals(userId)) {
-                userList.set(ii, null);
-            }
-        }
+    public void setUserList(ArrayList<UserEntity> userList) {
+        this.userList = userList;
     }
 }

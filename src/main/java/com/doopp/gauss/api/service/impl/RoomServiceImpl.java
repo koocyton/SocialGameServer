@@ -32,16 +32,16 @@ public class RoomServiceImpl implements RoomService {
     public boolean joinRoom(UserEntity user, int roomId) {
         RoomEntity roomEntity = new RoomEntity();
         roomEntity.setId(roomId);
-        roomEntity.addUser(user);
-        roomDao.create(roomEntity);
+        roomDao.addUser(roomId, user);
+        roomDao.save(roomEntity);
         return true;
     }
 
     @Override
     public boolean leaveRoom(Long userId) {
         RoomEntity roomEntity = roomDao.fetchByUserId(userId);
-        roomEntity.delUser(userId);
-        roomDao.update(roomEntity);
+        roomDao.delUser(userId);
+        roomDao.save(roomEntity);
         return true;
     }
 }
