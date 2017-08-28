@@ -4,6 +4,7 @@ import com.doopp.gauss.api.service.impl.RoomServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
@@ -11,7 +12,7 @@ import java.util.ArrayList;
  *
  * Created by Henry on 2017/8/26.
  */
-public class RoomEntity {
+public class RoomEntity implements Serializable {
 
     private static final Logger logger = LoggerFactory.getLogger(RoomServiceImpl.class);
 
@@ -51,28 +52,20 @@ public class RoomEntity {
         return userList;
     }
 
-    public boolean addUser(UserEntity userEntity) {
-        //logger.info(" >>> " + userEntity);
-        //logger.info(" >>> " + userList);
-        logger.info(" >>> " + userList.size());
-        for(int ii=0; ii<userList.size(); ii++) {
-            logger.info(" >>> " + userList);
-            logger.info(" >>> " + userList.get(ii));
-            if (userList.get(ii).equals(null)) {
+    public void addUser(UserEntity userEntity) {
+        int size = userList.size();
+        for(int ii=0; ii<=size; ii++) {
+            if (ii==size || userList.get(ii)==null) {
                 userList.set(ii, userEntity);
-                return true;
             }
         }
-        return false;
     }
 
-    public boolean deleteUser(Long userId) {
+    public void delUser(Long userId) {
         for(int ii=0; ii<userList.size(); ii++) {
             if (userList.get(ii).getId().equals(userId)) {
                 userList.remove(ii);
-                return true;
             }
         }
-        return false;
     }
 }

@@ -1,7 +1,6 @@
 package com.doopp.gauss.api.service.impl;
 
 import com.doopp.gauss.api.dao.RoomDao;
-import com.doopp.gauss.api.dao.impl.RoomDaoImpl;
 import com.doopp.gauss.api.entity.RoomEntity;
 import com.doopp.gauss.api.entity.UserEntity;
 import com.doopp.gauss.api.service.RoomService;
@@ -9,8 +8,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.Cache;
-import org.springframework.cache.CacheManager;
+import org.springframework.data.redis.serializer.JdkSerializationRedisSerializer;
 import org.springframework.stereotype.Service;
+import redis.clients.jedis.ShardedJedis;
+import redis.clients.jedis.ShardedJedisPool;
 
 import javax.annotation.Resource;
 
@@ -22,30 +23,24 @@ import javax.annotation.Resource;
 @Service
 public class RoomServiceImpl implements RoomService {
 
-    private static final Logger logger = LoggerFactory.getLogger(RoomServiceImpl.class);
+    // private static final Logger logger = LoggerFactory.getLogger(RoomServiceImpl.class);
 
     //@Autowired
     //private EhCacheCacheManager springCacheManager;
 
     // @Resource
+    // private ShardedJedisPool shardedJedisPool;
+
+    @Resource
     private RoomDao roomDao;
 
-    private Cache roomsCache;
-
-    @Autowired
-    public RoomServiceImpl(CacheManager cacheManager) {
-        roomDao = new RoomDaoImpl();
-        // logger.info(" >>> cacheManager " + cacheManager);
-        // roomsCache = ehCacheCacheManager.getCache("room-cache");
-    }
 
     @Override
     public boolean joinRoom(UserEntity user, int roomId) {
         RoomEntity roomEntity = new RoomEntity();
+        roomEntity.setId(roomId);
         roomEntity.addUser(user);
-        logger.info(" >>> currentUser " + user);
         roomDao.create(roomEntity);
-        logger.info(" >>> currentUser " + user);
         return true;
     }
 

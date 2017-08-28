@@ -33,9 +33,6 @@ public class LoginController {
     @Autowired
     private RestResponseService restResponse;
 
-    @Resource
-    private ShardedJedisPool shardedJedisPool;
-
     /*
      * 提交登录
      */
@@ -45,8 +42,6 @@ public class LoginController {
                             HttpSession httpSession,
                             @RequestParam("account") String account,
                             @RequestParam("password") String password) {
-
-        logger.info(" >>> " + shardedJedisPool);
 
         // 校验用户名，密码
         if (!loginService.checkLoginRequest(account, password)) {
