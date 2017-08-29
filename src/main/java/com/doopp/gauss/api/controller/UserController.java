@@ -2,8 +2,10 @@ package com.doopp.gauss.api.controller;
 
 import com.alibaba.fastjson.JSONObject;
 
+import com.doopp.gauss.api.entity.RoomEntity;
 import com.doopp.gauss.api.entity.UserEntity;
 import com.doopp.gauss.api.helper.UploadFileHelper;
+import com.doopp.gauss.api.service.RestResponseService;
 import com.doopp.gauss.api.service.RoomService;
 import com.doopp.gauss.api.service.UserService;
 import org.slf4j.Logger;
@@ -33,6 +35,9 @@ public class UserController {
 
     @Autowired
     private RoomService roomService;
+
+    @Autowired
+    private RestResponseService restResponse;
 
     /*
      * 获取当前用户信息
@@ -64,24 +69,46 @@ public class UserController {
     }
 
     /*
-     * 随机加入房间
+     * 创建新房间
+     */
+    @ResponseBody
+    @RequestMapping(value = "user/create-room", method = RequestMethod.GET)
+    public JSONObject createRoom(@ModelAttribute("currentUser") UserEntity currentUser) {
+        // 创建了新房间
+        RoomEntity roomEntity = roomService.userCreateRoom(currentUser);
+        if (roomEntity==null) {
+            return restResponse.error(500, "Can`t create room !");
+        }
+        return restResponse.data(roomEntity);
+    }
+
+    /*
+     * 加入指定房间
      */
     @ResponseBody
     @RequestMapping(value = "user/join-room/{roomId}", method = RequestMethod.GET)
     public JSONObject joinRoom(@ModelAttribute("currentUser") UserEntity currentUser,
                                @PathVariable("roomId") int roomId) {
-        roomService.joinRoom(currentUser, roomId);
-        return currentUser.toJsonObject();
+        // 用户加入到指定 ID 的房间
+        RoomEntity roomEntity = roomService.userJoinRoom(currentUser, roomId);
+        if (roomEntity==null) {
+            return restResponse.error(500, "Can`t join room !");
+        }
+        return restResponse.data(roomEntity);
     }
 
     /*
-     * 加入指定的房间
+     * 随机加入房间
      */
     @ResponseBody
-    @RequestMapping(value = "user/join-room", method = RequestMethod.GET)
+    @RequestMapping(value = "user/random-room", method = RequestMethod.GET)
     public JSONObject randomJoinRoom(@ModelAttribute("currentUser") UserEntity currentUser) {
-        roomService.joinRoom(currentUser, 0);
-        return currentUser.toJsonObject();
+        // 用户加入到指定 ID 的房间
+        RoomEntity roomEntity = roomService.userJoinFreeRoom(currentUser);
+        if (roomEntity==null) {
+            return restResponse.error(500, "Can`t join room !");
+        }
+        return restResponse.data(roomEntity);
     }
 
     /*

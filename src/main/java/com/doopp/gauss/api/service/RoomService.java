@@ -1,5 +1,6 @@
 package com.doopp.gauss.api.service;
 
+import com.doopp.gauss.api.entity.RoomEntity;
 import com.doopp.gauss.api.entity.UserEntity;
 
 /**
@@ -9,7 +10,11 @@ import com.doopp.gauss.api.entity.UserEntity;
  */
 public interface RoomService {
 
-    boolean joinRoom(UserEntity user, int roomId);
+    RoomEntity userCreateRoom(UserEntity user);
 
-    boolean leaveRoom(Long userId);
+    RoomEntity userJoinRoom(UserEntity user, int roomId);
+
+    RoomEntity userJoinFreeRoom(UserEntity user);
+
+    RoomEntity userLeaveRoom(Long userId);
 }

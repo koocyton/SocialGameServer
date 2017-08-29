@@ -23,74 +23,35 @@ public class RoomDao {
     @Resource
     private RedisHelper redisHelper;
 
+    // 房间信息保存到 Redis , key 的前缀 room_{roomId}
+    private static String roomPrefix = "roomId_room_";
+
+    // 用户 ID 做 key ，保存 user id 和 room id 的索引
+    private static String userPrefix = "userId_roomId_";
+
+    // 保存房间的实体
     public void save(RoomEntity roomEntity) {
-        redisHelper.setObject(roomEntity.getId(), roomEntity);
+        ArrayList<UserEntity> userList = roomEntity.getUserList();
+        for(UserEntity userEntity : userList) {
+            redisHelper.setObject(userPrefix + userEntity.getId(), roomEntity.getId());
+        }
+        redisHelper.setObject(roomPrefix + roomEntity.getId(), roomEntity);
     }
 
+    // 查询用户在哪个房间
     public RoomEntity fetchByUserId(Long userId) {
-        int roomId = (int) redisHelper.getObject(userId);
+        int roomId = (int) redisHelper.getObject(userPrefix + userId);
         return this.fetchByRoomId(roomId);
     }
 
+    // 按房间 id 查询房间
     public RoomEntity fetchByRoomId(int roomId) {
-        return (RoomEntity) redisHelper.getObject(roomId);
+        return (RoomEntity) redisHelper.getObject(roomPrefix + roomId);
     }
 
-    /*
-     * 将用户加入房间
-     */
-    public void addUser(int roomId, UserEntity userEntity) {
-        // 取得数据
-        RoomEntity roomEntity = this.fetchByRoomId(roomId);
-        ArrayList<UserEntity> userList = roomEntity.getUserList();
-        // 有多少个人在房间
-        int size = userList.size();
-        // 如果一个用户也没有
-        if (size==0) {
-            userList.add(0, userEntity);
-        }
-        else {
-            // 如果有空位，从前面开始插入空位
-            for (int ii = 0; ii < size; ii++) {
-                if (userList.get(ii) == null) {
-                    userList.add(ii, userEntity);
-                }
-            }
-        }
-        // 现在有多少个人在房间
-        int newSize = userList.size();
-        // 把人加在最后
-        if (size==newSize) {
-            userList.add(size, userEntity);
-        }
-        roomEntity.setUserList(userList);
-        this.save(roomEntity);
-        redisHelper.setObject(userEntity.getId(), roomId);
-    }
-
-    /*
-     * 将用户退出房间
-     */
-    public void delUser(Long userId) {
-        // 取得数据
-        RoomEntity roomEntity = this.fetchByUserId(userId);
-        ArrayList<UserEntity> userList = roomEntity.getUserList();
-        // 有多少个人在房间
-        int size = userList.size();
-        // 如果没有人在房间，直接返回
-        if (size==0) {
-            return;
-        }
-        // 开始遍历座位
-        for(int ii=0; ii<size; ii++) {
-            // 检查座位是不是这个人的
-            if (userList.get(ii)!=null && userList.get(ii).getId().equals(userId)) {
-                userList.remove(ii);
-                userList.set(ii, null);
-            }
-        }
-        roomEntity.setUserList(userList);
-        this.save(roomEntity);
-        redisHelper.delObject(userId);
+    // 查询一个空闲的房间
+    public RoomEntity fetchFreeRoom() {
+        int roomId = (int) redisHelper.getObject("userId_roomId_*");
+        return (RoomEntity) redisHelper.getObject(roomPrefix + roomId);
     }
 }

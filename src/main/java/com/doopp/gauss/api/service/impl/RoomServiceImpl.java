@@ -6,12 +6,7 @@ import com.doopp.gauss.api.entity.UserEntity;
 import com.doopp.gauss.api.service.RoomService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.Cache;
-import org.springframework.data.redis.serializer.JdkSerializationRedisSerializer;
 import org.springframework.stereotype.Service;
-import redis.clients.jedis.ShardedJedis;
-import redis.clients.jedis.ShardedJedisPool;
 
 import javax.annotation.Resource;
 
@@ -28,20 +23,83 @@ public class RoomServiceImpl implements RoomService {
     @Resource
     private RoomDao roomDao;
 
-    @Override
-    public boolean joinRoom(UserEntity user, int roomId) {
+    // 新开房间最小编号
+    private int minRoomNumber = 1000;
+
+    // 创建房间
+    private synchronized RoomEntity nextRoom(int seatCount) {
+        // 创建房间数据
         RoomEntity roomEntity = new RoomEntity();
-        roomEntity.setId(roomId);
-        roomDao.addUser(roomId, user);
-        roomDao.save(roomEntity);
-        return true;
+        // 座位数，即房间最多多少个人
+        roomEntity.setSeatCount(seatCount);
+        // 设定房间编号
+        roomEntity.setId(minRoomNumber++);
+        // 设定房主
+        return roomEntity;
     }
 
+    /*
+     * 用户创建房间
+     */
     @Override
-    public boolean leaveRoom(Long userId) {
-        RoomEntity roomEntity = roomDao.fetchByUserId(userId);
-        roomDao.delUser(userId);
+    public RoomEntity userCreateRoom(UserEntity user) {
+        // 创建房间数据
+        RoomEntity roomEntity = this.nextRoom(12);
+        // 设定房主
+        roomEntity.setRoomOwner(user.getId());
+        // 添加一个用户
+        roomEntity.addUser(user);
+        // 将房间保存
         roomDao.save(roomEntity);
-        return true;
+        // 返回这个房间
+        return roomEntity;
+    }
+
+    /*
+     * 用户加入指定的房间
+     */
+    @Override
+    public RoomEntity userJoinRoom(UserEntity user, int roomId) {
+        // 拿到房间
+        RoomEntity roomEntity = roomDao.fetchByRoomId(roomId);
+        // 加入用户
+        if (roomEntity.addUser(user)) {
+            roomDao.save(roomEntity);
+            return roomEntity;
+        }
+        // 返回这个房间
+        return null;
+    }
+
+    /*
+     * 用户随机加入一个空闲的房间
+     */
+    @Override
+    public RoomEntity userJoinFreeRoom(UserEntity user) {
+        // 拿到一个空闲的房间
+        RoomEntity roomEntity = roomDao.fetchFreeRoom();
+        // 加入用户
+        if (roomEntity.addUser(user)) {
+            roomDao.save(roomEntity);
+            return roomEntity;
+        }
+        // 返回这个房间
+        return null;
+    }
+
+    /*
+     * 用户离开房间
+     */
+    @Override
+    public RoomEntity userLeaveRoom(Long userId) {
+        // 拿到一个空闲的房间
+        RoomEntity roomEntity = roomDao.fetchByUserId(userId);
+        // 加入用户
+        if (roomEntity.delUser(userId)) {
+            roomDao.save(roomEntity);
+            return roomEntity;
+        }
+        // 返回这个房间
+        return null;
     }
 }

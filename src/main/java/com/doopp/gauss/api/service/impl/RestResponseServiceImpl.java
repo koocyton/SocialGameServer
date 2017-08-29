@@ -21,6 +21,7 @@ public class RestResponseServiceImpl implements RestResponseService {
         return error(errorCode, errorMessage);
     }
 
+    @Override
     public JSONObject error(int errorCode, String errorMessage) {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("errcode", errorCode);
@@ -28,6 +29,7 @@ public class RestResponseServiceImpl implements RestResponseService {
         return jsonObject;
     }
 
+    @Override
     public JSONObject helper(String message, String docUrl) {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("message", message);
@@ -35,9 +37,18 @@ public class RestResponseServiceImpl implements RestResponseService {
         return jsonObject;
     }
 
+    @Override
+    public JSONObject data(Object data) {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("status", 0);
+        jsonObject.put("data", data);
+        return jsonObject;
+    }
+
+    @Override
     public JSONObject success() {
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("status", 1);
+        jsonObject.put("status", 0);
         jsonObject.put("message", "success");
         return jsonObject;
     }

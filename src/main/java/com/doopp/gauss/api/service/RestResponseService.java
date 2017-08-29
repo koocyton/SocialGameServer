@@ -22,6 +22,8 @@ public interface RestResponseService {
 
     JSONObject success();
 
+    JSONObject data(Object data);
+
     static void writeErrorResponse(HttpServletResponse response, String message) throws IOException {
         response.setStatus(501);
         String data = "{\"errcode\":501, \"errmsg\":\"" + message + "\"}";
