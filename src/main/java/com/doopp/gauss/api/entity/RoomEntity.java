@@ -22,9 +22,11 @@ public class RoomEntity implements Serializable {
 
     private String name;
 
-    private Long roomOwner;
+    private Long roomOwnerId;
 
-    private ArrayList<UserEntity> userList = new ArrayList<>();
+    private ArrayList<UserEntity> userList = new ArrayList<UserEntity>() {{
+        add(null);
+    }};
 
     public int getId() {
         return id;
@@ -50,12 +52,12 @@ public class RoomEntity implements Serializable {
         this.name = name;
     }
 
-    public Long getRoomOwner() {
-        return roomOwner;
+    public Long getRoomOwnerId() {
+        return roomOwnerId;
     }
 
-    public void setRoomOwner(Long roomOwner) {
-        this.roomOwner = roomOwner;
+    public void setRoomOwnerId(Long roomOwnerId) {
+        this.roomOwnerId = roomOwnerId;
     }
 
     public ArrayList<UserEntity> getUserList() {
@@ -74,17 +76,28 @@ public class RoomEntity implements Serializable {
         ArrayList<UserEntity> userList = this.getUserList();
         // 坐过的，有几个座位
         int usedSeatCount = userList.size();
-        //
+        // 如果是空的座位，就坐下
         for(int ii=0; ii<usedSeatCount; ii++) {
             if (userList.get(ii)==null) {
                 userList.set(ii, userEntity);
                 this.setUserList(userList);
+
+                // 如果没有房主，设定他为房主
+                if (this.getRoomOwnerId()==null) {
+                    this.setRoomOwnerId(userEntity.getId());
+                }
                 return true;
             }
         }
-        // 没找到空位，在最后一个位置插入用户
+        // 没找到空位，在最后加一个凳子坐下
         if (usedSeatCount<=seatCount) {
             userList.set(usedSeatCount, userEntity);
+            this.setUserList(userList);
+
+            // 如果没有房主，设定他为房主
+            if (this.getRoomOwnerId()==null) {
+                this.setRoomOwnerId(userEntity.getId());
+            }
             return true;
         }
         return false;
@@ -94,28 +107,28 @@ public class RoomEntity implements Serializable {
      * 将用户退出房间
      */
     public boolean delUser(Long userId) {
-        /*
-        // 取得数据
-        RoomEntity roomEntity = this.fetchByUserId(userId);
-        ArrayList<UserEntity> userList = roomEntity.getUserList();
-        // 有多少个人在房间
-        int size = userList.size();
-        // 如果没有人在房间，直接返回
-        if (size==0) {
-            return;
-        }
-        // 开始遍历座位
-        for(int ii=0; ii<size; ii++) {
-            // 检查座位是不是这个人的
+        // 拿到房间的人
+        ArrayList<UserEntity> userList = this.getUserList();
+        // 坐过的，有几个座位
+        int usedSeatCount = userList.size();
+        // 遍历
+        for(int ii=0; ii<usedSeatCount; ii++) {
+            // 如果不是空的座位，并且 ID 是这个用户就删除这个用户
             if (userList.get(ii)!=null && userList.get(ii).getId().equals(userId)) {
-                userList.remove(ii);
+                // 删除用户
                 userList.set(ii, null);
+                this.setUserList(userList);
+                // 判断是不是房主
+                if (userId.equals(this.getRoomOwnerId())) {
+                    for(int nn=0; nn<usedSeatCount; nn++) {
+                        if (userList.get(ii)!=null) {
+                            this.setRoomOwnerId(userList.get(ii).getId());
+                        }
+                    }
+                }
+                return true;
             }
         }
-        roomEntity.setUserList(userList);
-        this.save(roomEntity);
-        redisHelper.delObject(userId);
-        */
-        return true;
+        return false;
     }
 }

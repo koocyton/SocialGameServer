@@ -51,7 +51,7 @@ public class RoomDao {
 
     // 查询一个空闲的房间
     public RoomEntity fetchFreeRoom() {
-        int roomId = (int) redisHelper.getObject("userId_roomId_*");
-        return (RoomEntity) redisHelper.getObject(roomPrefix + roomId);
+        logger.info(">>> redisHelper.getObject(\"roomId_room_*\") " + redisHelper.getObject("roomId_room_*"));
+        return (RoomEntity) redisHelper.getObject(roomPrefix + "123");
     }
 }

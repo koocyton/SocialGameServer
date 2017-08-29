@@ -69,6 +69,15 @@ public class UserController {
     }
 
     /*
+     * 获取某用户信息
+     */
+    @ResponseBody
+    @RequestMapping(value = "user/{userId}", method = RequestMethod.GET)
+    public JSONObject userInfo(@PathVariable("userId") Long userId) {
+        return userService.getUserInfo(userId).toJsonObject();
+    }
+
+    /*
      * 创建新房间
      */
     @ResponseBody
@@ -112,11 +121,16 @@ public class UserController {
     }
 
     /*
-     * 获取某用户信息
+     * 用户离开房间
      */
     @ResponseBody
-    @RequestMapping(value = "user/{userId}", method = RequestMethod.GET)
-    public JSONObject userInfo(@PathVariable("userId") Long userId) {
-        return userService.getUserInfo(userId).toJsonObject();
+    @RequestMapping(value = "user/leave-room", method = RequestMethod.GET)
+    public JSONObject leaveRoom(@ModelAttribute("currentUser") UserEntity currentUser) {
+        // 用户离开房间
+        RoomEntity roomEntity = roomService.userLeaveRoom(currentUser.getId());
+        if (roomEntity==null) {
+            return restResponse.error(500, "Can`t leave room !");
+        }
+        return restResponse.data(roomEntity);
     }
 }
