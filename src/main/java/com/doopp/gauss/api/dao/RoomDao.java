@@ -3,16 +3,16 @@ package com.doopp.gauss.api.dao;
 import com.doopp.gauss.api.entity.RoomEntity;
 import com.doopp.gauss.api.entity.UserEntity;
 import com.doopp.gauss.api.helper.RedisHelper;
-import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 
-@Component
+@Repository
 public class RoomDao {
 
     private static final Logger logger = LoggerFactory.getLogger(RoomDao.class);
