@@ -3,10 +3,7 @@ package com.doopp.gauss.api.dao;
 import com.doopp.gauss.api.entity.RoomEntity;
 import com.doopp.gauss.api.entity.UserEntity;
 import com.doopp.gauss.api.helper.RedisHelper;
-import org.springframework.data.redis.serializer.JdkSerializationRedisSerializer;
 import org.springframework.stereotype.Component;
-import redis.clients.jedis.ShardedJedis;
-import redis.clients.jedis.ShardedJedisPool;
 
 import javax.annotation.Resource;
 
@@ -41,19 +38,36 @@ public class RoomDao {
     }
 
     // 删除房间
+    // 将房间号回收
     public void delete(int roomId) {
         redisHelper.delObject(roomPrefix + roomId);
+        // 需要回收房间号
+    }
+
+    // 删除用户的索引
+    public void delUserIdIndex(Long userId) {
+        redisHelper.delObject(userPrefix + userId);
     }
 
     // 查询用户在哪个房间
     public RoomEntity fetchByUserId(Long userId) {
-        int roomId = (int) redisHelper.getObject(userPrefix + userId);
+        // 取值，判断空值
+        Object roomIdObject = redisHelper.getObject(userPrefix + userId);
+        if (roomIdObject==null) {
+            return null;
+        }
+        int roomId = (int) roomIdObject;
         return this.fetchByRoomId(roomId);
     }
 
     // 按房间 id 查询房间
     public RoomEntity fetchByRoomId(int roomId) {
-        return (RoomEntity) redisHelper.getObject(roomPrefix + roomId);
+        // 判断空值
+        Object roomEntityObject = redisHelper.getObject(roomPrefix + roomId);
+        if (roomEntityObject==null) {
+            return null;
+        }
+        return (RoomEntity) roomEntityObject;
     }
 
     // 查询一个空闲的房间

@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 
 /**
  * 房间的管理
@@ -48,7 +49,12 @@ public class RoomServiceImpl implements RoomService {
      */
     @Override
     public RoomEntity userCreateRoom(UserEntity user) {
-        // 创建房间数据
+        // 如果用户已经在一个房间里了
+        RoomEntity lastRoomEntity = roomDao.fetchByUserId(user.getId());
+        if (lastRoomEntity!=null) {
+            return lastRoomEntity;
+        }
+        // 创建房间的座位的数量
         RoomEntity roomEntity = this.nextRoom(12);
         // 添加一个用户
         roomEntity.addUser(user);
@@ -63,10 +69,15 @@ public class RoomServiceImpl implements RoomService {
      */
     @Override
     public RoomEntity userJoinRoom(UserEntity user, int roomId) {
+        // 如果用户已经在一个房间里了
+        RoomEntity lastRoomEntity = roomDao.fetchByUserId(user.getId());
+        if (lastRoomEntity!=null) {
+            return lastRoomEntity;
+        }
         // 拿到房间
         RoomEntity roomEntity = roomDao.fetchByRoomId(roomId);
         // 加入用户
-        if (roomEntity.addUser(user)) {
+        if (roomEntity!=null && roomEntity.addUser(user)) {
             roomDao.save(roomEntity);
             return roomEntity;
         }
@@ -79,10 +90,15 @@ public class RoomServiceImpl implements RoomService {
      */
     @Override
     public RoomEntity userJoinFreeRoom(UserEntity user) {
+        // 如果用户已经在一个房间里了
+        RoomEntity lastRoomEntity = roomDao.fetchByUserId(user.getId());
+        if (lastRoomEntity!=null) {
+            return lastRoomEntity;
+        }
         // 拿到一个空闲的房间
         RoomEntity roomEntity = roomDao.fetchFreeRoom();
         // 加入用户
-        if (roomEntity.addUser(user)) {
+        if (roomEntity!=null && roomEntity.addUser(user)) {
             roomDao.save(roomEntity);
             return roomEntity;
         }
@@ -98,8 +114,27 @@ public class RoomServiceImpl implements RoomService {
         // 拿到一个空闲的房间
         RoomEntity roomEntity = roomDao.fetchByUserId(userId);
         // 删除用户
-        if (roomEntity.delUser(userId)) {
-            roomDao.save(roomEntity);
+        if (roomEntity!=null && roomEntity.delUser(userId)) {
+            // 删除用户 ID 到 room id 的索引
+            roomDao.delUserIdIndex(userId);
+            // 检查房间还剩多少人，如果人都撒了，就删除这个房间的持久数据
+            boolean isEmptyRoom = true;
+            ArrayList<UserEntity> userList = roomEntity.getUserList();
+            for(UserEntity user : userList) {
+                // 如果有人，就不是空房间
+                if (user!=null) {
+                    isEmptyRoom = false;
+                    break;
+                }
+            }
+            // 空房间，就删除这个房间的持久数据
+            if (isEmptyRoom) {
+                roomDao.delete(roomEntity.getId());
+            }
+            // 将删除一人的房间的数据持久
+            else {
+                roomDao.save(roomEntity);
+            }
             return roomEntity;
         }
         // 踢出长链接

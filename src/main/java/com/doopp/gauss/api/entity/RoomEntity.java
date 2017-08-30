@@ -90,6 +90,9 @@ public class RoomEntity implements Serializable {
         // 如果找到空位
         if (mm!=-1) {
             userList.set(mm, userEntity);
+            if (roomOwnerId==null) {
+                roomOwnerId = userEntity.getId();
+            }
             return true;
         }
         // 位置满了
@@ -111,6 +114,8 @@ public class RoomEntity implements Serializable {
                 this.setUserList(userList);
                 // 判断是不是房主
                 if (userId.equals(this.getRoomOwnerId())) {
+                    // 如果是房主，先置空房主
+                    this.setRoomOwnerId(null);
                     // 重新找一个房主出来
                     for(int nn=0; nn<seatCount; nn++) {
                         if (userList.get(nn)!=null) {
@@ -118,6 +123,7 @@ public class RoomEntity implements Serializable {
                         }
                     }
                 }
+                // 返回
                 return true;
             }
         }
