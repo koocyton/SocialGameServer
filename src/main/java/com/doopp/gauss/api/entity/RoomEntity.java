@@ -24,9 +24,7 @@ public class RoomEntity implements Serializable {
 
     private Long roomOwnerId;
 
-    private ArrayList<UserEntity> userList = new ArrayList<UserEntity>() {{
-        add(null);
-    }};
+    private ArrayList<UserEntity> userList = new ArrayList<>();
 
     public int getId() {
         return id;
@@ -46,6 +44,10 @@ public class RoomEntity implements Serializable {
 
     public void setSeatCount(int seatCount) {
         this.seatCount = seatCount;
+        // 先摆上空凳子
+        for(int ii=0; ii<seatCount; ii++) {
+            this.userList.add(null);
+        }
     }
 
     public void setName(String name) {
@@ -72,34 +74,25 @@ public class RoomEntity implements Serializable {
      * 将用户加入房间
      */
     public boolean addUser(UserEntity userEntity) {
-        // 拿到房间的人
-        ArrayList<UserEntity> userList = this.getUserList();
-        // 坐过的，有几个座位
-        int usedSeatCount = userList.size();
-        // 如果是空的座位，就坐下
-        for(int ii=0; ii<usedSeatCount; ii++) {
-            if (userList.get(ii)==null) {
-                userList.set(ii, userEntity);
-                this.setUserList(userList);
-
-                // 如果没有房主，设定他为房主
-                if (this.getRoomOwnerId()==null) {
-                    this.setRoomOwnerId(userEntity.getId());
-                }
+        // 1. 按顺序拿一个空座位
+        // 2. 要查询是不是重复在这个房间内加入同一个用户
+        int mm=-1;
+        for(int ii=0; ii<seatCount; ii++) {
+            // 如果用户已经在房间里
+            if (userList.get(ii)!=null && userList.get(ii).getId().equals(userEntity.getId())) {
                 return true;
             }
-        }
-        // 没找到空位，在最后加一个凳子坐下
-        if (usedSeatCount<=seatCount) {
-            userList.set(usedSeatCount, userEntity);
-            this.setUserList(userList);
-
-            // 如果没有房主，设定他为房主
-            if (this.getRoomOwnerId()==null) {
-                this.setRoomOwnerId(userEntity.getId());
+            // 如果是空房间
+            if (userList.get(ii)==null && mm==-1) {
+                mm = ii;
             }
+        }
+        // 如果找到空位
+        if (mm!=-1) {
+            userList.set(mm, userEntity);
             return true;
         }
+        // 位置满了
         return false;
     }
 
@@ -109,10 +102,8 @@ public class RoomEntity implements Serializable {
     public boolean delUser(Long userId) {
         // 拿到房间的人
         ArrayList<UserEntity> userList = this.getUserList();
-        // 坐过的，有几个座位
-        int usedSeatCount = userList.size();
         // 遍历
-        for(int ii=0; ii<usedSeatCount; ii++) {
+        for(int ii=0; ii<seatCount; ii++) {
             // 如果不是空的座位，并且 ID 是这个用户就删除这个用户
             if (userList.get(ii)!=null && userList.get(ii).getId().equals(userId)) {
                 // 删除用户
@@ -120,9 +111,10 @@ public class RoomEntity implements Serializable {
                 this.setUserList(userList);
                 // 判断是不是房主
                 if (userId.equals(this.getRoomOwnerId())) {
-                    for(int nn=0; nn<usedSeatCount; nn++) {
-                        if (userList.get(ii)!=null) {
-                            this.setRoomOwnerId(userList.get(ii).getId());
+                    // 重新找一个房主出来
+                    for(int nn=0; nn<seatCount; nn++) {
+                        if (userList.get(nn)!=null) {
+                            this.setRoomOwnerId(userList.get(nn).getId());
                         }
                     }
                 }

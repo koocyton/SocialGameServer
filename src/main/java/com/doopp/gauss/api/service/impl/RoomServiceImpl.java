@@ -31,8 +31,8 @@ public class RoomServiceImpl implements RoomService {
     // 新开房间最小编号
     private int minRoomNumber = 1000;
 
-    // 创建房间
-    private synchronized RoomEntity nextRoom(int seatCount) {
+    // 初始化一个房间
+    private RoomEntity nextRoom(int seatCount) {
         // 创建房间数据
         RoomEntity roomEntity = new RoomEntity();
         // 座位数，即房间最多多少个人
@@ -52,8 +52,6 @@ public class RoomServiceImpl implements RoomService {
         RoomEntity roomEntity = this.nextRoom(12);
         // 添加一个用户
         roomEntity.addUser(user);
-        // 设定房主
-        // roomEntity.setRoomOwnerId(user.getId());
         // 将房间保存
         roomDao.save(roomEntity);
         // 返回这个房间
@@ -67,11 +65,8 @@ public class RoomServiceImpl implements RoomService {
     public RoomEntity userJoinRoom(UserEntity user, int roomId) {
         // 拿到房间
         RoomEntity roomEntity = roomDao.fetchByRoomId(roomId);
-        logger.info(" >>> " + roomEntity);
         // 加入用户
-        logger.info(" >>> " + user);
         if (roomEntity.addUser(user)) {
-            logger.info(" >>> " + user);
             roomDao.save(roomEntity);
             return roomEntity;
         }

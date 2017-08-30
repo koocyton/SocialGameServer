@@ -33,9 +33,16 @@ public class RoomDao {
     public void save(RoomEntity roomEntity) {
         ArrayList<UserEntity> userList = roomEntity.getUserList();
         for(UserEntity userEntity : userList) {
-            redisHelper.setObject(userPrefix + userEntity.getId(), roomEntity.getId());
+            if (userEntity!=null) {
+                redisHelper.setObject(userPrefix + userEntity.getId(), roomEntity.getId());
+            }
         }
         redisHelper.setObject(roomPrefix + roomEntity.getId(), roomEntity);
+    }
+
+    // 删除房间
+    public void delete(int roomId) {
+        redisHelper.delObject(roomPrefix + roomId);
     }
 
     // 查询用户在哪个房间

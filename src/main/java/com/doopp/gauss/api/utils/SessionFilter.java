@@ -76,6 +76,7 @@ public class SessionFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
         }
         catch(Exception e) {
+            logger.info(" Error : " + e);
             RestResponseService.writeErrorResponse(response, e.getMessage());
         }
     }
