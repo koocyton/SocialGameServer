@@ -38,8 +38,10 @@ public class RoomServiceImpl implements RoomService {
         RoomEntity roomEntity = new RoomEntity();
         // 座位数，即房间最多多少个人
         roomEntity.setSeatCount(seatCount);
-        // 设定房间编号
-        roomEntity.setId(minRoomNumber++);
+        synchronized (RoomServiceImpl.class) {
+            // 设定房间编号
+            roomEntity.setId(minRoomNumber++);
+        }
         // 设定房主
         return roomEntity;
     }

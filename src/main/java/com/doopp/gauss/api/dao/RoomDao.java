@@ -56,8 +56,23 @@ public class RoomDao {
         if (roomIdObject==null) {
             return null;
         }
+        // 转化为 room id
         int roomId = (int) roomIdObject;
-        return this.fetchByRoomId(roomId);
+        // 获取房间
+        RoomEntity roomEntity = this.fetchByRoomId(roomId);
+        // 判断一下
+        if (roomEntity!=null) {
+            // 如果房间里能找到这个用户
+            for (UserEntity userEntity : roomEntity.getUserList()) {
+                if (userEntity.getId().equals(userId)) {
+                    // 返回房间
+                    return roomEntity;
+                }
+            }
+        }
+        // 如果找不到这个用户，就要删除索引
+        this.delUserIdIndex(userId);
+        return null;
     }
 
     // 按房间 id 查询房间
@@ -72,7 +87,7 @@ public class RoomDao {
 
     // 查询一个空闲的房间
     public RoomEntity fetchFreeRoom() {
-        logger.info(">>> redisHelper.getObject(\"roomId_room_*\") " + redisHelper.getObject("roomId_room_*"));
+        logger.info(">>> redisHelper.getObject(\"roomId_room_*\") " + redisHelper.getKeys(roomPrefix+""));
         return (RoomEntity) redisHelper.getObject(roomPrefix + "123");
     }
 }

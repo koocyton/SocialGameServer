@@ -71,6 +71,11 @@ public class RedisHelper {
         return this.getObject(byteKey);
     }
 
+    public Object getKeys(String key) {
+        byte[] byteKey = key.getBytes();
+        return this.getKeys(byteKey);
+    }
+
     public void delObject(String key) {
         byte[] byteKey = key.getBytes();
         this.delObject(byteKey);
@@ -85,6 +90,15 @@ public class RedisHelper {
         ShardedJedis roomJedis = shardedJedisPool.getResource();
         roomJedis.set(byteKey, byteObject);
         roomJedis.close();
+    }
+
+    public Object getKeys(byte[] byteKey) {
+        // byte[] byteKey = key.getBytes();
+        ShardedJedis roomJedis = shardedJedisPool.getResource();
+        logger.info(" >>> " + roomJedis.hkeys(byteKey));
+        byte[] byteRoom = roomJedis.get(byteKey);
+        roomJedis.close();
+        return jsrs.deserialize(byteRoom);
     }
 
     public Object getObject(byte[] byteKey) {
