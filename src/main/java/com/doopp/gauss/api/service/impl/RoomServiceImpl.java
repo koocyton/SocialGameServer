@@ -93,20 +93,32 @@ public class RoomServiceImpl implements RoomService {
     @Override
     public RoomEntity userJoinFreeRoom(UserEntity user) {
         // 如果用户已经在一个房间里了
-        /* RoomEntity lastRoomEntity = roomDao.fetchByUserId(user.getId());
+        RoomEntity lastRoomEntity = roomDao.fetchByUserId(user.getId());
         if (lastRoomEntity!=null) {
             return lastRoomEntity;
-        } */
-        // 拿到一个空闲的房间
-        RoomEntity roomEntity = roomDao.fetchFreeRoom();
-        logger.info( " >>> " + roomEntity);
-        // 加入用户
-        if (roomEntity!=null && roomEntity.addUser(user)) {
-            roomDao.save(roomEntity);
-            return roomEntity;
         }
-        // 返回这个房间
-        return null;
+
+        // 用户在服务端有 3 次机会，偶遇拿到的空房间刚好坐满并
+        for(int ii=0; ii<3; ii++) {
+            // 拿到一个空闲的房间
+            RoomEntity roomEntity = roomDao.fetchFreeRoom();
+            // 加入用户
+            if (roomEntity != null) {
+                // 如果加入到房间成功
+                if (roomEntity.addUser(user)) {
+                    roomDao.save(roomEntity);
+                    return roomEntity;
+                }
+                // 加入失败，说明房间已经满员，重新标注房间
+                else {
+                    roomEntity.setFreeSeat(false);
+                    roomDao.save(roomEntity);
+                }
+            }
+        }
+
+        // 实在有问题，就让他创建一个新房间进入
+        return this.userCreateRoom(user);
     }
 
     /*

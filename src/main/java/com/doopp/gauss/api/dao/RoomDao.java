@@ -100,8 +100,17 @@ public class RoomDao {
     // 查询一个空闲的房间
     public RoomEntity fetchFreeRoom() {
         List<String> freeRoomsId = this.getUnlockRooms();
+        // logger.info(" >>> freeRoomsId : \n " + freeRoomsId);
         for(String roomId : freeRoomsId) {
-            RoomEntity freeRoom = (RoomEntity) redisHelper.getObject("" + roomId);
+            RoomEntity freeRoom = null;
+            try {
+                freeRoom = this.fetchByRoomId(Integer.valueOf(roomId));
+            }
+            catch(NumberFormatException e) {
+                redisHelper.setHDel(roomPrefix, roomId);
+            }
+            //(RoomEntity) redisHelper.getObject("" + roomId);
+            // logger.info(" >>> freeRoom : " + roomId + " \n " + freeRoom);
             if (freeRoom != null) {
                 return freeRoom;
             }

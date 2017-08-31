@@ -110,7 +110,7 @@ public class RoomEntity implements Serializable {
             if (userList.get(ii)!=null && userList.get(ii).getId().equals(userEntity.getId())) {
                 return true;
             }
-            // 如果是空房间
+            // 如果有空房间
             if (userList.get(ii)==null && mm==-1) {
                 mm = ii;
             }
@@ -121,6 +121,11 @@ public class RoomEntity implements Serializable {
             // 只会在第一个人加入时出现，加入前，没有房主
             if (roomOwnerId==null) {
                 roomOwnerId = userEntity.getId();
+            }
+            // 如果坐在了最后一个位置，说明房间满了
+            if (mm>=seatCount) {
+                // 位置满了
+                setFreeSeat(false);
             }
             return true;
         }
