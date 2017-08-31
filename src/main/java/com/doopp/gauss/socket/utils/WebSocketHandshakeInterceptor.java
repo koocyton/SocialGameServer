@@ -1,9 +1,8 @@
 package com.doopp.gauss.socket.utils;
 
 import com.doopp.gauss.api.entity.UserEntity;
-// import com.doopp.gauss.socket.handler.GameSocketHandler;
-// import org.slf4j.Logger;
-// import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
 import org.springframework.http.server.ServletServerHttpRequest;
@@ -19,7 +18,7 @@ import java.util.Map;
  */
 public class WebSocketHandshakeInterceptor extends HttpSessionHandshakeInterceptor {
 
-    // private static final Logger logger = LoggerFactory.getLogger(GameSocketHandler.class);
+    private static final Logger logger = LoggerFactory.getLogger(WebSocketHandshakeInterceptor.class);
 
     @Override
     public boolean beforeHandshake(ServerHttpRequest request,
@@ -27,7 +26,10 @@ public class WebSocketHandshakeInterceptor extends HttpSessionHandshakeIntercept
                                    WebSocketHandler wsHandler,
                                    Map<String, Object> attributes) throws Exception {
         // 获取用户是否登录的 session
+        logger.info(" >>> " + request);
+        logger.info(" >>> " + this.getSession(request));
         UserEntity currentUser = (UserEntity) this.getSession(request).getAttribute("currentUser");
+        logger.info(" >>> WebSocketHandshakeInterceptor.currentUser " + currentUser);
         // 呵呵
         return currentUser!=null && super.beforeHandshake(request, response, wsHandler, attributes);
     }
@@ -41,9 +43,13 @@ public class WebSocketHandshakeInterceptor extends HttpSessionHandshakeIntercept
     }
 
     private HttpSession getSession(ServerHttpRequest request) {
+        logger.info(" >>> request 1 " + request);
         if (request instanceof ServletServerHttpRequest) {
+            logger.info(" >>> request 2 " + request);
             ServletServerHttpRequest serverRequest = (ServletServerHttpRequest) request;
-            return serverRequest.getServletRequest().getSession(isCreateSession());
+            logger.info(" >>> request 3 " + serverRequest);
+            logger.info(" >>> request 4 " + serverRequest.getServletRequest());
+            return serverRequest.getServletRequest().getSession(true);
         }
         return null;
     }

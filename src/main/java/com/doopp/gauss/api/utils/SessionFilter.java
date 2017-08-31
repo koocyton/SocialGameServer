@@ -64,6 +64,8 @@ public class SessionFilter extends OncePerRequestFilter {
             }
         }
 
+        logger.info(" >>>>> while filter ");
+
         // 执行过滤 验证通过的会话
         try {
             if (doFilter) {
@@ -76,15 +78,14 @@ public class SessionFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
         }
         catch(Exception e) {
-            /*
-            StringBuilder errorInfo = new StringBuilder();
+            /*StringBuilder errorInfo = new StringBuilder();
             errorInfo.append("\n /*");
             for(StackTraceElement stackTraceElement : e.getStackTrace()) {
                 errorInfo.append("\n  * " + stackTraceElement.toString());
             }
             errorInfo.append("\n  * / ");
-            logger.info(errorInfo.toString());
-            */
+            logger.info(errorInfo.toString());*/
+            e.printStackTrace();
             RestResponseService.writeErrorResponse(response, e.getMessage());
         }
     }

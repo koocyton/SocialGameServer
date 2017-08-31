@@ -27,6 +27,7 @@ public class GameSocketHandler implements WebSocketHandler {
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception
     {
+        logger.info(" >>> socketSessions.put(sessionId, webSocketSession) ");
         // 获取当前用户
         UserEntity currentUser = (UserEntity) session.getAttributes().get("currentUser");
         String sessionId = Long.toString(currentUser.getId());
