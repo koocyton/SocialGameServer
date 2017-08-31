@@ -166,4 +166,17 @@ public class RoomEntity implements Serializable {
         }
         return false;
     }
+
+    @Override
+    public String toString() {
+        return "RoomEntity {" +
+            "id=" + id +
+            ", seatCount=" + this.seatCount +
+            ", name='" + this.name + '\'' +
+            ", roomOwnerId='" + this.roomOwnerId + '\'' +
+            ", userList=" + this.userList +
+            ", freeSeat=" + this.freeSeat +
+            ", canWatch=" + this.canWatch +
+            '}';
+    }
 }

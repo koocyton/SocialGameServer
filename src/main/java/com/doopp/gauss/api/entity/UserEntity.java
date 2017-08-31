@@ -165,11 +165,16 @@ public class UserEntity implements Serializable {
 
     @Override
     public String toString() {
-        return "User{" +
+        return "UserEntity {" +
             "id=" + id +
             ", account='" + this.account + '\'' +
             ", password='" + this.password + '\'' +
             ", salt='" + this.salt + '\'' +
+            ", nickname='" + this.nickname + '\'' +
+            ", gender=" + this.gender +
+            ", portrait='" + this.portrait + '\'' +
+            ", friends='" + this.friends + '\'' +
+            ", created_at='" + this.created_at + '\'' +
             '}';
     }
 }
