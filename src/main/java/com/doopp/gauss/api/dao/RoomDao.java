@@ -33,7 +33,7 @@ public class RoomDao {
         ArrayList<UserEntity> userList = roomEntity.getUserList();
         for(UserEntity userEntity : userList) {
             if (userEntity!=null) {
-                redisHelper.setObject(userPrefix + userEntity.getId(), roomEntity.getId());
+                redisHelper.setString(userPrefix + userEntity.getId(), "" + roomEntity.getId());
             }
         }
         // 保存房间
@@ -50,25 +50,25 @@ public class RoomDao {
 
     // 删除房间
     // 将房间号回收
-    public void delete(int roomId) {
+    public void delete(String roomId) {
         redisHelper.delObject(roomPrefix + roomId);
         // 需要回收房间号
     }
 
     // 删除用户的索引
     public void delUserIdIndex(Long userId) {
-        redisHelper.delObject(userPrefix + userId);
+        redisHelper.delString(userPrefix + userId);
     }
 
     // 查询用户在哪个房间
     public RoomEntity fetchByUserId(Long userId) {
         // 取值，判断空值
-        Object roomIdObject = redisHelper.getObject(userPrefix + userId);
-        if (roomIdObject==null) {
+        String roomId = redisHelper.getString(userPrefix + userId);
+        if (roomId==null) {
             return null;
         }
         // 转化为 room id
-        int roomId = (int) roomIdObject;
+        // int roomId = (int) roomIdObject;
         //logger.info(" >>> fetchByUserId " + userId + " roomId " + roomId);
         // 获取房间
         RoomEntity roomEntity = this.fetchByRoomId(roomId);
@@ -90,7 +90,7 @@ public class RoomDao {
     }
 
     // 按房间 id 查询房间
-    public RoomEntity fetchByRoomId(int roomId) {
+    public RoomEntity fetchByRoomId(String roomId) {
         // 判断空值
         Object roomEntityObject = redisHelper.getObject(roomPrefix + roomId);
         if (roomEntityObject==null) {
@@ -106,10 +106,10 @@ public class RoomDao {
         for(String roomId : freeRoomsId) {
             RoomEntity freeRoom = null;
             try {
-                freeRoom = this.fetchByRoomId(Integer.valueOf(roomId));
+                freeRoom = this.fetchByRoomId(roomId);
             }
             catch(NumberFormatException e) {
-                redisHelper.setHDel(roomPrefix, roomId);
+                redisHelper.hdel(roomPrefix, roomId);
             }
             //(RoomEntity) redisHelper.getObject("" + roomId);
             // logger.info(" >>> freeRoom : " + roomId + " \n " + freeRoom);
@@ -117,7 +117,7 @@ public class RoomDao {
                 return freeRoom;
             }
             else {
-                redisHelper.setHDel(roomPrefix, roomId);
+                redisHelper.hdel(roomPrefix, roomId);
                 // this.lockRoom(Integer.parseInt(roomId));
             }
         }
@@ -126,16 +126,16 @@ public class RoomDao {
 
     // 检索所有的空闲的房间
     private List<String> getUnlockRooms() {
-        return redisHelper.getHKeys(roomPrefix);
+        return redisHelper.hkeys(roomPrefix);
     }
 
     // 在房间满员，或房间进入游戏状态后，房间不排在 free 名单中
     private void lockRoom(int roomId) {
-        redisHelper.setHDel(roomPrefix, "" + roomId);
+        redisHelper.hdel(roomPrefix, "" + roomId);
     }
 
     // 非游戏状态，而且没有满员，房间解锁，可以进入用户
     private void unlockRoom(int roomId) {
-        redisHelper.setHSet(roomPrefix, "" + roomId, roomPrefix + roomId);
+        redisHelper.hset(roomPrefix, "" + roomId, roomPrefix + roomId);
     }
 }
