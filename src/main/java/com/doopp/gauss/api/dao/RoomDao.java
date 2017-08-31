@@ -51,8 +51,10 @@ public class RoomDao {
     // 删除房间
     // 将房间号回收
     public void delete(String roomId) {
+        // 删除房间
         redisHelper.delObject(roomPrefix + roomId);
-        // 需要回收房间号
+        // free room 的索引也要删除
+        redisHelper.hdel(roomPrefix, roomId);
     }
 
     // 删除用户的索引
