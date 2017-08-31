@@ -123,7 +123,7 @@ public class RoomEntity implements Serializable {
                 roomOwnerId = userEntity.getId();
             }
             // 如果坐在了最后一个位置，说明房间满了
-            if (mm>=seatCount) {
+            if (mm>=seatCount-1) {
                 // 位置满了
                 setFreeSeat(false);
             }

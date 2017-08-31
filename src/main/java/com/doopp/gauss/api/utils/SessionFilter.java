@@ -64,8 +64,18 @@ public class SessionFilter extends OncePerRequestFilter {
             }
         }
 
+
+        if (doFilter) {
+            UserEntity currentUser = (UserEntity)request.getSession().getAttribute("currentUser");
+            if (currentUser==null) {
+                RestResponseService.writeErrorResponse(response, "Session failed");
+                return;
+            }
+        }
+        filterChain.doFilter(request, response);
+
         // 执行过滤 验证通过的会话
-        try {
+        /*try {
             if (doFilter) {
                 UserEntity currentUser = (UserEntity)request.getSession().getAttribute("currentUser");
                 if (currentUser==null) {
@@ -78,6 +88,6 @@ public class SessionFilter extends OncePerRequestFilter {
         catch(Exception e) {
             logger.info(" Error : " + e);
             RestResponseService.writeErrorResponse(response, e.getMessage());
-        }
+        }*/
     }
 }

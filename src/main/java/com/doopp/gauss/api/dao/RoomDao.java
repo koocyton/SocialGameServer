@@ -69,14 +69,16 @@ public class RoomDao {
         }
         // 转化为 room id
         int roomId = (int) roomIdObject;
-        logger.info(" >>> fetchByUserId " + userId + " roomId " + roomId);
+        //logger.info(" >>> fetchByUserId " + userId + " roomId " + roomId);
         // 获取房间
         RoomEntity roomEntity = this.fetchByRoomId(roomId);
         // 判断一下
         if (roomEntity!=null) {
+            //logger.info(" >>> roomEntity.getUserList() " + roomEntity.getUserList());
             // 如果房间里能找到这个用户
             for (UserEntity userEntity : roomEntity.getUserList()) {
-                if (userEntity.getId().equals(userId)) {
+                //logger.info(" >>> userEntity " + userEntity);
+                if (userEntity!=null && userEntity.getId().equals(userId)) {
                     // 返回房间
                     return roomEntity;
                 }
