@@ -93,12 +93,13 @@ public class RoomServiceImpl implements RoomService {
     @Override
     public RoomEntity userJoinFreeRoom(UserEntity user) {
         // 如果用户已经在一个房间里了
-        RoomEntity lastRoomEntity = roomDao.fetchByUserId(user.getId());
+        /* RoomEntity lastRoomEntity = roomDao.fetchByUserId(user.getId());
         if (lastRoomEntity!=null) {
             return lastRoomEntity;
-        }
+        } */
         // 拿到一个空闲的房间
         RoomEntity roomEntity = roomDao.fetchFreeRoom();
+        logger.info( " >>> " + roomEntity);
         // 加入用户
         if (roomEntity!=null && roomEntity.addUser(user)) {
             roomDao.save(roomEntity);
@@ -133,7 +134,7 @@ public class RoomServiceImpl implements RoomService {
             if (isEmptyRoom) {
                 roomDao.delete(roomEntity.getId());
             }
-            // 将删除一人的房间的数据持久
+            // 删除了一个人后，将房间数据，持久化
             else {
                 roomDao.save(roomEntity);
             }

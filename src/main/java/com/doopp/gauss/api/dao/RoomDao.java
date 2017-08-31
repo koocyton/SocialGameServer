@@ -6,11 +6,13 @@ import com.doopp.gauss.api.helper.RedisHelper;
 
 import javax.annotation.Resource;
 
+import com.sun.org.apache.bcel.internal.generic.RETURN;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @Repository
 public class RoomDao {
@@ -34,7 +36,16 @@ public class RoomDao {
                 redisHelper.setObject(userPrefix + userEntity.getId(), roomEntity.getId());
             }
         }
+        // 保存房间
         redisHelper.setObject(roomPrefix + roomEntity.getId(), roomEntity);
+        // 如果有空座，就解锁房间
+        if (roomEntity.isFreeSeat()) {
+            unlockRoom(roomEntity.getId());
+        }
+        // 满员就锁定房间
+        else {
+            lockRoom(roomEntity.getId());
+        }
     }
 
     // 删除房间
@@ -58,6 +69,7 @@ public class RoomDao {
         }
         // 转化为 room id
         int roomId = (int) roomIdObject;
+        logger.info(" >>> fetchByUserId " + userId + " roomId " + roomId);
         // 获取房间
         RoomEntity roomEntity = this.fetchByRoomId(roomId);
         // 判断一下
@@ -70,7 +82,7 @@ public class RoomDao {
                 }
             }
         }
-        // 如果找不到这个用户，就要删除索引
+        // 如果找不到这个用户，有错误的数据，就要删除索引
         this.delUserIdIndex(userId);
         return null;
     }
@@ -87,7 +99,32 @@ public class RoomDao {
 
     // 查询一个空闲的房间
     public RoomEntity fetchFreeRoom() {
-        logger.info(">>> redisHelper.getObject(\"roomId_room_*\") " + redisHelper.getKeys(roomPrefix+""));
-        return (RoomEntity) redisHelper.getObject(roomPrefix + "123");
+        List<String> freeRoomsId = this.getUnlockRooms();
+        for(String roomId : freeRoomsId) {
+            RoomEntity freeRoom = (RoomEntity) redisHelper.getObject("" + roomId);
+            if (freeRoom != null) {
+                return freeRoom;
+            }
+            else {
+                redisHelper.setHDel(roomPrefix, roomId);
+                // this.lockRoom(Integer.parseInt(roomId));
+            }
+        }
+        return null;
+    }
+
+    // 检索所有的空闲的房间
+    private List<String> getUnlockRooms() {
+        return redisHelper.getHKeys(roomPrefix);
+    }
+
+    // 在房间满员，或房间进入游戏状态后，房间不排在 free 名单中
+    private void lockRoom(int roomId) {
+        redisHelper.setHDel(roomPrefix, "" + roomId);
+    }
+
+    // 非游戏状态，而且没有满员，房间解锁，可以进入用户
+    private void unlockRoom(int roomId) {
+        redisHelper.setHSet(roomPrefix, "" + roomId, roomPrefix + roomId);
     }
 }

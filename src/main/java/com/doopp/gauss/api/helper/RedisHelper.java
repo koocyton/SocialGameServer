@@ -9,6 +9,9 @@ import redis.clients.jedis.ShardedJedis;
 import redis.clients.jedis.ShardedJedisPool;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 @Component
 public class RedisHelper {
@@ -71,14 +74,36 @@ public class RedisHelper {
         return this.getObject(byteKey);
     }
 
-    public Object getKeys(String key) {
-        byte[] byteKey = key.getBytes();
-        return this.getKeys(byteKey);
-    }
-
     public void delObject(String key) {
         byte[] byteKey = key.getBytes();
         this.delObject(byteKey);
+    }
+
+    public void setHSet(String key, String field, String value) {
+        ShardedJedis roomJedis = shardedJedisPool.getResource();
+        roomJedis.hset(key, field, value);
+        roomJedis.close();
+    }
+
+    public void setHDel(String key, String field) {
+        ShardedJedis roomJedis = shardedJedisPool.getResource();
+        roomJedis.hdel(key, field);
+        roomJedis.close();
+    }
+
+    public List<String> getHKeys(String key) {
+        ShardedJedis roomJedis = shardedJedisPool.getResource();
+        Set<String> keys = roomJedis.hkeys(key);
+        roomJedis.close();
+        List<String> setList = new ArrayList<>(keys);
+        return setList;
+    }
+
+    public List<String> getHVals(String key) {
+        ShardedJedis roomJedis = shardedJedisPool.getResource();
+        List<String> values = roomJedis.hvals(key);
+        roomJedis.close();
+        return values;
     }
 
     /*
@@ -90,15 +115,6 @@ public class RedisHelper {
         ShardedJedis roomJedis = shardedJedisPool.getResource();
         roomJedis.set(byteKey, byteObject);
         roomJedis.close();
-    }
-
-    public Object getKeys(byte[] byteKey) {
-        // byte[] byteKey = key.getBytes();
-        ShardedJedis roomJedis = shardedJedisPool.getResource();
-        logger.info(" >>> " + roomJedis.hkeys(byteKey));
-        byte[] byteRoom = roomJedis.get(byteKey);
-        roomJedis.close();
-        return jsrs.deserialize(byteRoom);
     }
 
     public Object getObject(byte[] byteKey) {
