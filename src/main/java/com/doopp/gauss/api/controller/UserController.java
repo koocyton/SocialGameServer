@@ -114,7 +114,7 @@ public class UserController {
     public JSONObject randomJoinRoom(@ModelAttribute("currentUser") UserEntity currentUser) {
         // 用户加入到指定 ID 的房间
         RoomEntity roomEntity = roomService.userJoinFreeRoom(currentUser);
-        logger.info(" >>> roomEntity.toString() " + roomEntity.toString());
+        // logger.info(" >>> roomEntity.toString() " + roomEntity.toString());
         if (roomEntity==null) {
             return restResponse.error(500, "Can`t join room !");
         }
