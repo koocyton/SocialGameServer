@@ -1,9 +1,14 @@
 package com.doopp.gauss.socket.handler;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import com.doopp.gauss.api.controller.UserController;
 import com.doopp.gauss.api.entity.UserEntity;
+import com.doopp.gauss.api.service.WebSocketService;
 import com.doopp.gauss.socket.utils.WebSocketHandshakeInterceptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.socket.*;
 
 import java.io.IOException;
@@ -18,6 +23,9 @@ import java.util.Map;
  */
 public class GameSocketHandler implements WebSocketHandler {
 
+    @Autowired
+    WebSocketService webSocketService;
+
     private static final Logger logger = LoggerFactory.getLogger(GameSocketHandler.class);
 
     // private static final ArrayList<WebSocketSession> users = new ArrayList<WebSocketSession>();
@@ -27,7 +35,6 @@ public class GameSocketHandler implements WebSocketHandler {
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception
     {
-        logger.info(" >>> socketSessions.put(sessionId, webSocketSession) ");
         // 获取当前用户
         UserEntity currentUser = (UserEntity) session.getAttributes().get("currentUser");
         String sessionId = Long.toString(currentUser.getId());
@@ -41,8 +48,8 @@ public class GameSocketHandler implements WebSocketHandler {
 
         // 保存一个 session 回话
         socketSessions.put(sessionId, session);
-        logger.info(" >>> socketSessions.put(sessionId, webSocketSession) " + sessionId);
-        session.sendMessage(new TextMessage(currentUser.getAccount() + " connected !"));
+        logger.info(" >>> User " + currentUser.getAccount() + " <" + sessionId +  "> connected !");
+        // session.sendMessage(new TextMessage(currentUser.getAccount() + " connected !"));
     }
 
     @Override
@@ -50,10 +57,21 @@ public class GameSocketHandler implements WebSocketHandler {
     {
         // 获取当前用户
         UserEntity currentUser = (UserEntity) session.getAttributes().get("currentUser");
-
+        // 获取返回的信息
         String requestBody = message.getPayload().toString();
+        // 如果获取到信息
         if (requestBody!=null && requestBody.length()>=1) {
-            session.sendMessage(new TextMessage(currentUser.getNickname() + " 说 : " + requestBody));
+            try {
+                JSONObject requestObject = JSON.parseObject(requestBody);
+                String action = requestObject.getString("action");
+                JSONObject data = requestObject.getJSONObject("data");
+                JSONObject responseObject = webSocketService.dispatch(action, data, currentUser);
+                session.sendMessage(new TextMessage(responseObject.toJSONString()));
+            }
+            catch (Exception e) {
+                logger.info(" >>> User " + currentUser.getAccount() + " <" + currentUser.getId() +  "> send message : " + requestBody);
+            }
+            // session.sendMessage(new TextMessage(currentUser.getNickname() + " 说 : " + requestBody));
         }
     }
 

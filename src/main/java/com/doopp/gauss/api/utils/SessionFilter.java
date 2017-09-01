@@ -51,7 +51,7 @@ public class SessionFilter extends OncePerRequestFilter {
         // 请求的uri
         String uri = request.getRequestURI();
 
-        logger.info(" >>>>> request.getRequestURI() : " + uri);
+        logger.info(" >>> request.getRequestURI() : " + uri);
 
         // 是否过滤
         boolean doFilter = true;
@@ -64,7 +64,7 @@ public class SessionFilter extends OncePerRequestFilter {
             }
         }
 
-        logger.info(" >>>>> while filter ");
+        // logger.info(" >>>>> while filter ");
 
         // 执行过滤 验证通过的会话
         try {

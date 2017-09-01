@@ -1,9 +1,13 @@
 package com.doopp.gauss.api.service.impl;
 
+import com.alibaba.fastjson.JSONObject;
+import com.doopp.gauss.api.entity.UserEntity;
+import com.doopp.gauss.api.service.RestResponseService;
 import com.doopp.gauss.api.service.WebSocketService;
 import com.doopp.gauss.socket.handler.GameSocketHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.socket.TextMessage;
 
@@ -21,6 +25,9 @@ public class WebSocketServiceImpl implements WebSocketService {
 
     @Resource
     private GameSocketHandler gameSocketHandler;
+
+    @Autowired
+    private RestResponseService restResponseService;
 
     @Override
     public boolean disconnectSocket(Long userId) {
@@ -45,5 +52,10 @@ public class WebSocketServiceImpl implements WebSocketService {
     @Override
     public void sendStringToAll(String message){
         gameSocketHandler.sendMessageToAll(new TextMessage(message));
+    }
+
+    @Override
+    public JSONObject dispatch(String action, JSONObject actionData, UserEntity userEntity) {
+        return restResponseService.data(userEntity);
     }
 }
