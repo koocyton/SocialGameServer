@@ -26,10 +26,10 @@ public class RegisterServiceImpl implements RegisterService {
     @Autowired
     private LoginService loginService;
 
-    @Autowired
-    public RegisterServiceImpl() {
+    //@Autowired
+    //public RegisterServiceImpl() {
         // this.userDao = DBSession.getMapper(UserDao.class);
-    }
+    //}
 
     @Override
     public boolean registerUser(String account, String password) {

@@ -4,12 +4,10 @@ import com.doopp.gauss.api.dao.UserDao;
 import com.doopp.gauss.api.entity.UserEntity;
 import com.doopp.gauss.api.service.LoginService;
 import com.doopp.gauss.api.helper.EncryHelper;
-import com.doopp.gauss.api.service.WebSocketService;
+import com.doopp.gauss.socket.service.MessageService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.Cache;
-import org.springframework.cache.CacheManager;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -28,7 +26,7 @@ public class LoginServiceImpl implements LoginService {
     private UserDao userDao;
 
     @Autowired
-    private WebSocketService webSocketService;
+    private MessageService messageService;
 
     //@Resource
     //private EhCacheCacheManager ehCacheCacheManager;
@@ -41,12 +39,12 @@ public class LoginServiceImpl implements LoginService {
 
     // private HttpServletRequest request;
 
-    @Autowired
-    public LoginServiceImpl(CacheManager cacheManager) {
+    //@Autowired
+    //public LoginServiceImpl(CacheManager cacheManager) {
         //this.userDao = DBSession.getMapper(UserDao.class);
         // this.cache   = cacheManager.getCache("access-token-cache");
         // this.request = request;
-    }
+    //}
 
     @Override
     public boolean checkLoginRequest(String account, String password) {
@@ -66,9 +64,9 @@ public class LoginServiceImpl implements LoginService {
         httpSession.setAttribute("currentUser", currentUser);
         // logger.info(" >>> " + currentUser);
         // 哈哈，尝试给长连接发一个消息
-        webSocketService.sendStringToUser(currentUser.getAccount() + " 重登录，连接被重置", currentUser.getId());
-        webSocketService.disconnectSocket(currentUser.getId());
-        webSocketService.sendStringToAll(account + " 登录");
+        // MessageService.sendStringToUser(currentUser.getAccount() + " 重登录，连接被重置", currentUser.getId());
+        messageService.disconnectSocket(currentUser.getId());
+        // MessageService.sendStringToAll(account + " 登录");
         return true;
         /*
         try {

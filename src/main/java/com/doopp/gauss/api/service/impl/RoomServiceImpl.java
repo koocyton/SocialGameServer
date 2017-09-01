@@ -4,10 +4,8 @@ import com.doopp.gauss.api.dao.RoomDao;
 import com.doopp.gauss.api.entity.RoomEntity;
 import com.doopp.gauss.api.entity.UserEntity;
 import com.doopp.gauss.api.service.RoomService;
-import com.doopp.gauss.api.service.WebSocketService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -26,8 +24,8 @@ public class RoomServiceImpl implements RoomService {
     @Resource
     private RoomDao roomDao;
 
-    @Autowired
-    private WebSocketService webSocketService;
+    //@Autowired
+    //private MessageService sendMessageService;
 
     // 新开房间最小编号
     private int minRoomNumber = 1000;
@@ -153,7 +151,7 @@ public class RoomServiceImpl implements RoomService {
             return roomEntity;
         }
         // 踢出长链接
-        // webSocketService.disconnectSocket(userId);
+        // sendMessageService.disconnectSocket(userId);
         // 返回这个房间
         return null;
     }

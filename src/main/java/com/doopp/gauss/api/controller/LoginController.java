@@ -3,13 +3,10 @@ package com.doopp.gauss.api.controller;
 import com.alibaba.fastjson.JSONObject;
 import com.doopp.gauss.api.service.LoginService;
 import com.doopp.gauss.api.service.RestResponseService;
-import com.doopp.gauss.api.service.WebSocketService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import redis.clients.jedis.ShardedJedisPool;
 
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
