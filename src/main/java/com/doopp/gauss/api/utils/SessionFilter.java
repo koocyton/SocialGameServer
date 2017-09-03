@@ -2,10 +2,16 @@ package com.doopp.gauss.api.utils;
 
 import java.io.IOException;
 
+import javax.annotation.Resource;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import com.doopp.gauss.api.entity.RoomEntity;
+import org.springframework.data.redis.serializer.JdkSerializationRedisSerializer;
+import redis.clients.jedis.ShardedJedis;
+import redis.clients.jedis.ShardedJedisPool;
 
 import com.doopp.gauss.api.entity.UserEntity;
 import com.doopp.gauss.api.service.RestResponseService;
@@ -13,6 +19,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import redis.clients.jedis.ShardedJedisPool;
 
 /*
  * Created by henry on 2017/4/16.
@@ -20,6 +27,11 @@ import org.slf4j.LoggerFactory;
 public class SessionFilter extends OncePerRequestFilter {
 
     private static final Logger logger = LoggerFactory.getLogger(SessionFilter.class);
+
+    @Resource
+    private ShardedJedisPool accessTokenJedis;
+
+    private final JdkSerializationRedisSerializer jsrs = new JdkSerializationRedisSerializer();
 
     /*
      * 登录验证过滤器
@@ -69,13 +81,16 @@ public class SessionFilter extends OncePerRequestFilter {
         // 执行过滤 验证通过的会话
         try {
             if (doFilter) {
-                UserEntity currentUser = (UserEntity) request.getSession().getAttribute("currentUser");
-                if (currentUser==null) {
+                byte[] accessToken = request.getHeader("access-token").getBytes();
+                ShardedJedis shardedJedis = accessTokenJedis.getResource();
+                byte[] byteUser = shardedJedis.get(accessToken);
+                shardedJedis.close();
+                Object userObject = jsrs.deserialize(byteUser);
+                if (userObject == null) {
                     RestResponseService.writeErrorResponse(response, "Session failed");
-                    return;
                 }
+                filterChain.doFilter(request, response);
             }
-            filterChain.doFilter(request, response);
         }
         catch(Exception e) {
             /*StringBuilder errorInfo = new StringBuilder();
