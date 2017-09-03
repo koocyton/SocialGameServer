@@ -46,11 +46,14 @@ public class LoginController {
             return restResponse.error(response, 404, "Account or password is failed");
         }
         // 注册一个登录用户，生成 access token ，并缓存这个 key 对应的值 (account)
-        if (!loginService.registerLogin(account, httpSession)) {
+        String accessToken = loginService.registerLogin(account, httpSession);
+        if (accessToken==null) {
             return restResponse.error(response, 500, "can not login");
         }
+        // 下发 access token
+        return restResponse.loginSuccess(accessToken);
         // 登录成功
-        return restResponse.success();
+        // return restResponse.success();
     }
 
     /*

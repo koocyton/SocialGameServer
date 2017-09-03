@@ -25,7 +25,7 @@ public interface LoginService {
     String hashPassword(UserEntity userEntity, String password);
 
     // 注册登录
-    boolean registerLogin(String account, HttpSession httpSession);
+    String registerLogin(String account, HttpSession httpSession);
 
     // 注销登录
     boolean unregisterLogin(HttpSession httpSession);

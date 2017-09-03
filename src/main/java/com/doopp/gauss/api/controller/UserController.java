@@ -24,7 +24,6 @@ import java.io.IOException;
  * Created by henry on 2017/7/14.
  */
 @RequestMapping(value = "api/v1/")
-@SessionAttributes("currentUser")
 @Controller
 public class UserController {
 
@@ -44,7 +43,8 @@ public class UserController {
      */
     @ResponseBody
     @RequestMapping(value = "user/me", method = RequestMethod.GET)
-    public JSONObject me(@ModelAttribute("currentUser") UserEntity currentUser) {
+    public JSONObject me(@RequestHeader("access-token") String accessToken) {
+        UserEntity currentUser = userService.getUserByToken(accessToken);
         logger.info(" >>> " + currentUser);
         return currentUser.toJsonObject();
     }

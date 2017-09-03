@@ -2,15 +2,21 @@ package com.doopp.gauss.api.service.impl;
 
 import com.doopp.gauss.api.dao.UserDao;
 import com.doopp.gauss.api.entity.UserEntity;
+import com.doopp.gauss.api.helper.RedisSessionHelper;
 import com.doopp.gauss.api.service.LoginService;
 import com.doopp.gauss.api.helper.EncryHelper;
 import com.doopp.gauss.socket.service.MessageService;
+import org.apache.oltu.oauth2.as.issuer.MD5Generator;
+import org.apache.oltu.oauth2.as.issuer.OAuthIssuer;
+import org.apache.oltu.oauth2.as.issuer.OAuthIssuerImpl;
+import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import javax.naming.AuthenticationException;
 import javax.servlet.http.HttpSession;
 
 /**
@@ -27,6 +33,9 @@ public class LoginServiceImpl implements LoginService {
 
     @Autowired
     private MessageService messageService;
+
+    @Autowired
+    private RedisSessionHelper redisSessionHelper;
 
     //@Resource
     //private EhCacheCacheManager ehCacheCacheManager;
@@ -59,27 +68,26 @@ public class LoginServiceImpl implements LoginService {
     }
 
     @Override
-    public boolean registerLogin(String account, HttpSession httpSession) {
-        UserEntity currentUser = userDao.fetchByAccount(account);
-        httpSession.setAttribute("currentUser", currentUser);
+    public String registerLogin(String account, HttpSession httpSession) {
+        // httpSession.setAttribute("currentUser", currentUser);
         // logger.info(" >>> " + currentUser);
         // 哈哈，尝试给长连接发一个消息
         // MessageService.sendStringToUser(currentUser.getAccount() + " 重登录，连接被重置", currentUser.getId());
-        messageService.disconnectSocket(currentUser.getId());
+        // messageService.disconnectSocket(currentUser.getId());
         // MessageService.sendStringToAll(account + " 登录");
-        return true;
-        /*
+        // return true;
+
         try {
             OAuthIssuer oauthIssuerImpl = new OAuthIssuerImpl(new MD5Generator());
             String accessToken = oauthIssuerImpl.accessToken();
-            cache.put(accessToken, account);
-            this.accessToken = accessToken;
+
+            UserEntity currentUser = userDao.fetchByAccount(account);
+            redisSessionHelper.setUserByToken(accessToken, currentUser);
+            return accessToken;
         }
-        catch (OAuthSystemException e) {
-            return false;
+        catch (Exception e) {
+            return null;
         }
-        return true;
-         */
     }
 
     @Override

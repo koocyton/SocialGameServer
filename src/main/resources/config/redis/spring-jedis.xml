@@ -22,6 +22,52 @@
         <property name="testOnBorrow" value="${redis.pool.testOnBorrow}" />
     </bean>
 
+    <!-- 配置redis服务器信息 -->
+    <bean id="connectionFactory"
+          class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory">
+        <property name="poolConfig" ref="jedisPoolConfig" />
+        <property name="hostName" value="${redis.session.host}" />
+        <property name="port" value="${redis.session.port}" />
+        <property name="password" value="${redis.session.password}" />
+        <property name="database" value="${redis.session.database}" />
+        <property name="timeout" value="${redis.session.timeout}" />
+    </bean>
+
+    <!-- 配置RedisTemplate -->
+    <bean id="redisSessionTemplate" class="org.springframework.data.redis.core.RedisTemplate">
+        <property name="connectionFactory" ref="connectionFactory" />
+        <property name="keySerializer">
+            <bean class="org.springframework.data.redis.serializer.StringRedisSerializer" />
+        </property>
+        <property name="valueSerializer">
+            <bean class="org.springframework.data.redis.serializer.JdkSerializationRedisSerializer" />
+            <!-- <bean class="com.doopp.gauss.api.utils.RedisValueSerialize" /> //-->
+        </property>
+        <property name="hashKeySerializer">
+            <bean class="org.springframework.data.redis.serializer.StringRedisSerializer" />
+        </property>
+        <!-- 使用JacksonJsonRedisSerializer需要引入jar包：barchart-wrap-jackson-1.8.6-build001.jar -->
+        <!-- JacksonJsonRedisSerializer 需要一个有参的构造函数，因此需要配置constructor-arg -->
+        <!-- <property name="hashValueSerializer">
+            <bean class="org.springframework.data.redis.serializer.JacksonJsonRedisSerializer">
+                <constructor-arg type="java.lang.Class" value="java.lang.Object" />
+            </bean>
+        </property>
+        //-->
+    </bean>
+
+    <!-- 配置redis连接池 -->
+    <!--
+    <bean class="redis.clients.jedis.JedisPool">
+        <constructor-arg ref="jedisPoolConfig" />
+        <constructor-arg value="${redis.session.host}" />
+        <constructor-arg type="int" value="${redis.session.port}" />
+        <constructor-arg type="int" value="${redis.session.timeout}" />
+        <constructor-arg type="java.lang.String" value="${redis.session.password}" />
+        <constructor-arg type="int" value="${redis.session.database}" />
+    </bean>
+    -->
+
     <!-- room id => room info -->
     <bean id="roomJedis" class="redis.clients.jedis.ShardedJedisPool">
         <constructor-arg index="0" ref="jedisPoolConfig" />

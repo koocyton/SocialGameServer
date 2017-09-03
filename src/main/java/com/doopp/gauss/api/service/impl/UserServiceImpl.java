@@ -2,6 +2,7 @@ package com.doopp.gauss.api.service.impl;
 
 import com.doopp.gauss.api.dao.UserDao;
 import com.doopp.gauss.api.entity.UserEntity;
+import com.doopp.gauss.api.helper.RedisSessionHelper;
 import com.doopp.gauss.api.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,8 +24,16 @@ public class UserServiceImpl implements UserService {
     private UserDao userDao;
 
     @Autowired
+    private RedisSessionHelper redisSessionHelper;
+
+    @Autowired
     public UserServiceImpl() {
         // this.userDao = DBSession.getMapper(UserDao.class);
+    }
+
+    @Override
+    public UserEntity getUserByToken(String accessToken){
+        return redisSessionHelper.getUserByToken(accessToken);
     }
 
     @Override

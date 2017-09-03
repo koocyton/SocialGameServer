@@ -51,10 +51,11 @@ public class RegisterController {
             return restResponse.error(response, 500, "can not register account : " + account);
         }
         // 注册一个登录用户，生成 access token ，并缓存这个 key 对应的值 (account)
-        if (!loginService.registerLogin(account, httpSession)) {
+        String accessToken = loginService.registerLogin(account, httpSession);
+        if (accessToken==null) {
             return restResponse.error(response, 500, "can not login");
         }
         // 登录成功
-        return restResponse.success();
+        return restResponse.loginSuccess(accessToken);
     }
 }

@@ -46,6 +46,14 @@ public class RestResponseServiceImpl implements RestResponseService {
     }
 
     @Override
+    public JSONObject loginSuccess(String accessToken) {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("status", 0);
+        jsonObject.put("access-token", accessToken);
+        return jsonObject;
+    }
+
+    @Override
     public JSONObject success() {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("status", 0);

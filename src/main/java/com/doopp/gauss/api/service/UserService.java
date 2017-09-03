@@ -11,6 +11,9 @@ import java.util.Map;
  */
 public interface UserService {
 
+    // 从 Session Redis 里获取用户
+    UserEntity getUserByToken(String accessToken);
+
     // 获取用户信息
     UserEntity getUserInfo(Long userId);
 

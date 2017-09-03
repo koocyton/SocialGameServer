@@ -2,36 +2,31 @@ package com.doopp.gauss.api.utils;
 
 import java.io.IOException;
 
-import javax.annotation.Resource;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.doopp.gauss.api.entity.RoomEntity;
-import org.springframework.data.redis.serializer.JdkSerializationRedisSerializer;
-import redis.clients.jedis.ShardedJedis;
-import redis.clients.jedis.ShardedJedisPool;
-
 import com.doopp.gauss.api.entity.UserEntity;
+import com.doopp.gauss.api.helper.RedisSessionHelper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.doopp.gauss.api.service.RestResponseService;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import redis.clients.jedis.ShardedJedisPool;
 
 /*
  * Created by henry on 2017/4/16.
  */
+@Service
 public class SessionFilter extends OncePerRequestFilter {
 
     private static final Logger logger = LoggerFactory.getLogger(SessionFilter.class);
 
-    @Resource
-    private ShardedJedisPool accessTokenJedis;
-
-    private final JdkSerializationRedisSerializer jsrs = new JdkSerializationRedisSerializer();
+    private RedisSessionHelper redisSessionHelper = new RedisSessionHelper();
 
     /*
      * 登录验证过滤器
@@ -76,30 +71,35 @@ public class SessionFilter extends OncePerRequestFilter {
             }
         }
 
-        logger.info(" >>>>> Session Id " + request.getSession().getId());
-
         // 执行过滤 验证通过的会话
         try {
             if (doFilter) {
-                byte[] accessToken = request.getHeader("access-token").getBytes();
-                ShardedJedis shardedJedis = accessTokenJedis.getResource();
-                byte[] byteUser = shardedJedis.get(accessToken);
-                shardedJedis.close();
-                Object userObject = jsrs.deserialize(byteUser);
-                if (userObject == null) {
-                    RestResponseService.writeErrorResponse(response, "Session failed");
+                // 从 header 里拿到 access token
+                String accessToken = request.getHeader("access-token");
+                // 如果 token 存在，且长度正确
+                if (accessToken!=null && accessToken.length()>=32) {
+                    UserEntity userEntity = redisSessionHelper.getUserByToken(accessToken);
+                    // 如果能找到用户
+                    if (userEntity!=null) {
+                        filterChain.doFilter(request, response);
+                        return;
+                    }
+                    // 如果不能找到用户
+                    else {
+                        RestResponseService.writeErrorResponse(response, "Session failed");
+                        return;
+                    }
                 }
-                filterChain.doFilter(request, response);
+                // 如果 token 不对
+                else {
+                    RestResponseService.writeErrorResponse(response, "Session failed");
+                    return;
+                }
             }
+            // 不用校验
+            filterChain.doFilter(request, response);
         }
         catch(Exception e) {
-            /*StringBuilder errorInfo = new StringBuilder();
-            errorInfo.append("\n /*");
-            for(StackTraceElement stackTraceElement : e.getStackTrace()) {
-                errorInfo.append("\n  * " + stackTraceElement.toString());
-            }
-            errorInfo.append("\n  * / ");
-            logger.info(errorInfo.toString());*/
             e.printStackTrace();
             RestResponseService.writeErrorResponse(response, e.getMessage());
         }
