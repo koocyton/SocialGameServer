@@ -39,6 +39,7 @@ public class RoomDao {
     // 保存房间的实体
     public void save(RoomEntity roomEntity) {
         /* 删除旧的 用户ID 对 房间ID 的索引 */
+        /*
         // 取出这个房间
         RoomEntity oRoomEntity = this.getRoom(roomEntity.getId());
         // 如果之前房间存在
@@ -51,6 +52,7 @@ public class RoomDao {
                 }
             }
         }
+        */
 
         /* 建立新的 用户ID 对房间ID 的索引 */
         // 保存用户到房间的索引
@@ -174,7 +176,7 @@ public class RoomDao {
     }
 
     // del room index
-    private void delUserIndex(Long userId) {
+    public void delUserIndex(Long userId) {
         ShardedJedis shardedJedis = roomIndexJedis.getResource();
         shardedJedis.del(userPrefix + userId);
         shardedJedis.close();
@@ -200,12 +202,19 @@ public class RoomDao {
     private RoomEntity getLastFreeRoom() {
         List<String> roomsId = getFreeRoomsId();
         int size = roomsId.size();
+        if (size==0) {
+            return null;
+        }
         return getRoom(Integer.parseInt(roomsId.get(size-1)));
     }
 
     // 取得第一个空闲房间
     private RoomEntity getFirstFreeRoom() {
         List<String> roomsId = getFreeRoomsId();
+        int size = roomsId.size();
+        if (size==0) {
+            return null;
+        }
         return getRoom(Integer.parseInt(roomsId.get(0)));
     }
 

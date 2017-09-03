@@ -54,7 +54,7 @@ public class MessageServiceImpl implements MessageService {
 
     @Override
     public void sendStringToRoom(String message, int roomId) {
-        RoomEntity roomEntity = roomDao.fetchByRoomId(String.valueOf(roomId));
+        RoomEntity roomEntity = roomDao.fetchByRoomId(roomId);
         ArrayList<UserEntity> userList = roomEntity.getUserList();
         for(UserEntity userEntity : userList) {
             if (userEntity!=null) {

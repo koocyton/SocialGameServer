@@ -75,7 +75,7 @@ public class RoomServiceImpl implements RoomService {
             return lastRoomEntity;
         }
         // 拿到房间
-        RoomEntity roomEntity = roomDao.fetchByRoomId(String.valueOf(roomId));
+        RoomEntity roomEntity = roomDao.fetchByRoomId(roomId);
         // 加入用户
         if (roomEntity!=null && roomEntity.addUser(user)) {
             roomDao.save(roomEntity);
@@ -129,7 +129,7 @@ public class RoomServiceImpl implements RoomService {
         // 删除用户
         if (roomEntity!=null && roomEntity.delUser(userId)) {
             // 删除用户 ID 到 room id 的索引
-            roomDao.delUserIdIndex(userId);
+            roomDao.delUserIndex(userId);
             // 检查房间还剩多少人，如果人都撒了，就删除这个房间的持久数据
             boolean isEmptyRoom = true;
             ArrayList<UserEntity> userList = roomEntity.getUserList();
@@ -142,7 +142,7 @@ public class RoomServiceImpl implements RoomService {
             }
             // 空房间，就删除这个房间的持久数据
             if (isEmptyRoom) {
-                roomDao.delete(String.valueOf(roomEntity.getId()));
+                roomDao.delete(roomEntity.getId());
             }
             // 删除了一个人后，将房间数据，持久化
             else {
