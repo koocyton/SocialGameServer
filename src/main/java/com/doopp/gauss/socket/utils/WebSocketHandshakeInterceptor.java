@@ -25,6 +25,9 @@ public class WebSocketHandshakeInterceptor extends HttpSessionHandshakeIntercept
                                    ServerHttpResponse response,
                                    WebSocketHandler wsHandler,
                                    Map<String, Object> attributes) throws Exception {
+
+        logger.info(" >>> getAttribute(\"currentUser\") " + this.getSession(request).getAttribute("currentUser"));
+        logger.info(" >>> getId() " + this.getSession(request).getId());
         // 获取用户是否登录的 session
         UserEntity currentUser = (UserEntity) this.getSession(request).getAttribute("currentUser");
         // 如果不能从 Session 里获取 currentUser ，就不能连接上
@@ -42,6 +45,8 @@ public class WebSocketHandshakeInterceptor extends HttpSessionHandshakeIntercept
     private HttpSession getSession(ServerHttpRequest request) {
         if (request instanceof ServletServerHttpRequest) {
             ServletServerHttpRequest serverRequest = (ServletServerHttpRequest) request;
+            logger.info(" >>> serverRequest " + serverRequest);
+            logger.info(" >>> serverRequest.getServletRequest() " + serverRequest.getServletRequest().getSession());
             return serverRequest.getServletRequest().getSession(true);
         }
         return null;

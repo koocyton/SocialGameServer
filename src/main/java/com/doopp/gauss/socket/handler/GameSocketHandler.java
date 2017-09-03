@@ -47,7 +47,7 @@ public class GameSocketHandler implements WebSocketHandler {
         // 保存一个 session 回话
         socketSessions.put(sessionId, session);
         logger.info(" >>> User " + currentUser.getAccount() + " <" + sessionId +  "> connected !");
-        // session.sendMessage(new TextMessage(currentUser.getAccount() + " connected !"));
+        session.sendMessage(new TextMessage(currentUser.getAccount() + " connected !"));
     }
 
     @Override

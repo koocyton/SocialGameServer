@@ -64,12 +64,12 @@ public class SessionFilter extends OncePerRequestFilter {
             }
         }
 
-        // logger.info(" >>>>> while filter ");
+        logger.info(" >>>>> Session Id " + request.getSession().getId());
 
         // 执行过滤 验证通过的会话
         try {
             if (doFilter) {
-                UserEntity currentUser = (UserEntity)request.getSession().getAttribute("currentUser");
+                UserEntity currentUser = (UserEntity) request.getSession().getAttribute("currentUser");
                 if (currentUser==null) {
                     RestResponseService.writeErrorResponse(response, "Session failed");
                     return;

@@ -2,17 +2,20 @@ package com.doopp.gauss.api.dao;
 
 import com.doopp.gauss.api.entity.RoomEntity;
 import com.doopp.gauss.api.entity.UserEntity;
-import com.doopp.gauss.api.helper.RedisHelper;
 
 import javax.annotation.Resource;
 
-import com.sun.org.apache.bcel.internal.generic.RETURN;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.redis.serializer.JdkSerializationRedisSerializer;
 import org.springframework.stereotype.Repository;
+import redis.clients.jedis.ShardedJedis;
+import redis.clients.jedis.ShardedJedisPool;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
+import java.util.Set;
 
 @Repository
 public class RoomDao {
@@ -20,66 +23,75 @@ public class RoomDao {
     private static final Logger logger = LoggerFactory.getLogger(RoomDao.class);
 
     @Resource
-    private RedisHelper redisHelper;
+    private ShardedJedisPool roomJedis;
+
+    @Resource
+    private ShardedJedisPool roomIndexJedis;
+
+    private final JdkSerializationRedisSerializer jsrs = new JdkSerializationRedisSerializer();
 
     // 房间信息保存到 Redis , key 的前缀 room_{roomId}
-    private static String roomPrefix = "roomId_room_";
+    private final String roomPrefix = "roomId_room_";
 
     // 用户 ID 做 key ，保存 user id 和 room id 的索引
-    private static String userPrefix = "userId_roomId_";
+    private final String userPrefix = "userId_roomId_";
 
     // 保存房间的实体
     public void save(RoomEntity roomEntity) {
+        /* 删除旧的 用户ID 对 房间ID 的索引 */
+        // 取出这个房间
+        RoomEntity oRoomEntity = this.getRoom(roomEntity.getId());
+        // 如果之前房间存在
+        if (oRoomEntity!=null) {
+            ArrayList<UserEntity> oUserList = oRoomEntity.getUserList();
+            // 如果之前不是空房间，将 user id => room id 的索引删除
+            for (UserEntity oUserEntity : oUserList) {
+                if (oUserEntity != null) {
+                    this.delUserIndex(oUserEntity.getId());
+                }
+            }
+        }
+
+        /* 建立新的 用户ID 对房间ID 的索引 */
+        // 保存用户到房间的索引
         ArrayList<UserEntity> userList = roomEntity.getUserList();
         for(UserEntity userEntity : userList) {
             if (userEntity!=null) {
-                redisHelper.setString(userPrefix + userEntity.getId(), "" + roomEntity.getId());
+                this.setUserIndex(userEntity.getId(), roomEntity.getId());
             }
         }
-        // 保存房间
-        redisHelper.setObject(roomPrefix + roomEntity.getId(), roomEntity);
-        // 如果有空座，就解锁房间
+
+        /* 保存房间 */
+        this.setRoom(roomEntity.getId(), roomEntity);
+
+        /* 设定空闲房间的索引 */
+        // 如果有空座，设定空闲房间索引到此房间
         if (roomEntity.isFreeSeat()) {
-            unlockRoom(roomEntity.getId());
+            this.setFreeRoomIndex(roomEntity.getId());
         }
-        // 满员就锁定房间
+        // 满员就删除指向这个房间的空闲房间索引
         else {
-            lockRoom(roomEntity.getId());
+            this.delFreeRoomIndex(roomEntity.getId());
         }
     }
 
     // 删除房间
     // 将房间号回收
-    public void delete(String roomId) {
+    public void delete(int roomId) {
         // 删除房间
-        redisHelper.delObject(roomPrefix + roomId);
+        this.delRoom(roomId);
         // free room 的索引也要删除
-        redisHelper.hdel(roomPrefix, roomId);
-    }
-
-    // 删除用户的索引
-    public void delUserIdIndex(Long userId) {
-        redisHelper.delString(userPrefix + userId);
+        this.delFreeRoomIndex(roomId);
     }
 
     // 查询用户在哪个房间
     public RoomEntity fetchByUserId(Long userId) {
-        // 取值，判断空值
-        String roomId = redisHelper.getString(userPrefix + userId);
-        if (roomId==null) {
-            return null;
-        }
-        // 转化为 room id
-        // int roomId = (int) roomIdObject;
-        //logger.info(" >>> fetchByUserId " + userId + " roomId " + roomId);
         // 获取房间
-        RoomEntity roomEntity = this.fetchByRoomId(roomId);
+        RoomEntity roomEntity = this.getRoomByUserId(userId);
         // 判断一下
         if (roomEntity!=null) {
-            //logger.info(" >>> roomEntity.getUserList() " + roomEntity.getUserList());
             // 如果房间里能找到这个用户
             for (UserEntity userEntity : roomEntity.getUserList()) {
-                //logger.info(" >>> userEntity " + userEntity);
                 if (userEntity!=null && userEntity.getId().equals(userId)) {
                     // 返回房间
                     return roomEntity;
@@ -87,57 +99,128 @@ public class RoomDao {
             }
         }
         // 如果找不到这个用户，有错误的数据，就要删除索引
-        this.delUserIdIndex(userId);
+        this.delUserIndex(userId);
         return null;
     }
 
     // 按房间 id 查询房间
-    public RoomEntity fetchByRoomId(String roomId) {
+    public RoomEntity fetchByRoomId(int roomId) {
         // 判断空值
-        Object roomEntityObject = redisHelper.getObject(roomPrefix + roomId);
-        if (roomEntityObject==null) {
+        RoomEntity roomEntity = getRoom(roomId);
+        if (roomEntity==null) {
             return null;
         }
-        return (RoomEntity) roomEntityObject;
+        return roomEntity;
     }
 
     // 查询一个空闲的房间
     public RoomEntity fetchFreeRoom() {
-        List<String> freeRoomsId = this.getUnlockRooms();
-        // logger.info(" >>> freeRoomsId : \n " + freeRoomsId);
-        for(String roomId : freeRoomsId) {
-            RoomEntity freeRoom = null;
-            try {
-                freeRoom = this.fetchByRoomId(roomId);
-            }
-            catch(NumberFormatException e) {
-                redisHelper.hdel(roomPrefix, roomId);
-            }
-            //(RoomEntity) redisHelper.getObject("" + roomId);
-            // logger.info(" >>> freeRoom : " + roomId + " \n " + freeRoom);
-            if (freeRoom != null) {
-                return freeRoom;
-            }
-            else {
-                redisHelper.hdel(roomPrefix, roomId);
-                // this.lockRoom(Integer.parseInt(roomId));
-            }
+        return this.getFirstFreeRoom();
+    }
+
+
+    /*
+     * 数据的读写
+     */
+
+    // set room info
+    private void setRoom(int roomId, RoomEntity roomEntity) {
+        byte[] byteRoomKey = (roomPrefix + roomId).getBytes();
+        byte[] byteRoom = jsrs.serialize(roomEntity);
+        ShardedJedis shardedJedis = roomJedis.getResource();
+        shardedJedis.set(byteRoomKey, byteRoom);
+        shardedJedis.close();
+    }
+
+    // get room info
+    private RoomEntity getRoom(int roomId) {
+        ShardedJedis shardedJedis = roomJedis.getResource();
+        byte[] byteRoomKey = (roomPrefix + roomId).getBytes();
+        byte[] byteRoom = shardedJedis.get(byteRoomKey);
+        shardedJedis.close();
+        Object roomObject = jsrs.deserialize(byteRoom);
+        if (roomObject!=null) {
+            return (RoomEntity) roomObject;
         }
         return null;
     }
 
-    // 检索所有的空闲的房间
-    private List<String> getUnlockRooms() {
-        return redisHelper.hkeys(roomPrefix);
+    // del room info
+    private void delRoom(int... roomsId) {
+        ShardedJedis shardedJedis = roomJedis.getResource();
+        for (int roomId : roomsId) {
+            byte[] byteRoomKey = (roomPrefix + roomId).getBytes();
+            shardedJedis.del(byteRoomKey);
+        }
+        shardedJedis.close();
     }
 
-    // 在房间满员，或房间进入游戏状态后，房间不排在 free 名单中
-    private void lockRoom(int roomId) {
-        redisHelper.hdel(roomPrefix, "" + roomId);
+    // set room index
+    private void setUserIndex(Long userId, int roomId) {
+        ShardedJedis shardedJedis = roomIndexJedis.getResource();
+        shardedJedis.set(userPrefix + userId, "" + roomId);
+        shardedJedis.close();
     }
 
-    // 非游戏状态，而且没有满员，房间解锁，可以进入用户
-    private void unlockRoom(int roomId) {
-        redisHelper.hset(roomPrefix, "" + roomId, roomPrefix + roomId);
+    // get room index
+    private RoomEntity getRoomByUserId(Long userId) {
+        ShardedJedis shardedJedis = roomIndexJedis.getResource();
+        String sRoomId = shardedJedis.get(userPrefix + userId);
+        shardedJedis.close();
+        if (sRoomId==null) {
+            return null;
+        }
+        return this.getRoom(Integer.parseInt(sRoomId));
+    }
+
+    // del room index
+    private void delUserIndex(Long userId) {
+        ShardedJedis shardedJedis = roomIndexJedis.getResource();
+        shardedJedis.del(userPrefix + userId);
+        shardedJedis.close();
+    }
+
+
+
+    // 设置空闲房间
+    private void setFreeRoomIndex(int roomId) {
+        ShardedJedis shardedJedis = roomIndexJedis.getResource();
+        shardedJedis.hset(roomPrefix + "*", "" + roomId, "");
+        shardedJedis.close();
+    }
+
+    // 随机取得一个空闲房间
+    private RoomEntity getRandomFreeRoom() {
+        List<String> roomsId = getFreeRoomsId();
+        String roomId = roomsId.remove(new Random().nextInt(roomsId.size()));
+        return getRoom(Integer.parseInt(roomId));
+    }
+
+    // 取得最后一个空闲房间
+    private RoomEntity getLastFreeRoom() {
+        List<String> roomsId = getFreeRoomsId();
+        int size = roomsId.size();
+        return getRoom(Integer.parseInt(roomsId.get(size-1)));
+    }
+
+    // 取得第一个空闲房间
+    private RoomEntity getFirstFreeRoom() {
+        List<String> roomsId = getFreeRoomsId();
+        return getRoom(Integer.parseInt(roomsId.get(0)));
+    }
+
+    // 取得空闲房间的 id 列表
+    private List<String> getFreeRoomsId() {
+        ShardedJedis shardedJedis = roomIndexJedis.getResource();
+        Set<String> keys = shardedJedis.hkeys(roomPrefix + "*");
+        shardedJedis.close();
+        return new ArrayList<>(keys);
+    }
+
+    // 删除空闲的房间的索引
+    private void delFreeRoomIndex(int roomId) {
+        ShardedJedis shardedJedis = roomIndexJedis.getResource();
+        shardedJedis.hdel(roomPrefix + "*", "" + roomId);
+        shardedJedis.close();
     }
 }
