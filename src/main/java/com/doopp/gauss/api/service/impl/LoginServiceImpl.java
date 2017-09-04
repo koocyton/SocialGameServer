@@ -69,12 +69,13 @@ public class LoginServiceImpl implements LoginService {
 
     @Override
     public String registerLogin(String account, HttpSession httpSession) {
+
         // httpSession.setAttribute("currentUser", currentUser);
         // logger.info(" >>> " + currentUser);
         // 哈哈，尝试给长连接发一个消息
-        // MessageService.sendStringToUser(currentUser.getAccount() + " 重登录，连接被重置", currentUser.getId());
+        // messageService.sendStringToUser(currentUser.getAccount() + " 重登录，连接被重置", currentUser.getId());
         // messageService.disconnectSocket(currentUser.getId());
-        // MessageService.sendStringToAll(account + " 登录");
+        // messageService.sendStringToAll(account + " 登录");
         // return true;
 
         try {
@@ -83,6 +84,9 @@ public class LoginServiceImpl implements LoginService {
 
             UserEntity currentUser = userDao.fetchByAccount(account);
             redisSessionHelper.setUserByToken(accessToken, currentUser);
+            // 断开这个用户的长链接
+            messageService.disconnectSocket(currentUser.getId());
+            messageService.sendStringToUser(currentUser.getAccount() + " 重登录，连接被重置", currentUser.getId());
             return accessToken;
         }
         catch (Exception e) {
