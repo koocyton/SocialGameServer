@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 public class DemoController {
 
-    @RequestMapping(value = "/ap/v1/web/socket")
+    @RequestMapping(value = "/web-socket-demo")
     public String socket() {
         return "socket/demo/web_socket_demo";
     }

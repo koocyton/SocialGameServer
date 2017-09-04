@@ -33,23 +33,34 @@ public class WebSocketHandshakeInterceptor extends HttpSessionHandshakeIntercept
                                    WebSocketHandler wsHandler,
                                    Map<String, Object> attributes) throws Exception {
 
-        //logger.info(" >>> getAttribute(\"currentUser\") " + this.getSession(request).getAttribute("currentUser"));
-        //logger.info(" >>> getId() " + this.getSession(request).getId());
-        // 获取用户是否登录的 session
-        //UserEntity currentUser = (UserEntity) this.getSession(request).getAttribute("currentUser");
-        // String accessToken = request.getHeaders().get("access-token");
+        // 默认从 url query 里获取 access token
+        String accessToken = null;
+        String uriQuery = request.getURI().getQuery();
+        int beginOffset = uriQuery.indexOf("access-token=");
+        if (beginOffset!=-1) {
+            beginOffset = beginOffset + 13;
+            accessToken = uriQuery.substring(beginOffset, beginOffset + 32);
+        }
 
-        List<String> tokens = request.getHeaders().get("access-token");
-        if (tokens!=null) {
-            String accessToken = tokens.get(0);
+        // 从 header 里获取 access token
+        /*
+        if (accessToken==null) {
+            List<String> tokens = request.getHeaders().get("access-token");
+            if (tokens!=null) {
+                accessToken = tokens.get(0);
+            }
+        }
+        */
+
+        // 有 token
+        if (accessToken!=null) {
             UserEntity currentUser = redisSessionHelper.getUserByToken(accessToken);
             // 在会话里加入当前用户信息
             attributes.put("currentUser", currentUser);
             return currentUser!=null && super.beforeHandshake(request, response, wsHandler, attributes);
         }
-        // logger.info(" >>> " + request.getHeaders().get("access-token"));
-        // 如果不能从 Session 里获取 currentUser ，就不能连接上
-        // return currentUser!=null && super.beforeHandshake(request, response, wsHandler, attributes);
+
+        // 不能连接
         return false;
     }
 
