@@ -70,9 +70,4 @@ public class LoginController {
         // 退出登录成功
         return restResponse.success();
     }
-
-    @RequestMapping(value = "web/socket", method = RequestMethod.GET)
-    public String socket() {
-        return "api/login/web_socket";
-    }
 }
