@@ -45,6 +45,15 @@ public class RoomServiceImpl implements RoomService {
     }
 
     /*
+     * 用户当前所在的房间
+     */
+    @Override
+    public RoomEntity userCurrentRoom(UserEntity user) {
+        // 如果用户已经在一个房间里了
+        return roomDao.fetchByUserId(user.getId());
+    }
+
+    /*
      * 用户创建房间
      */
     @Override

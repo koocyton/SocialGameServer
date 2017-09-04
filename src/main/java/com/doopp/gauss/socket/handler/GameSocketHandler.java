@@ -3,7 +3,9 @@ package com.doopp.gauss.socket.handler;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONException;
 import com.alibaba.fastjson.JSONObject;
+import com.doopp.gauss.api.entity.RoomEntity;
 import com.doopp.gauss.api.entity.UserEntity;
+import com.doopp.gauss.api.service.RoomService;
 import com.doopp.gauss.socket.service.MessageService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,6 +26,9 @@ public class GameSocketHandler implements WebSocketHandler {
     @Autowired
     MessageService messageService;
 
+    @Autowired
+    RoomService roomService;
+
     private static final Logger logger = LoggerFactory.getLogger(GameSocketHandler.class);
 
     // private static final ArrayList<WebSocketSession> users = new ArrayList<WebSocketSession>();
@@ -37,11 +42,20 @@ public class GameSocketHandler implements WebSocketHandler {
         UserEntity currentUser = (UserEntity) session.getAttributes().get("currentUser");
         String sessionId = Long.toString(currentUser.getId());
 
+        // 如果用户不在房间里，就断开连接
+        RoomEntity currentRoom = roomService.userCurrentRoom(currentUser);
+        if (currentRoom==null) {
+            session.sendMessage(new TextMessage(currentUser.getAccount() + " not connect the game room !"));
+            socketSessions.remove(sessionId);
+            return;
+        }
+
         // 需要判断是否存在旧的连接，存在就断开
         WebSocketSession oldSession = socketSessions.get(sessionId);
         if (oldSession!=null && oldSession.isOpen()){
             oldSession.close();
             socketSessions.remove(sessionId);
+            return;
         }
 
         // 保存一个 session 回话

@@ -1,5 +1,6 @@
 package com.doopp.gauss.socket.utils;
 
+import com.doopp.gauss.api.entity.RoomEntity;
 import com.doopp.gauss.api.entity.UserEntity;
 import com.doopp.gauss.api.helper.RedisSessionHelper;
 import com.doopp.gauss.socket.handler.GameSocketHandler;
