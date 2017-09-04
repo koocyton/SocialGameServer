@@ -26,7 +26,7 @@ public class SessionFilter extends OncePerRequestFilter {
 
     private static final Logger logger = LoggerFactory.getLogger(SessionFilter.class);
 
-    private RedisSessionHelper redisSessionHelper = new RedisSessionHelper();
+    private final RedisSessionHelper redisSessionHelper = new RedisSessionHelper();
 
     /*
      * 登录验证过滤器
