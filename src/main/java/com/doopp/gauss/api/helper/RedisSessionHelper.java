@@ -15,6 +15,8 @@ import org.springframework.stereotype.Component;
 import redis.clients.jedis.ShardedJedis;
 import redis.clients.jedis.ShardedJedisPool;
 
+import java.util.concurrent.TimeUnit;
+
 @Component
 public class RedisSessionHelper {
 
@@ -63,9 +65,8 @@ public class RedisSessionHelper {
             ofv.getOperations().delete(String.valueOf(userId));
             ofv.getOperations().delete((String) lastAccesssToken);
         }
-
         // 保存数据
-        ofv.set(accessToken, userEntity);
+        ofv.set(accessToken, userEntity, 7, TimeUnit.DAYS);
         // 保存 user id => access token 的索引
         ofv.set(String.valueOf(userId), accessToken);
     }
