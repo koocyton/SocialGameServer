@@ -23,8 +23,8 @@ import java.io.IOException;
  *
  * Created by henry on 2017/7/14.
  */
-@RequestMapping(value = "api/v1/")
 @Controller
+@RequestMapping(value = "api/v1/")
 public class UserController {
 
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
@@ -44,6 +44,7 @@ public class UserController {
     @ResponseBody
     @RequestMapping(value = "user/me", method = RequestMethod.GET)
     public JSONObject me(@RequestHeader("access-token") String accessToken) {
+        // 当前用户
         UserEntity currentUser = userService.getUserByToken(accessToken);
         logger.info(" >>> " + currentUser);
         return currentUser.toJsonObject();
@@ -56,7 +57,9 @@ public class UserController {
     @RequestMapping(value = "user/me", method = RequestMethod.POST)
     public JSONObject updateMe(HttpServletRequest request,
                                @RequestParam("portrait") MultipartFile file,
-                               @ModelAttribute("currentUser") UserEntity currentUser) throws IOException {
+                               @RequestHeader("access-token") String accessToken) throws IOException {
+        // 当前用户
+        UserEntity currentUser = userService.getUserByToken(accessToken);
         // 更新昵称
         currentUser.setNickname(request.getParameter("nickname"));
         // 跟新头像
@@ -82,7 +85,9 @@ public class UserController {
      */
     @ResponseBody
     @RequestMapping(value = "user/create-room", method = RequestMethod.GET)
-    public JSONObject createRoom(@ModelAttribute("currentUser") UserEntity currentUser) {
+    public JSONObject createRoom(@RequestHeader("access-token") String accessToken) {
+        // 当前用户
+        UserEntity currentUser = userService.getUserByToken(accessToken);
         // 创建了新房间
         RoomEntity roomEntity = roomService.userCreateRoom(currentUser);
         if (roomEntity==null) {
@@ -96,8 +101,10 @@ public class UserController {
      */
     @ResponseBody
     @RequestMapping(value = "user/join-room/{roomId}", method = RequestMethod.GET)
-    public JSONObject joinRoom(@ModelAttribute("currentUser") UserEntity currentUser,
+    public JSONObject joinRoom(@RequestHeader("access-token") String accessToken,
                                @PathVariable("roomId") int roomId) {
+        // 当前用户
+        UserEntity currentUser = userService.getUserByToken(accessToken);
         // 用户加入到指定 ID 的房间
         RoomEntity roomEntity = roomService.userJoinRoom(currentUser, roomId);
         if (roomEntity==null) {
@@ -111,7 +118,10 @@ public class UserController {
      */
     @ResponseBody
     @RequestMapping(value = "user/random-room", method = RequestMethod.GET)
-    public JSONObject randomJoinRoom(@ModelAttribute("currentUser") UserEntity currentUser) {
+    public JSONObject randomJoinRoom(@RequestHeader("access-token") String accessToken) {
+        // 当前用户
+        UserEntity currentUser = userService.getUserByToken(accessToken);
+        // logger.info(" >>> " + currentUser);
         // 用户加入到指定 ID 的房间
         RoomEntity roomEntity = roomService.userJoinFreeRoom(currentUser);
         // logger.info(" >>> roomEntity.toString() " + roomEntity.toString());
