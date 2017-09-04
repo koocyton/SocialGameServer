@@ -75,6 +75,7 @@
 
         function sendMessage() {
             let msg = $("#new-message").val();
+            let json = "{\"action\":\"room-chat\", \"data\":{\"message\":\"" + msg + "\"}}";
             ws.send(msg);
             $("#new-message").val("");
             $("#new-message").focus();
