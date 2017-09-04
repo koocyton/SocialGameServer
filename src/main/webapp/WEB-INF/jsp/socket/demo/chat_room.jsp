@@ -42,10 +42,35 @@
             return false;
         }
 
+        function joinRoom() {
+
+            let accessToken = $("#access-token").val();
+
+            $.ajax({
+                "url"  : "/api/v1/user/random-room",
+                "type" : "get",
+                "data" : null,
+                "contentType" : "application/x-www-form-urlencoded; charset=UTF-8",
+                "processData" : false,
+                "headers" : {"access-token":accessToken},
+                "success" : function(responseText) {
+                    socketConnect();
+                },
+                "error" : function(XMLHttpRequest) {
+                    //
+                },
+                "complete" : function(XMLHttpRequest) {
+                    //
+                }
+            });
+            return false;
+
+        }
+
         function socketConnect() {
 
             let accessToken = $("#access-token").val();
-            ws = new WebSocket("ws://127.0.0.1:8080/game-socket?t=1&access-token=" + accessToken + "&b=2");
+            ws = new WebSocket("ws://127.0.0.1:8080/game-socket?access-token=" + accessToken);
             // Listen for the connection open event then call the sendMessage function
             ws.onopen = function(e) {
                 console.log("WebSocket Connected ...");
@@ -63,10 +88,15 @@
             // Listen for new messages arriving at the client
             ws.onmessage = function(e) {
                 console.log("Message received: " + e.data);
-
                 let showMsgElt = document.getElementById("chat-window");
                 let newMsg = document.createElement("div");
-                newMsg.innerHTML = e.data;
+                try {
+                    var obj = JSON.parse(e.data);
+                    newMsg.innerHTML = obj.data.sender + " 说 : " + obj.data.message;
+                }
+                catch(e) {
+                    newMsg.innerHTML = e.data;
+                }
                 let firstChild = showMsgElt.firstChild;
                 showMsgElt.insertBefore(newMsg, firstChild);
             };
@@ -76,10 +106,10 @@
         function sendMessage() {
             let msg = $("#new-message").val();
             let json = "{\"action\":\"room-chat\", \"data\":{\"message\":\"" + msg + "\"}}";
-            ws.send(msg);
+            ws.send(json);
             $("#new-message").val("");
             $("#new-message").focus();
-            console.log("Message sent : " + msg);
+            console.log("Message sent : " + json);
         }
     </script>
 </head>
@@ -90,19 +120,19 @@
 
     <div style="width:600px;display:block;">
         <form action="/api/v1/login" id="login-form" method="post" onsubmit="onLogin();return false;">
-            <div class="form-group" style="float:left;width:200px;margin-right:10px;">
-                <input type="text" id="form-account" class="form-control" name="account" value="koocyton@gmail.com">
+            <div class="form-group" style="float:left;width:400px;margin-right:10px;">
+                <input type="input" id="form-account" class="form-control" name="account" value="">
             </div>
             <div class="form-group" style="float:left;width:200px;margin-right:10px;">
-                <input type="text" id="form-password" class="form-control" name="password" value="123456">
+                <input type="input" id="form-password" class="form-control" name="password" value="123456">
             </div>
             <div class="form-group" style="float:left;width:100px;">
-                <button class="btn btn-success" type="submit">Get Token</button>
+                <button class="btn btn-success" type="submit">登陆</button>
             </div>
         </form>
     </div>
 
-    <div style="width:600px;display:block;">
+    <div style="width:600px;">
         <div class="form-group" style="float:left;width:100px;margin-right:10px;">
             <span style="height:30px;line-height:30px;">access-token :</span>
         </div>
@@ -110,8 +140,8 @@
             <input type="text" id="access-token" class="form-control" name="access-token" style="width:300px;" value="">
         </div>
         <div class="form-group" id="socket-connect" style="float:left;width:100px;display:none;">
-            <a href="javascript:socketConnect();">
-                <button class="btn btn-success">连接游戏服</button>
+            <a href="javascript:joinRoom();">
+                <button class="btn btn-success">进入聊天房间</button>
             </a>
         </div>
     </div>

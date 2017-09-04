@@ -69,7 +69,8 @@ public class GameSocketHandler implements WebSocketHandler {
     {
         // 获取返回的信息
         String requestBody = message.getPayload().toString();
-        // 如果获取到信息
+        logger.info(" >>> requestBody " + requestBody);
+                // 如果获取到信息
         if (requestBody!=null && requestBody.length()>=1) {
             // 获取当前用户
             UserEntity currentUser = (UserEntity) session.getAttributes().get("currentUser");
@@ -88,7 +89,7 @@ public class GameSocketHandler implements WebSocketHandler {
                 // session.sendMessage(new TextMessage(responseObject.toJSONString()));
             }
             catch (Exception e) {
-                // e.printStackTrace();
+                e.printStackTrace();
                 logger.info("\n >>>\n [ User ] " + currentUser.getAccount() + " <" + currentUser.getId() +  "> send message : " + requestBody + "\n [ Error ] " + e.getMessage() + "\n <<<");
             }
             // session.sendMessage(new TextMessage(currentUser.getNickname() + " 说 : " + requestBody));
