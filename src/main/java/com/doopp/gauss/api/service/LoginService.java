@@ -25,10 +25,10 @@ public interface LoginService {
     String hashPassword(UserEntity userEntity, String password);
 
     // 注册登录
-    String registerLogin(String account, HttpSession httpSession);
+    String registerLogin(String account);//, HttpSession httpSession);
 
     // 注销登录
-    boolean unregisterLogin(HttpSession httpSession);
+    boolean unregisterLogin(String accessToken);
 
     // 获取 access token，应该和 registerLogin 一起使用
     String getAccessToken();

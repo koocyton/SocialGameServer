@@ -20,7 +20,7 @@
             // let password = $("#form-password").val();
             let $form = $("#login-form");
             $.ajax({
-                "url"  : "/api/v1/login",
+                "url"  : "/api/v1/fast-login",
                 "type" : "post",
                 "data" : $form.serialize(),
                 "contentType" : "application/x-www-form-urlencoded; charset=UTF-8",
@@ -119,13 +119,13 @@
 <div style="width:600px;padding:20px;">
 
     <div style="width:600px;display:block;">
-        <form action="/api/v1/login" id="login-form" method="post" onsubmit="onLogin();return false;">
+        <form action="/api/v1/fast-login" id="login-form" method="post" onsubmit="onLogin();return false;">
             <div class="form-group" style="float:left;width:400px;margin-right:10px;">
                 <input type="input" id="form-account" class="form-control" name="account" value="">
             </div>
-            <div class="form-group" style="float:left;width:200px;margin-right:10px;">
+            <!-- <div class="form-group" style="float:left;width:200px;margin-right:10px;">
                 <input type="input" id="form-password" class="form-control" name="password" value="123456">
-            </div>
+            </div> -->
             <div class="form-group" style="float:left;width:100px;">
                 <button class="btn btn-success" type="submit">登陆</button>
             </div>

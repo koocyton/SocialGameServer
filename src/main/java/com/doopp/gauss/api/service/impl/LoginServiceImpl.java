@@ -5,6 +5,7 @@ import com.doopp.gauss.api.entity.UserEntity;
 import com.doopp.gauss.api.helper.RedisSessionHelper;
 import com.doopp.gauss.api.service.LoginService;
 import com.doopp.gauss.api.helper.EncryHelper;
+import com.doopp.gauss.api.service.UserService;
 import com.doopp.gauss.socket.service.MessageService;
 import org.apache.oltu.oauth2.as.issuer.MD5Generator;
 import org.apache.oltu.oauth2.as.issuer.OAuthIssuer;
@@ -33,6 +34,9 @@ public class LoginServiceImpl implements LoginService {
 
     @Autowired
     private MessageService messageService;
+
+    @Autowired
+    private UserService userService;
 
     @Autowired
     private RedisSessionHelper redisSessionHelper;
@@ -68,15 +72,7 @@ public class LoginServiceImpl implements LoginService {
     }
 
     @Override
-    public String registerLogin(String account, HttpSession httpSession) {
-
-        // httpSession.setAttribute("currentUser", currentUser);
-        // logger.info(" >>> " + currentUser);
-        // 哈哈，尝试给长连接发一个消息
-        // messageService.sendStringToUser(currentUser.getAccount() + " 重登录，连接被重置", currentUser.getId());
-        // messageService.disconnectSocket(currentUser.getId());
-        // messageService.sendStringToAll(account + " 登录");
-        // return true;
+    public String registerLogin(String account) { // , HttpSession httpSession) {
 
         try {
             OAuthIssuer oauthIssuerImpl = new OAuthIssuerImpl(new MD5Generator());
@@ -95,9 +91,14 @@ public class LoginServiceImpl implements LoginService {
     }
 
     @Override
-    public boolean unregisterLogin(HttpSession httpSession) {
+    public boolean unregisterLogin(String accessToken) {
+
+        redisSessionHelper.delUserSessionCache(accessToken);
+
+        // UserEntity currentUser = userService.getUserByToken(accessToken);
+
         // SessionUserEntity currentUser = (SessionUserEntity) userDao.fetchByAccount(account);
-        httpSession.removeAttribute("currentUser");
+        // httpSession.removeAttribute("currentUser");
         return true;
         /*
         try {

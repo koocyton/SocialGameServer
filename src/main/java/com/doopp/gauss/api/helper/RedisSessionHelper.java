@@ -43,6 +43,10 @@ public class RedisSessionHelper {
      * String staticHost = properties.getProperty("static.host");
      */
 
+    public void delUserSessionCache(String accessToken) {
+        ofv.getOperations().delete(accessToken);
+    }
+
     public UserEntity getUserByToken(String accessToken) {
         // 取值
         Object userObject = ofv.get(accessToken);

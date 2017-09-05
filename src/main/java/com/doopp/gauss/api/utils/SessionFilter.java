@@ -43,6 +43,7 @@ public class SessionFilter extends OncePerRequestFilter {
         String[] notFilters = new String[] {
             "/api/v1/register",
             "/api/v1/login",
+            "/api/v1/fast-login",
             "/api/v1/logout",
             "/web-socket-demo",
             "/chat-room",

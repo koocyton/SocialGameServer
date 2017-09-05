@@ -36,7 +36,7 @@ public class RegisterController {
      */
     @ResponseBody
     @RequestMapping(value = "register", method = RequestMethod.POST)
-    public JSONObject register(HttpServletResponse response, HttpSession httpSession,
+    public JSONObject register(HttpServletResponse response,
                                @RequestParam("account") String account,
                                @RequestParam("password") String password)
     {
@@ -51,7 +51,7 @@ public class RegisterController {
             return restResponse.error(response, 500, "can not register account : " + account);
         }
         // 注册一个登录用户，生成 access token ，并缓存这个 key 对应的值 (account)
-        String accessToken = loginService.registerLogin(account, httpSession);
+        String accessToken = loginService.registerLogin(account);
         if (accessToken==null) {
             return restResponse.error(response, 500, "can not login");
         }
