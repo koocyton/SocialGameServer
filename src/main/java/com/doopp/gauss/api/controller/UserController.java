@@ -138,7 +138,7 @@ public class UserController {
     @RequestMapping(value = "user/leave-room", method = RequestMethod.GET)
     public JSONObject leaveRoom(@ModelAttribute("currentUser") UserEntity currentUser) {
         // 用户离开房间
-        RoomEntity roomEntity = roomService.userLeaveRoom(currentUser.getId());
+        RoomEntity roomEntity = roomService.userLeaveRoom(currentUser);
         if (roomEntity==null) {
             return restResponse.error(500, "Can`t leave room !");
         }

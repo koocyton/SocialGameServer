@@ -1,14 +1,14 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page session="false" contentType="text/html;charset=UTF-8" language="java" %>
-
 <!DOCTYPE html>
-<html lang="zh-cn">
+<html lang="en">
+<title>Chat Room</title>
 <head>
-
     <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>chat room</title>
+    <meta name="viewport" content="width=device-width,initial-scale=0.5,minimum-scale=0.5,maximum-scale=0.5,user-scalable=no"/>
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="format-detection" content="telephone=no"/>
+    <meta name="apple-mobile-web-app-status-bar-style" content="white" />
     <script src="/js/jquery-1.11.3.min.js"></script>
     <script src="/js/socket.io.js"></script>
     <script src="https://cdn.bootcss.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
@@ -68,11 +68,16 @@
         }
 
         function socketConnect() {
-
+            try {
+                ws.close();
+            }
+            catch(e) {;};
+            ws = null;
             let accessToken = $("#access-token").val();
             ws = new WebSocket("ws://127.0.0.1:8080/game-socket?access-token=" + accessToken);
             // Listen for the connection open event then call the sendMessage function
             ws.onopen = function(e) {
+
                 console.log("WebSocket Connected ...");
                 // let accessToken = document.getElementById("access-token").value;
                 // sendMessage({"access-token":accessToken})
@@ -87,18 +92,20 @@
             };
             // Listen for new messages arriving at the client
             ws.onmessage = function(e) {
-                console.log("Message received: " + e.data);
+                let message = e.data;
+                console.log("Message received: " + message);
                 let showMsgElt = document.getElementById("chat-window");
                 let newMsg = document.createElement("div");
                 try {
                     var obj = JSON.parse(e.data);
-                    newMsg.innerHTML = obj.data.sender + " 说 : " + obj.data.message;
+                    newMsg.innerHTML = "<b style=\"font-size:15px;color:blue;\">" + obj.data.sender + " </b> &gt; " + obj.data.message;
                 }
                 catch(e) {
-                    newMsg.innerHTML = e.data;
+                    newMsg.innerHTML = message;
                 }
-                let firstChild = showMsgElt.firstChild;
-                showMsgElt.insertBefore(newMsg, firstChild);
+                let lastChild = showMsgElt.lastChild;// firstChild;
+                showMsgElt.insertBefore(newMsg, lastChild);
+                showMsgElt.scrollTop = showMsgElt.scrollHeight;
             };
             return false;
         }
@@ -146,24 +153,25 @@
         </div>
     </div>
 
-
-
-
     <div style="width:600px;display:block;">
-
-        <div id="chat-window" style="height:300px;display:block;width:500px;padding:10px;border:1px solid #cccccc;overflow-y:scroll;"></div>
-
-        <div>
-            <div class="form-group" style="float:left;width:400px;margin-right:10px;">
-                <input type="text" id="new-message" class="form-control" name="access-token" style="width:400px;" value="">
-            </div>
-            <div class="form-group" style="float:left;width:100px;">
-                <a href="javascript:sendMessage();">
-                    <button class="btn btn-success">发言</button>
-                </a>
-            </div>
+        <div id="chat-window" style="vertical-align:bottom; height:300px;display:block;width:500px;padding:10px;border:1px solid #cccccc;overflow-y:scroll;">
+            <div style="height:1px;"></div>
         </div>
     </div>
+
+    <div style="width:600px;margin-top:10px;display:block;">
+        <div>
+            <form action="#" onsubmit="sendMessage();return false;">
+                <div class="form-group" style="float:left;width:400px;margin-right:10px;">
+                    <input type="text" id="new-message" class="form-control" name="access-token" onkeydown="" style="width:400px;" value="">
+                </div>
+                <div class="form-group" style="float:left;width:100px;">
+                    <button type="submit" class="btn btn-success">发言</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
 </div>
 
 </body>

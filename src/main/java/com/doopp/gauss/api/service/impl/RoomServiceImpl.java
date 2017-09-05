@@ -4,8 +4,10 @@ import com.doopp.gauss.api.dao.RoomDao;
 import com.doopp.gauss.api.entity.RoomEntity;
 import com.doopp.gauss.api.entity.UserEntity;
 import com.doopp.gauss.api.service.RoomService;
+import com.doopp.gauss.socket.service.MessageService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -24,8 +26,8 @@ public class RoomServiceImpl implements RoomService {
     @Resource
     private RoomDao roomDao;
 
-    //@Autowired
-    //private MessageService sendMessageService;
+    @Autowired
+    private MessageService messageService;
 
     // 新开房间最小编号
     private int minRoomNumber = 1000;
@@ -64,7 +66,7 @@ public class RoomServiceImpl implements RoomService {
             return lastRoomEntity;
         }
         // 创建房间的座位的数量
-        RoomEntity roomEntity = this.nextRoom(12);
+        RoomEntity roomEntity = this.nextRoom(120);
         // 添加一个用户
         roomEntity.addUser(user);
         // 将房间保存
@@ -87,6 +89,8 @@ public class RoomServiceImpl implements RoomService {
         RoomEntity roomEntity = roomDao.fetchByRoomId(roomId);
         // 加入用户
         if (roomEntity!=null && roomEntity.addUser(user)) {
+            String message = "<b style=\"color:red;\">" + user.getAccount() + "</b> 信步来房间 ";
+            messageService.sendStringToRoom(message, roomEntity.getId());
             roomDao.save(roomEntity);
             return roomEntity;
         }
@@ -113,6 +117,8 @@ public class RoomServiceImpl implements RoomService {
             if (roomEntity != null) {
                 // 如果加入到房间成功
                 if (roomEntity.addUser(user)) {
+                    String message = "<b style=\"color:red;\">" + user.getAccount() + "</b> 信步来房间 ";
+                    messageService.sendStringToRoom(message, roomEntity.getId());
                     roomDao.save(roomEntity);
                     return roomEntity;
                 }
@@ -132,19 +138,19 @@ public class RoomServiceImpl implements RoomService {
      * 用户离开房间
      */
     @Override
-    public RoomEntity userLeaveRoom(Long userId) {
+    public RoomEntity userLeaveRoom(UserEntity user) {
         // 拿到一个空闲的房间
-        RoomEntity roomEntity = roomDao.fetchByUserId(userId);
+        RoomEntity roomEntity = roomDao.fetchByUserId(user.getId());
         // 删除用户
-        if (roomEntity!=null && roomEntity.delUser(userId)) {
+        if (roomEntity!=null && roomEntity.delUser(user.getId())) {
             // 删除用户 ID 到 room id 的索引
-            roomDao.delUserIndex(userId);
+            roomDao.delUserIndex(user.getId());
             // 检查房间还剩多少人，如果人都撒了，就删除这个房间的持久数据
             boolean isEmptyRoom = true;
             ArrayList<UserEntity> userList = roomEntity.getUserList();
-            for(UserEntity user : userList) {
+            for(UserEntity oneUser : userList) {
                 // 如果有人，就不是空房间
-                if (user!=null) {
+                if (oneUser!=null) {
                     isEmptyRoom = false;
                     break;
                 }
@@ -155,6 +161,8 @@ public class RoomServiceImpl implements RoomService {
             }
             // 删除了一个人后，将房间数据，持久化
             else {
+                String message = user.getAccount() + " 离开了房间 ";
+                messageService.sendStringToRoom(message, roomEntity.getId());
                 roomDao.save(roomEntity);
             }
             return roomEntity;

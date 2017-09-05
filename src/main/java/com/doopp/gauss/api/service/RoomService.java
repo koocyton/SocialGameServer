@@ -18,5 +18,5 @@ public interface RoomService {
 
     RoomEntity userJoinFreeRoom(UserEntity user);
 
-    RoomEntity userLeaveRoom(Long userId);
+    RoomEntity userLeaveRoom(UserEntity user);
 }
