@@ -15,6 +15,7 @@
     <link href="https://cdn.bootcss.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
     <script>
         var msg = [];
+        var addMsg = [];
         let ws = null;
         function onLogin() {
             // let account = $("#form-account").val();
@@ -119,10 +120,10 @@
                         // setTimeout(marguess2d, 600, randomY);
                         // console.log(randomY);
                         // marguessMove(marguess2d, fontX, fontY);
-                        let nn = msg.length;
-                        console.log(nn);
+                        let nn = addMsg.length;
+                        // console.log(nn);
                         let speed = Math.floor(Math.random() * 4);
-                        msg[nn] = {"ctx":marguess2d, "speed": speed, "x":fontX, "y":fontY, "message": message};
+                        addMsg[nn] = {"ctx":marguess2d, "speed": speed, "x":fontX, "y":fontY, "message": message};
                     }
                     else if (typeof(obj.data.target)!="undefined" && obj.data.target=="drawing-board") {
                         if (obj.data.sender!=$("#form-account").val()) {
@@ -190,6 +191,12 @@
                     msg.splice(ii, 1);
                 }
             }
+            for (let ii=0; ii<addMsg.length; ii++) {
+                let xx = msg.length;
+                msg[xx] = addMsg[ii];
+            }
+            // console.log(addMsg, msg);
+            addMsg = [];
             for(let ii=0; ii<msg.length; ii++) {
                 if (ii==0) {
                     msg[ii].ctx.save();
