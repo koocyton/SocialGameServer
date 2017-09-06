@@ -14,6 +14,7 @@
     <script src="https://cdn.bootcss.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
     <link href="https://cdn.bootcss.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
     <script>
+        var msg = [];
         let ws = null;
         function onLogin() {
             // let account = $("#form-account").val();
@@ -97,10 +98,35 @@
                 let showMsgElt = document.getElementById("chat-window");
                 let newMsg = document.createElement("div");
                 try {
-                    var obj = JSON.parse(e.data);
-                    newMsg.innerHTML = "<b style=\"font-size:15px;color:blue;\">" + obj.data.sender + " </b> &gt; " + obj.data.message;
+                    let obj = JSON.parse(e.data);
+                    if (typeof(obj.data.target)!="undefined" && obj.data.target=="canvas-marquee") {
+
+                        console.log(obj);
+                        let canvas = document.getElementById('mycanvas');
+                        let marguess2d = canvas.getContext("2d");
+                        //设置字体样式
+                        marguess2d.font = "20px Courier New";
+                        //设置字体颜色
+                        marguess2d.strokeStyle = "blue";
+                        //从坐标点(50,50)开始绘制文字
+                        let fontX = 600;
+                        let fontY = Math.floor(Math.random() * 200 + 40);
+                        let message = obj.data.sender + " : " + obj.data.message;
+                        marguess2d.strokeText(message, fontX, fontY);
+                        //
+                        // setTimeout(marguess2d, 600, randomY);
+                        // console.log(randomY);
+                        // marguessMove(marguess2d, fontX, fontY);
+                        let nn = msg.length;
+                        console.log(nn);
+                        msg[nn] = {"ctx":marguess2d, "x":fontX, "y":fontY, "message": message};
+                    }
+                    else {
+                        newMsg.innerHTML = "<b style=\"font-size:15px;color:blue;\">" + obj.data.sender + " </b> &gt; " + obj.data.message;
+                    }
                 }
                 catch(e) {
+                    console.log(e);
                     newMsg.innerHTML = message;
                 }
                 let lastChild = showMsgElt.lastChild;// firstChild;
@@ -110,13 +136,57 @@
             return false;
         }
 
+        function cleanCanvas() {
+            let _canvas = document.getElementById('mycanvas');
+            let ctx = _canvas.getContext("2d");
+            ctx.strokeStyle = "whitesmoke";
+            ctx.save();
+            ctx.beginPath();
+            ctx.rect(-10, -10, _canvas.width+20 , _canvas.height+20 );
+            ctx.clip();
+            ctx.clearRect(-10, -10, _canvas.width + 20, _canvas.height + 20);
+            ctx.restore();
+            // ctx.strokeStyle = "blue";
+        }
+
+        function marguessMove() {
+
+            for(let ii=0; ii<msg.length; ii++) {
+                if (ii==0) {
+                    msg[ii].ctx.save();
+                    msg[ii].ctx.beginPath();
+                    msg[ii].ctx.rect(-10, -10, msg[ii].ctx.canvas.width + 20, msg[ii].ctx.canvas.height + 20);
+                    msg[ii].ctx.clip();
+                    msg[ii].ctx.clearRect(-10, -10, msg[ii].ctx.canvas.width + 20, msg[ii].ctx.canvas.height + 20);
+                    msg[ii].ctx.restore();
+                }
+                msg[ii].ctx.strokeText(msg[ii].message, msg[ii].x, msg[ii].y);
+                msg[ii].x = msg[ii].x - 1;
+            }
+            setTimeout(function () {
+                marguessMove();
+            }, 10);
+        }
+        marguessMove();
+
         function sendMessage() {
-            let msg = $("#new-message").val();
+            let elt = $("#new-message");
+            let msg = elt.val();
             let json = "{\"action\":\"room-chat\", \"data\":{\"message\":\"" + msg + "\"}}";
             ws.send(json);
-            $("#new-message").val("");
-            $("#new-message").focus();
-            console.log("Message sent : " + json);
+            elt.val("");
+            elt.focus();
+            // console.log("Message sent : " + json);
+        }
+
+        function sendMarquee() {
+            let elt = $("#new-marquee");
+            let msg = elt.val();
+            let json = "{\"action\":\"room-chat\", \"data\":{\"target\":\"canvas-marquee\", \"message\":\"" + msg + "\"}}";
+            ws.send(json);
+            elt.val("");
+            elt.focus();
+            // console.log("marquee sent : " + json);
         }
     </script>
 </head>
@@ -139,37 +209,8 @@
                 </div>
             </form>
         </td>
-        <td style="width:50%;" rowspan="4">
-            <canvas id="mycanvas" width="100%" height="400" style="width:100%;height:400px;background-color:whitesmoke;"></canvas>
-            <script type="text/javascript">
-                let canvas = document.getElementById('mycanvas');
-                let cxt = canvas.getContext("2d");
-                cxt.strokeStyle="black";
-                let flag = false;//判断鼠标是否按下
-                canvas.onmousedown = function (e) {
-                    flag = true;
-                    //e是鼠标按下事件，this是画布canvas.
-                    //pageX是相对于浏览器的，offsetLeft是相对于父级容器的
-                    let startx = e.pageX-this.offsetLeft;
-                    let starty = e.pageY-this.offsetTop;
-                    cxt.moveTo(startx,starty);
-                };
-                canvas.onmousemove = function (e) {
-                    let endx = e.pageX-this.offsetLeft;
-                    let endy = e.pageY-this.offsetTop;
-                    // console.log(e.pageX, this.offsetLeft, e);
-                    if(flag){
-                        cxt.lineTo(endx,endy);
-                        cxt.stroke();
-                    }
-                };
-                canvas.onmouseup = function(){
-                    flag = false;
-                };
-                canvas.onmouseout = function(){
-                    flag = false;
-                };
-            </script>
+        <td style="width:50%;" rowspan="3">
+            <canvas id="mycanvas" width="600" height="400" style="background-color:whitesmoke;"></canvas>
         </td>
     </tr>
     <tr>
@@ -204,8 +245,55 @@
                 </form>
             </div>
         </td>
+
+
+        <td>
+            <div class="form-group">
+                <form action="#" onsubmit="sendMarquee();return false;">
+                    <div class="form-group" style="float:left;width:60%;margin-right:10px;">
+                        <input type="text" id="new-marquee" class="form-control" name="access-token" onkeydown="" value="">
+                    </div>
+                    <div class="form-group" style="float:left;width:10%;margin-left:2px;">
+                        <button type="submit" class="btn btn-success">发弹幕</button>
+                    </div>
+                </form>
+
+                <div class="form-group" style="float:left;width:10%;margin-left:8px;">
+                    <button type="submit" onclick="cleanCanvas();" class="btn btn-default">清屏</button>
+                </div>
+            </div>
+        </td>
     </tr>
 </table>
+
+<script type="text/javascript">
+
+    function canvasBrush() {
+        let canvas = document.getElementById('mycanvas');
+        let cxt = canvas.getContext("2d");
+        let flag = false;//判断鼠标是否按下
+        canvas.onmousedown = function (e) {
+            cxt.strokeStyle = "blue";
+            flag = true;
+            cxt.moveTo(e.layerX, e.layerY);
+        };
+        canvas.onmousemove = function (e) {
+            if (flag) {
+                cxt.lineTo(e.layerX, e.layerY);
+                cxt.stroke();
+            }
+        };
+        canvas.onmouseup = function () {
+            flag = false;
+            cxt.strokeStyle = "whitesmoke";
+        };
+        canvas.onmouseout = function () {
+            flag = false;
+            cxt.strokeStyle = "whitesmoke";
+        };
+    }
+    // canvasBrush();
+</script>
 
 </body>
 </html>
