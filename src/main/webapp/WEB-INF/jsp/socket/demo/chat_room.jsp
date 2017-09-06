@@ -68,6 +68,8 @@
 
         }
 
+
+
         function socketConnect() {
             try {
                 ws.close();
@@ -75,7 +77,7 @@
             catch(e) {;};
             ws = null;
             let accessToken = $("#access-token").val();
-            ws = new WebSocket("ws://127.0.0.1:8080/game-socket?access-token=" + accessToken);
+            ws = new WebSocket("ws://j.doopp.com/game-socket?access-token=" + accessToken);
             // Listen for the connection open event then call the sendMessage function
             ws.onopen = function(e) {
 
@@ -119,14 +121,34 @@
                         // marguessMove(marguess2d, fontX, fontY);
                         let nn = msg.length;
                         console.log(nn);
-                        msg[nn] = {"ctx":marguess2d, "x":fontX, "y":fontY, "message": message};
+                        let speed = Math.floor(Math.random() * 4);
+                        msg[nn] = {"ctx":marguess2d, "speed": speed, "x":fontX, "y":fontY, "message": message};
+                    }
+                    else if (typeof(obj.data.target)!="undefined" && obj.data.target=="drawing-board") {
+                        if (obj.data.sender!=$("#form-account").val()) {
+                            let canvas = document.getElementById('mycanvas2');
+                            let cxt = canvas.getContext("2d");
+                            cxt.strokeStyle = "blue";
+                            cxt.lineTo(obj.data.x, obj.data.y);
+                            cxt.stroke();
+                        }
+                    }
+                    else if (typeof(obj.data.target)!="undefined" && obj.data.target=="drawing-move") {
+                        if (obj.data.sender!=$("#form-account").val()) {
+                            let canvas = document.getElementById('mycanvas2');
+                            let cxt = canvas.getContext("2d");
+                            cxt.strokeStyle = "blue";
+                            cxt.moveTo(obj.data.x, obj.data.y);
+                            // cxt.lineTo(obj.data.x, obj.data.y);
+                            // cxt.stroke();
+                        }
                     }
                     else {
                         newMsg.innerHTML = "<b style=\"font-size:15px;color:blue;\">" + obj.data.sender + " </b> &gt; " + obj.data.message;
                     }
                 }
                 catch(e) {
-                    console.log(e);
+                    // console.log(e);
                     newMsg.innerHTML = message;
                 }
                 let lastChild = showMsgElt.lastChild;// firstChild;
@@ -137,7 +159,7 @@
         }
 
         function cleanCanvas() {
-            let _canvas = document.getElementById('mycanvas');
+            let _canvas = document.getElementById('mycanvas2');
             let ctx = _canvas.getContext("2d");
             ctx.strokeStyle = "whitesmoke";
             ctx.save();
@@ -147,10 +169,27 @@
             ctx.clearRect(-10, -10, _canvas.width + 20, _canvas.height + 20);
             ctx.restore();
             // ctx.strokeStyle = "blue";
+
+
+            let _canvas2 = document.getElementById('mycanvas3');
+            let ctx2 = _canvas2.getContext("2d");
+            ctx2.strokeStyle = "whitesmoke";
+            ctx2.save();
+            ctx2.beginPath();
+            ctx2.rect(-10, -10, _canvas.width+20 , _canvas.height+20 );
+            ctx2.clip();
+            ctx2.clearRect(-10, -10, _canvas.width + 20, _canvas.height + 20);
+            ctx2.restore();
         }
 
         function marguessMove() {
-
+            for(let ii=0; ii<msg.length; ii++) {
+                if (msg[ii].x < -1000) {
+                    msg[ii].ctx = null;
+                    msg[ii] = null;
+                    msg.splice(ii, 1);
+                }
+            }
             for(let ii=0; ii<msg.length; ii++) {
                 if (ii==0) {
                     msg[ii].ctx.save();
@@ -161,7 +200,7 @@
                     msg[ii].ctx.restore();
                 }
                 msg[ii].ctx.strokeText(msg[ii].message, msg[ii].x, msg[ii].y);
-                msg[ii].x = msg[ii].x - 1;
+                msg[ii].x = msg[ii].x - msg[ii].speed;
             }
             setTimeout(function () {
                 marguessMove();
@@ -188,6 +227,25 @@
             elt.focus();
             // console.log("marquee sent : " + json);
         }
+
+        function sendDrawing(x, y) {
+            let elt = $("#new-marquee");
+            let msg = elt.val();
+            let json = "{\"action\":\"room-chat\", \"data\":{\"target\":\"drawing-board\", \"x\":\"" + x + "\", \"y\":\"" + y + "\"}}";
+            ws.send(json);
+            elt.val("");
+            elt.focus();
+            // console.log("marquee sent : " + json);
+        }
+
+        function sendDrawingMove(x, y) {
+            let elt = $("#new-marquee");
+            let msg = elt.val();
+            let json = "{\"action\":\"room-chat\", \"data\":{\"target\":\"drawing-move\", \"x\":\"" + x + "\", \"y\":\"" + y + "\"}}";
+            ws.send(json);
+            elt.val("");
+            elt.focus();
+        }
     </script>
 </head>
 
@@ -209,8 +267,10 @@
                 </div>
             </form>
         </td>
-        <td style="width:50%;" rowspan="3">
+        <td style="width:50%;position:relative" rowspan="3">
             <canvas id="mycanvas" width="600" height="400" style="background-color:whitesmoke;"></canvas>
+            <canvas id="mycanvas2" width="600" height="400" style="position:absolute;left:0px;"></canvas>
+            <canvas id="mycanvas3" width="600" height="400" style="position:absolute;left:0px;"></canvas>
         </td>
     </tr>
     <tr>
@@ -269,16 +329,18 @@
 <script type="text/javascript">
 
     function canvasBrush() {
-        let canvas = document.getElementById('mycanvas');
+        let canvas = document.getElementById('mycanvas3');
         let cxt = canvas.getContext("2d");
         let flag = false;//判断鼠标是否按下
         canvas.onmousedown = function (e) {
             cxt.strokeStyle = "blue";
             flag = true;
             cxt.moveTo(e.layerX, e.layerY);
+            sendDrawingMove(e.layerX, e.layerY);
         };
         canvas.onmousemove = function (e) {
             if (flag) {
+                sendDrawing(e.layerX, e.layerY);
                 cxt.lineTo(e.layerX, e.layerY);
                 cxt.stroke();
             }
@@ -292,7 +354,7 @@
             cxt.strokeStyle = "whitesmoke";
         };
     }
-    // canvasBrush();
+    canvasBrush();
 </script>
 
 </body>
