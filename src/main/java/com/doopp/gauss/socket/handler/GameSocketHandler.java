@@ -69,7 +69,7 @@ public class GameSocketHandler implements WebSocketHandler {
     {
         // 获取返回的信息
         String requestBody = message.getPayload().toString();
-        logger.info(" >>> requestBody " + requestBody);
+        // logger.info(" >>> requestBody " + requestBody);
                 // 如果获取到信息
         if (requestBody!=null && requestBody.length()>=1) {
             // 获取当前用户
