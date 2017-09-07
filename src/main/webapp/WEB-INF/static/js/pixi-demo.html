@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Video</title>
+    <script src="/js/pixi-4.3.5.min.js"></script>
+    <style>
+    body{margin:0}
+    </style>
+  </head>
+
+  <body>
+    <div class="container" id="pixi-convas">
+      <script>
+      var app = new PIXI.Application(960, 640, {backgroundColor : 0xffffff});
+      document.getElementById("pixi-convas").appendChild(app.view);
+
+      // create a new Sprite from an image path
+      var bunny = PIXI.Sprite.fromImage('chrome.png')
+
+      // center the sprite's anchor point
+      bunny.anchor.set(0.5);
+
+      // move the sprite to the center of the screen
+      bunny.x = app.renderer.width / 2;
+      bunny.y = app.renderer.height / 2;
+
+      // bunny.width = 100;
+      // bunny.height = 100;
+
+      app.stage.addChild(bunny);
+
+      var bunny_x_action = "-";
+      var bunny_y_action = "-";
+
+      // Listen for animate update
+      app.ticker.add(function(delta) {
+          // just for fun, let's rotate mr rabbit a little
+          // delta is 1 if running at 100% performance
+          // creates frame-independent tranformation
+          bunny.rotation += 0.2 / delta;
+          
+          bunny_x_action = (bunny.x>app.renderer.width-bunny.width/2) ? "-" : (bunny.x<bunny.width/2) ? "+" : bunny_x_action;
+          bunny_y_action = (bunny.y>app.renderer.height-bunny.height) ? "-" : (bunny.y<bunny.height/2) ? "+" : bunny_y_action;
+          
+          bunny.x = (bunny_x_action=="+") ? bunny.x + 4 : bunny.x - 4;
+          bunny.y = (bunny_y_action=="+") ? bunny.y + 4 : bunny.y - 4;
+
+      });
+      </script>
+    </div>
+  </body>
+</html>
