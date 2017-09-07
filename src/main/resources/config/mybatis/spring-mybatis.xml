@@ -24,7 +24,7 @@
     </bean>
     //-->
 
-    <bean id="userDataSource" class="org.apache.commons.dbcp.BasicDataSource"
+    <bean id="userDataSource" class="com.doopp.gauss.api.utils.SafeBasicDataSource"
           destroy-method="close">
         <property name="driverClassName" value="${jdbc.user.driver}" />
         <property name="url" value="${jdbc.user.url}" />
