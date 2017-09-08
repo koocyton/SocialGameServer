@@ -23,7 +23,36 @@
 
 <body>
 
+<div class="scroll-wrap">
 
+    <div class="form-main">
+        <form action="/client/mobileLoginSbt" method="post">
+
+            <div class="text-item" style="text-align:center;margin:0 auto 15px;">
+                <br>
+                登录惠享分期 。
+            </div>
+
+            <div class="form-item">
+                <input type="hidden" value="<%= openId %>" name="openId">
+                <input class="text-input radius-3" type="tel" name="mobileNumber" value="<%- mobile %>" autocomplete="off" placeholder="请输入手机号" validation="/number:11:请输入11位长的手机号码/" />
+            </div>
+
+            <div class="form-item">
+                <input class="text-input radius-3" type="password" name="password" autocomplete="off" placeholder="请输入密码" validation="/!empty:密码不能为空/" />
+            </div>
+
+            <div class="form-item" style="margin-top:20px;">
+                <button type="submit" id="submit-btn" class="disable-btn radius-3" style="width:100%;">登录</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="head-fixed">
+    <a href="mregist1.html"><span class="kt-icons">&#xf0c7;</span></a>
+    <h2>狼人杀</h2>
+</div>
 
 </body>
 

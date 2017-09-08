@@ -29,9 +29,10 @@
                 "processData" : false,
                 "headers" : null,
                 "success" : function(responseText) {
-                    if (typeof(responseText)=="object" && typeof(responseText["access-token"])=="string") {
+                    if (typeof(responseText)==="object" && typeof(responseText["access-token"])==="string") {
                         $("#access-token").val(responseText["access-token"]);
                         $("#socket-connect").css("display", "block");
+                        joinRoom();
                     }
                 },
                 "error" : function(XMLHttpRequest) {
@@ -56,7 +57,9 @@
                 "processData" : false,
                 "headers" : {"access-token":accessToken},
                 "success" : function(responseText) {
-                    socketConnect();
+                    if (typeof(responseText)==="object" && typeof(responseText.data.id)==="number") {
+                        socketConnect();
+                    }
                 },
                 "error" : function(XMLHttpRequest) {
                     //
@@ -73,6 +76,7 @@
 
         function socketConnect() {
             try {
+                ws.onclose = function(e) {console.log("Disconnected: " + e.reason);};
                 ws.close();
             }
             catch(e) {;};
@@ -88,6 +92,7 @@
             };
             // Listen for the close connection event
             ws.onclose = function(e) {
+                socketConnect();
                 console.log("Disconnected: " + e.reason);
             };
             // Listen for connection errors
@@ -102,7 +107,7 @@
                 let newMsg = document.createElement("div");
                 try {
                     let obj = JSON.parse(e.data);
-                    if (typeof(obj.data.target)!="undefined" && obj.data.target=="canvas-marquee") {
+                    if (typeof(obj.data.target)!=="undefined" && obj.data.target==="canvas-marquee") {
 
                         console.log(obj);
                         let canvas = document.getElementById('mycanvas');
@@ -125,8 +130,8 @@
                         let speed = Math.floor(Math.random() * 4);
                         addMsg[nn] = {"ctx":marguess2d, "speed": speed, "x":fontX, "y":fontY, "message": message};
                     }
-                    else if (typeof(obj.data.target)!="undefined" && obj.data.target=="drawing-board") {
-                        if (obj.data.sender!=$("#form-account").val()) {
+                    else if (typeof(obj.data.target)!=="undefined" && obj.data.target==="drawing-board") {
+                        if (obj.data.sender!==$("#form-account").val()) {
                             let canvas = document.getElementById('mycanvas2');
                             let cxt = canvas.getContext("2d");
                             cxt.strokeStyle = "blue";
@@ -134,8 +139,8 @@
                             cxt.stroke();
                         }
                     }
-                    else if (typeof(obj.data.target)!="undefined" && obj.data.target=="drawing-move") {
-                        if (obj.data.sender!=$("#form-account").val()) {
+                    else if (typeof(obj.data.target)!=="undefined" && obj.data.target==="drawing-move") {
+                        if (obj.data.sender!==$("#form-account").val()) {
                             let canvas = document.getElementById('mycanvas2');
                             let cxt = canvas.getContext("2d");
                             cxt.strokeStyle = "blue";
@@ -273,13 +278,15 @@
                     <button class="btn btn-success" type="submit">登陆</button>
                 </div>
             </form>
+            <input type="hidden" readonly="1" id="access-token" class="form-control" name="access-token" placeholder="Access Token" value="">
         </td>
-        <td style="width:50%;position:relative" rowspan="3">
+        <td style="width:50%;position:relative" rowspan="2">
             <canvas id="mycanvas" width="600" height="400" style="background-color:whitesmoke;"></canvas>
             <canvas id="mycanvas2" width="600" height="400" style="position:absolute;left:0px;"></canvas>
             <canvas id="mycanvas3" width="600" height="400" style="position:absolute;left:0px;"></canvas>
         </td>
     </tr>
+    <!--
     <tr>
         <td>
             <div class="form-group" style="float:left;width:60%;margin-right:10px;">
@@ -290,6 +297,7 @@
             </div>
         </td>
     </tr>
+    //-->
     <tr>
         <td>
             <div class="form-group">
