@@ -14,8 +14,11 @@
     <!-- 配置 websocket -->
     <import resource="classpath:config/websocket/spring-websocket.xml" />
 
-    <!-- 引入spring-data-redis.xml -->
+    <!-- 引入 spring-data-redis.xml -->
     <import resource="classpath:config/redis/spring-jedis.xml"/>
+
+    <!-- 引入 mybatis -->
+    <import resource="classpath:config/mybatis/spring-mybatis.xml"/>
 
     <!-- 扫描注解Bean -->
     <context:component-scan base-package="com.doopp.gauss.api, com.doopp.gauss.socket">
