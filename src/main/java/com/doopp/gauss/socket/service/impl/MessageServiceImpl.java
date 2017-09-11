@@ -20,7 +20,7 @@ import java.util.ArrayList;
  *
  * Created by Henry on 2017/7/20.
  */
-@Service
+@Service("messageService")
 public class MessageServiceImpl implements MessageService {
 
     // static Logger logger = LoggerFactory.getLogger(MessageService.class);

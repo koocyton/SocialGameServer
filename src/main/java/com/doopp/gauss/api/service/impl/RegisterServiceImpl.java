@@ -17,7 +17,7 @@ import java.util.regex.Pattern;
  * 注册用户实现
  * Created by henry on 2017/7/14.
  */
-@Service
+@Service("registerService")
 public class RegisterServiceImpl implements RegisterService {
 
     @Resource

@@ -12,7 +12,7 @@ import java.util.Map;
  * 返回 Rest 的数据
  * Created by Henry on 2017/8/19.
  */
-@Service
+@Service("restResponseService")
 public class RestResponseServiceImpl implements RestResponseService {
 
     @Override

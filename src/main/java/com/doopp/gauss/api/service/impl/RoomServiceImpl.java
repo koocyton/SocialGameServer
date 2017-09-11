@@ -18,7 +18,7 @@ import java.util.ArrayList;
  *
  * Created by Henry on 2017/8/26.
  */
-@Service
+@Service("roomService")
 public class RoomServiceImpl implements RoomService {
 
     private static final Logger logger = LoggerFactory.getLogger(RoomServiceImpl.class);

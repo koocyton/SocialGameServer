@@ -15,7 +15,7 @@ import java.util.Map;
  *
  * Created by henry on 2017/7/11.
  */
-@Service
+@Service("userService")
 public class UserServiceImpl implements UserService {
 
     // private static final Logger logger = LoggerFactory.getLogger(LoginServiceImpl.class);

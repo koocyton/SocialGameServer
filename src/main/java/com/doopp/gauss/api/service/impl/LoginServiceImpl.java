@@ -24,7 +24,7 @@ import javax.servlet.http.HttpSession;
  *
  * Created by henry on 2017/7/11.
  */
-@Service
+@Service("loginService")
 public class LoginServiceImpl implements LoginService {
 
     private static final Logger logger = LoggerFactory.getLogger(LoginServiceImpl.class);

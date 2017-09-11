@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 
-@Service
+@Service("chatService")
 public class ChatServiceImpl implements ChatService {
 
     @Autowired
