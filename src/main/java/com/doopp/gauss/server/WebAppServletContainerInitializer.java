@@ -14,6 +14,7 @@ import java.util.EnumSet;
 import java.util.Set;
 
 public class WebAppServletContainerInitializer implements ServletContainerInitializer, ApplicationContextAware {
+
     private ApplicationContext applicationContext;
 
     @Override
