@@ -1,4 +1,4 @@
-package com.doopp.gauss.server;
+package com.doopp.gauss.server.undertow;
 
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
