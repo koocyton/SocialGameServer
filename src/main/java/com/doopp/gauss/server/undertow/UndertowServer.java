@@ -18,6 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 
 
@@ -29,8 +30,10 @@ import java.util.HashSet;
 public class UndertowServer implements InitializingBean, DisposableBean {
     private final Logger logger = LoggerFactory.getLogger(UndertowServer.class);
 
+    public static final String MYAPP = "/myapp";
+
     private String webAppName;
-    private Resource webAppRoot;
+    private Resource webAppRoot = new FileSystemResource("D:\\project\\SocialGameServer\\src\\main\\webapp");
     private int port = 8080;
     private ServletContainerInitializer servletContainerInitializer;
 
@@ -42,6 +45,14 @@ public class UndertowServer implements InitializingBean, DisposableBean {
 
         logger.info("Starting Undertow web server on port {}, serving web application '{}' having root at {}", port, webAppName, webAppRoot.getFile().getAbsolutePath());
 
+        /*
+        DeploymentInfo deploymentInfo = Servlets.deployment().setClassLoader(UndertowServer.class.getClassLoader())
+                .setContextPath(MYAPP)
+                .setDeploymentName("myapp.war")
+                .addServlets(Servlets.servlet("MessageServlet", MessageServlet.class).addMappings("/messageServlet")
+                        , Servlets.servlet("MyServlet", MyServlet.class).addMappings("/myServlet"));
+        */
+
         InstanceFactory<? extends ServletContainerInitializer> instanceFactory = new ImmediateInstanceFactory<>(servletContainerInitializer);
         ServletContainerInitializerInfo sciInfo = new ServletContainerInitializerInfo(WebAppServletContainerInitializer.class, instanceFactory, new HashSet<>());
 
@@ -52,6 +63,7 @@ public class UndertowServer implements InitializingBean, DisposableBean {
         HttpHandler httpHandler = manager.start();
 
         PathHandler pathHandler = constructPathHandler(httpHandler);
+
 
         server = Undertow.builder()
                 .addHttpListener(port, "localhost")
