@@ -82,7 +82,7 @@
             catch(e) {;};
             ws = null;
             let accessToken = $("#access-token").val();
-            ws = new WebSocket("ws://j.doopp.com/game-socket?access-token=" + accessToken);
+            ws = new WebSocket("ws://home.doopp.com/game-socket?access-token=" + accessToken);
             // Listen for the connection open event then call the sendMessage function
             ws.onopen = function(e) {
 

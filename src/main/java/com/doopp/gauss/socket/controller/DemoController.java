@@ -15,4 +15,9 @@ public class DemoController {
     public String chatRoom() {
         return "socket/demo/chat_room";
     }
+
+    @RequestMapping(value = "/mchat-room")
+    public String mobileChatRoom() {
+        return "socket/demo/mobile_chat_room";
+    }
 }

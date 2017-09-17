@@ -62,7 +62,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public boolean acceptFriend(UserEntity userEntity, Long userId) {
-        return false;
+        userEntity.addFriend(userId);
+        userDao.update(userEntity);
+        return true;
     }
 
     @Override
@@ -72,6 +74,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public boolean cancelFriend(UserEntity userEntity, Long userId) {
-        return false;
+        userEntity.delFriend(userId);
+        userDao.update(userEntity);
+        return true;
     }
 }
