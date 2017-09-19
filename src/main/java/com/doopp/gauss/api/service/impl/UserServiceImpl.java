@@ -54,4 +54,28 @@ public class UserServiceImpl implements UserService {
         }
         return null;
     }
+
+    @Override
+    public boolean applyFriend(UserEntity userEntity, Long userId) {
+        return false;
+    }
+
+    @Override
+    public boolean acceptFriend(UserEntity userEntity, Long userId) {
+        userEntity.addFriend(userId);
+        userDao.update(userEntity);
+        return true;
+    }
+
+    @Override
+    public boolean rejectFriend(UserEntity userEntity, Long userId) {
+        return false;
+    }
+
+    @Override
+    public boolean cancelFriend(UserEntity userEntity, Long userId) {
+        userEntity.delFriend(userId);
+        userDao.update(userEntity);
+        return true;
+    }
 }

@@ -20,6 +20,18 @@ public interface UserService {
     // 获取用户信息
     UserEntity getUserInfo(String account);
 
-    // 获取用户列表
+    // 获取用户好友列表
     List<Map<String, UserEntity>> getUserFriendList(Long userId);
+
+    // 加为好友
+    boolean applyFriend(UserEntity userEntity, Long userId);
+
+    // 通过好友关系
+    boolean acceptFriend(UserEntity userEntity, Long userId);
+
+    // 通过好友关系
+    boolean rejectFriend(UserEntity userEntity, Long userId);
+
+    // 删除好友关系
+    boolean cancelFriend(UserEntity userEntity, Long userId);
 }
