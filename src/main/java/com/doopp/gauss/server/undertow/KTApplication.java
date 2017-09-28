@@ -8,11 +8,13 @@ public class KTApplication {
 
     public static void main(String[] args) {
 
+        // ClassPathXmlApplicationContext ctx = new ClassPathXmlApplicationContext("file:" + appPath + "/config/rootContext.xml");
+
         AbstractApplicationContext context = new ClassPathXmlApplicationContext("config/spring-undertow.xml");
 
         UndertowServer undertowServer  =  (UndertowServer) context.getBean("undertowServer");
 
         // context.registerShutdownHook();
-        context.close();
+        // context.close();
     }
 }

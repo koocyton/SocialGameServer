@@ -22,7 +22,7 @@ public class WebAppServletContainerInitializer implements ServletContainerInitia
         // System.out.print(" 3 >>> " + ctx + "\n");
 
         XmlWebApplicationContext rootWebAppContext = new XmlWebApplicationContext();
-        rootWebAppContext.setConfigLocation("classpath:config/spring/applicationContext.xml");
+        rootWebAppContext.setConfigLocation("file:D:\\project\\SocialGameServer\\src\\main\\resources\\config\\spring\\applicationContext.xml");
         rootWebAppContext.setParent(applicationContext);
         ctx.addListener(new ContextLoaderListener(rootWebAppContext));
 
@@ -34,7 +34,8 @@ public class WebAppServletContainerInitializer implements ServletContainerInitia
         // FilterRegistration.Dynamic springSecurityFilterChain = ctx.addFilter("springSecurityFilterChain", DelegatingFilterProxy.class);
         // springSecurityFilterChain.addMappingForServletNames(EnumSet.allOf(DispatcherType.class), false, "admin");
 
-        ServletRegistration.Dynamic dispatcher = ctx.addServlet("config/spring-mvc/mvc-dispatcher", DispatcherServlet.class);
+        // System.out.print(" >>> " + ctx.servlet());
+        ServletRegistration.Dynamic dispatcher = ctx.addServlet("../config/spring-mvc/mvc-dispatcher", DispatcherServlet.class);
         dispatcher.setLoadOnStartup(1);
         dispatcher.addMapping("/*");
 

@@ -5,7 +5,8 @@
 
     <bean id="undertowServer" class="com.doopp.gauss.server.undertow.UndertowServer">
         <property name="port" value="8080"/>
-        <property name="webAppName" value="SocialGame"/>
+        <property name="webAppName" value="SocialGameServer"/>
+        <!-- <property name="webAppRoot" value="file:D:\project\SocialGameServer\src\main\java" /> -->
         <property name="webAppRoot" value="/" />
         <property name="servletContainerInitializer">
             <bean class="com.doopp.gauss.server.undertow.WebAppServletContainerInitializer"/>
