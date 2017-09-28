@@ -3,11 +3,13 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
 	http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
 
-
-
     <bean id="undertowServer" class="com.doopp.gauss.server.undertow.UndertowServer">
-        <property name="port" value="8080" />
-        <property name="webAppName" value="Spring-Undertow" />
+        <property name="port" value="8080"/>
+        <property name="webAppName" value="SocialGame"/>
+        <property name="webAppRoot" value="/" />
+        <property name="servletContainerInitializer">
+            <bean class="com.doopp.gauss.server.undertow.WebAppServletContainerInitializer"/>
+        </property>
     </bean>
 
 </beans>
