@@ -9,8 +9,14 @@
         <!-- <property name="webAppRoot" value="file:D:\project\SocialGameServer\src\main\java" /> -->
         <property name="webAppRoot" value="/" />
         <property name="servletContainerInitializer">
-            <bean class="com.doopp.gauss.server.undertow.WebAppServletContainerInitializer"/>
+            <bean class="com.doopp.gauss.server.undertow.WebAppServletContainerInitializer">
+                <property name="webAppRoot" value="/" />
+            </bean>
         </property>
+    </bean>
+
+    <bean id="dispatcherServlet" class="org.springframework.web.servlet.DispatcherServlet">
+        <property name="contextConfigLocation" value="classpath:config/spring-mvc/mvc-dispatcher-servlet.xml"/>
     </bean>
 
 </beans>

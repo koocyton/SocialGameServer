@@ -3,6 +3,9 @@ package com.doopp.gauss.server.undertow;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.support.AbstractApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.core.io.Resource;
 import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.context.support.XmlWebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
@@ -10,19 +13,37 @@ import org.springframework.web.filter.DelegatingFilterProxy;
 import org.springframework.web.servlet.DispatcherServlet;
 
 import javax.servlet.*;
+import java.io.File;
+import java.io.IOException;
 import java.util.EnumSet;
 import java.util.Set;
 
 public class WebAppServletContainerInitializer implements ServletContainerInitializer, ApplicationContextAware {
+
     private ApplicationContext applicationContext;
+
+    private Resource webAppRoot;
 
     @Override
     public void onStartup(Set<Class<?>> c, ServletContext ctx) throws ServletException {
 
-        // System.out.print(" 3 >>> " + ctx + "\n");
+        // ctx.getResourcePaths("ab");
+        // System.out.print(" 3 >>> " + ctx.getResource("/") + "\n");
+        File classPath = null;
+        try {
+            classPath = webAppRoot.getFile();
+            System.out.print(" 3 >>> " + webAppRoot.getFile() + "\n");
+        }
+        catch (IOException e) {
+            throw new ServletException();
+        }
+        //System.out.print(" 3 >>> " + ctx.getContextPath() + "\n");
+
+        // ServletContext servletContext = request.getSession().getServletContext();
+        // ApplicationContext ctx = WebApplicationContextUtils.getWebApplicationContext(servletContext);
 
         XmlWebApplicationContext rootWebAppContext = new XmlWebApplicationContext();
-        rootWebAppContext.setConfigLocation("file:D:\\project\\SocialGameServer\\src\\main\\resources\\config\\spring\\applicationContext.xml");
+        rootWebAppContext.setConfigLocation("file:" + classPath + "/../resources/config/spring/applicationContext.xml");
         rootWebAppContext.setParent(applicationContext);
         ctx.addListener(new ContextLoaderListener(rootWebAppContext));
 
@@ -34,10 +55,14 @@ public class WebAppServletContainerInitializer implements ServletContainerInitia
         // FilterRegistration.Dynamic springSecurityFilterChain = ctx.addFilter("springSecurityFilterChain", DelegatingFilterProxy.class);
         // springSecurityFilterChain.addMappingForServletNames(EnumSet.allOf(DispatcherType.class), false, "admin");
 
-        // System.out.print(" >>> " + ctx.servlet());
-        ServletRegistration.Dynamic dispatcher = ctx.addServlet("../config/spring-mvc/mvc-dispatcher", DispatcherServlet.class);
+        // System.out.print(" >>> " + ctx.getServletRegistration(""));
+
+        // AbstractApplicationContext context = new ClassPathXmlApplicationContext("config/spring-undertow.xml");
+        DispatcherServlet dispatcherServlet  =  (DispatcherServlet) applicationContext.getBean("dispatcherServlet");
+        ServletRegistration.Dynamic dispatcher = ctx.addServlet("mvc-dispatcher", dispatcherServlet);//DispatcherServlet.class);
+        // dispatcher.setMultipartConfig("classpath:config/spring-mvc/mvc-dispatcher-servlet.xml");
         dispatcher.setLoadOnStartup(1);
-        dispatcher.addMapping("/*");
+        dispatcher.addMapping("/chat-room");
 
         // ServletRegistration.Dynamic dispatcher2 = ctx.addServlet("customer", DispatcherServlet.class);
         // dispatcher2.setLoadOnStartup(1);
@@ -47,5 +72,9 @@ public class WebAppServletContainerInitializer implements ServletContainerInitia
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
+    }
+
+    public void setWebAppRoot(Resource webAppRoot) {
+        this.webAppRoot = webAppRoot;
     }
 }

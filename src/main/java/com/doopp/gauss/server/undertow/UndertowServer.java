@@ -41,11 +41,11 @@ public class UndertowServer implements InitializingBean, DisposableBean {
 
         InstanceFactory<? extends ServletContainerInitializer> instanceFactory = new ImmediateInstanceFactory<>(servletContainerInitializer);
         ServletContainerInitializerInfo sciInfo = new ServletContainerInitializerInfo(WebAppServletContainerInitializer.class, instanceFactory, new HashSet<>());
-
+        // System.out.print("\n 2 >>> " + sciInfo + "\n");
         DeploymentInfo deploymentInfo = constructDeploymentInfo(sciInfo);
 
         manager = Servlets.defaultContainer().addDeployment(deploymentInfo);
-        // System.out.print("\n 2 >>> " + manager + "\n");
+        // System.out.print("\n 2 >>> " + webAppRoot.getFile() + "\n");
         manager.deploy();
         HttpHandler httpHandler = manager.start();
 
@@ -64,8 +64,8 @@ public class UndertowServer implements InitializingBean, DisposableBean {
     private DeploymentInfo constructDeploymentInfo(ServletContainerInitializerInfo sciInfo) throws IOException {
         File webAppRootFile = webAppRoot.getFile();
 
-        System.out.print(" >>> " + webAppRoot + "\n");
-        System.out.print(" >>> " + webAppRootFile + "\n");
+        // System.out.print(" >>> " + webAppRoot + "\n");
+        // System.out.print(" >>> " + webAppRootFile + "\n");
 
         return Servlets.deployment()
             .addServletContainerInitalizer(sciInfo)
