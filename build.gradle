@@ -129,7 +129,33 @@ jar {
                 "Main-Class": "com.doopp.gauss.server.undertow.KTApplication.main")
     }
     from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
-    into('assets') {
-        from 'assets'
+    into('WEB-INF') {
+        from 'WEB-INF'
     }
+}
+
+//清除上次的编译过的文件
+task clearPj(type:Delete){
+    delete 'build','target'
+}
+
+task copyJar(type:Copy){
+    from configurations.runtime
+    into ('build/libs/lib')
+
+}
+
+task jar {
+    // from 'main/webapp'
+    webInf { from 'src/main/webapp/WEB-INF' }
+    //  classpath classpath() /
+    classpath configurations.runtime
+    webXml = file('src/main/webapp/WEB-INF/web.xml')
+}
+
+//把JAR复制到目标目录
+// task release(type: Copy,dependsOn: [build,copyJar]) {
+task release(type: Copy,dependsOn: [jar]) {
+//    from  'conf'
+//    into ('build/libs/eachend/conf') // 目标位置
 }

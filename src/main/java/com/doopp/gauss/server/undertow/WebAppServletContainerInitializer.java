@@ -45,7 +45,7 @@ public class WebAppServletContainerInitializer implements ServletContainerInitia
     </filter-mapping>
          */
 
-        FilterRegistration.Dynamic sessionFilter = ctx.addFilter("esessionFilter", SessionFilter.class);
+        FilterRegistration.Dynamic sessionFilter = ctx.addFilter("sessionFilter", SessionFilter.class);
         // encodingFilter.setInitParameter("encoding", "UTF-8");
         // encodingFilter.setInitParameter("forceEncoding", "true");
         sessionFilter.addMappingForServletNames(EnumSet.allOf(DispatcherType.class), false, "/*");
