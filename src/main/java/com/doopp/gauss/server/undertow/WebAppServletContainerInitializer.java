@@ -30,18 +30,9 @@ public class WebAppServletContainerInitializer implements ServletContainerInitia
         ctx.setInitParameter("log4jConfigLocation", "classpath:config/log4j/log4j.properties");
         ctx.setInitParameter("log4jRefreshInterval", "6000");
         ctx.addListener(org.springframework.web.util.Log4jConfigListener.class);
+        // ctx.addListener(org.springframework.web.util.WebAppRootListener.class);
 
-        // ctx.getResourcePaths("ab");
-        // System.out.print(" 3 >>> " + ctx.getResource("/") + "\n");
-        File classPath = null;
-        try {
-            classPath = webAppRoot.getFile();
-            System.out.print(" 3 >>> " + webAppRoot.getFile() + "\n");
-        }
-        catch (IOException e) {
-            throw new ServletException();
-        }
-        //System.out.print(" 3 >>> " + ctx.getContextPath() + "\n");
+        // classPath = webAppRoot.getFile();
 
         // ServletContext servletContext = request.getSession().getServletContext();
         // ApplicationContext ctx = WebApplicationContextUtils.getWebApplicationContext(servletContext);
@@ -62,7 +53,9 @@ public class WebAppServletContainerInitializer implements ServletContainerInitia
         // System.out.print(" >>> " + ctx.getServletRegistration(""));
 
         // AbstractApplicationContext context = new ClassPathXmlApplicationContext("config/spring-undertow.xml");
-        DispatcherServlet dispatcherServlet  =  (DispatcherServlet) applicationContext.getBean("dispatcherServlet");
+        // DispatcherServlet dispatcherServlet  =  (DispatcherServlet) applicationContext.getBean("dispatcherServlet");
+        DispatcherServlet dispatcherServlet = new DispatcherServlet();
+        dispatcherServlet.setContextConfigLocation("classpath:config/spring-mvc/mvc-dispatcher-servlet.xml");
         ServletRegistration.Dynamic dispatcher = ctx.addServlet("mvc-dispatcher", dispatcherServlet);//DispatcherServlet.class);
         // dispatcher.setMultipartConfig("classpath:config/spring-mvc/mvc-dispatcher-servlet.xml");
         dispatcher.setLoadOnStartup(1);

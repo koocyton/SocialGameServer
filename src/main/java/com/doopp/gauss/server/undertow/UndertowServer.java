@@ -25,7 +25,8 @@ import java.io.IOException;
 import java.util.HashSet;
 
 public class UndertowServer implements InitializingBean, DisposableBean {
-    private final Logger logger = LoggerFactory.getLogger(UndertowServer.class);
+
+    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     private String webAppName;
     private Resource webAppRoot;
@@ -37,7 +38,7 @@ public class UndertowServer implements InitializingBean, DisposableBean {
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        logger.info("Starting Undertow web server on port {}, serving web application '{}' having root at {}", port, webAppName, webAppRoot.getFile().getAbsolutePath());
+        // logger.info("Starting Undertow web server on port {}, serving web application '{}' having root at {}", port, webAppName, webAppRoot.getFile().getAbsolutePath());
 
         InstanceFactory<? extends ServletContainerInitializer> instanceFactory = new ImmediateInstanceFactory<>(servletContainerInitializer);
         ServletContainerInitializerInfo sciInfo = new ServletContainerInitializerInfo(WebAppServletContainerInitializer.class, instanceFactory, new HashSet<>());
@@ -45,7 +46,7 @@ public class UndertowServer implements InitializingBean, DisposableBean {
         DeploymentInfo deploymentInfo = constructDeploymentInfo(sciInfo);
 
         manager = Servlets.defaultContainer().addDeployment(deploymentInfo);
-        // System.out.print("\n 2 >>> " + webAppRoot.getFile() + "\n");
+        logger.info("\n 2 >>> " + webAppRoot.getFile() + "\n");
         manager.deploy();
         HttpHandler httpHandler = manager.start();
 
@@ -58,12 +59,13 @@ public class UndertowServer implements InitializingBean, DisposableBean {
 
         server.start();
 
-        logger.info("Undertow web server started; web application available at http://localhost:{}/{}", port, webAppName);
+        // logger.info("Undertow web server started; web application available at http://localhost:{}/{}", port, webAppName);
+        logger.info("Undertow web server started; web application available at http://localhost:{}", port);
     }
 
     private DeploymentInfo constructDeploymentInfo(ServletContainerInitializerInfo sciInfo) throws IOException {
-        File webAppRootFile = webAppRoot.getFile();
 
+        File webAppRootFile = webAppRoot.getFile();
         // System.out.print(" >>> " + webAppRoot + "\n");
         // System.out.print(" >>> " + webAppRootFile + "\n");
 
@@ -77,7 +79,8 @@ public class UndertowServer implements InitializingBean, DisposableBean {
     }
 
     private PathHandler constructPathHandler(HttpHandler httpHandler) {
-        RedirectHandler defaultHandler = Handlers.redirect("/" + webAppName);
+        // RedirectHandler defaultHandler = Handlers.redirect("/" + webAppName);
+        RedirectHandler defaultHandler = Handlers.redirect("/");
         PathHandler pathHandler = Handlers.path(defaultHandler);
         // pathHandler.addPrefixPath("/" + webAppName, httpHandler);
         pathHandler.addPrefixPath("/", httpHandler);

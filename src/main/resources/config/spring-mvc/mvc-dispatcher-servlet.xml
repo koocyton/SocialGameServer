@@ -17,10 +17,7 @@
                                 expression="org.springframework.web.bind.annotation.ControllerAdvice" />
     </context:component-scan>
 
-    <!--
-    <context:component-scan base-package="com.doopp.gauss.api.controller, com.doopp.gauss.socket.controller" use-default-filters="false" />
-    -->
-
+    <!-- 开启注解 -->
     <mvc:annotation-driven>
         <mvc:async-support default-timeout="30000" task-executor="async-executor"/>
     </mvc:annotation-driven>
@@ -30,11 +27,7 @@
 
     <!-- 静态资源(js、image等)的访问-->
     <!-- <mvc:default-servlet-handler />
-    <mvc:resources mapping="/**" location="/WEB-INF/static/" />
-    -->
-
-    <!-- 开启注解
-    <mvc:annotation-driven /> -->
+    <mvc:resources mapping="/**" location="/WEB-INF/static" /> -->
 
     <!--
     <mvc:resources mapping="/webjars/**" location="/WEB-INF/static/webjars/" />

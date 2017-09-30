@@ -9,15 +9,15 @@
         <property name="webAppName" value="webapp" />
         <property name="webAppRoot" value="/" />
         <property name="servletContainerInitializer">
-            <bean class="com.doopp.gauss.server.undertow.WebAppServletContainerInitializer">
-                <property name="webAppRoot" value="/" />
-            </bean>
+            <bean class="com.doopp.gauss.server.undertow.WebAppServletContainerInitializer" />
         </property>
     </bean>
 
+    <!--
     <bean id="dispatcherServlet" class="org.springframework.web.servlet.DispatcherServlet">
         <property name="contextConfigLocation" value="classpath:config/spring-mvc/mvc-dispatcher-servlet.xml"/>
     </bean>
+    //-->
 
 
     <!-- <bean class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor" id="async-executor" />
