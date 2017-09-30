@@ -1,5 +1,6 @@
 package com.doopp.gauss.server.undertow;
 
+import com.doopp.gauss.api.utils.SessionFilter;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -31,8 +32,25 @@ public class WebAppServletContainerInitializer implements ServletContainerInitia
         ctx.setInitParameter("log4jRefreshInterval", "6000");
         ctx.addListener(org.springframework.web.util.Log4jConfigListener.class);
         // ctx.addListener(org.springframework.web.util.WebAppRootListener.class);
-
         // classPath = webAppRoot.getFile();
+
+        /*
+             <filter>
+        <filter-name>sessionFilter</filter-name>
+        <filter-class>com.doopp.gauss.api.utils.SessionFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>sessionFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+         */
+
+        FilterRegistration.Dynamic sessionFilter = ctx.addFilter("esessionFilter", SessionFilter.class);
+        // encodingFilter.setInitParameter("encoding", "UTF-8");
+        // encodingFilter.setInitParameter("forceEncoding", "true");
+        sessionFilter.addMappingForServletNames(EnumSet.allOf(DispatcherType.class), false, "/*");
+        //ctx.addFilter("sessionFilter", SessionFilter.class);
+        //ctx.addFilter("sessionFilter", "/*");
 
         // ServletContext servletContext = request.getSession().getServletContext();
         // ApplicationContext ctx = WebApplicationContextUtils.getWebApplicationContext(servletContext);

@@ -2,6 +2,7 @@ package com.doopp.gauss.server.undertow;
 
 import io.undertow.Handlers;
 import io.undertow.Undertow;
+import io.undertow.server.DefaultByteBufferPool;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.handlers.PathHandler;
 import io.undertow.server.handlers.RedirectHandler;
@@ -13,6 +14,7 @@ import io.undertow.servlet.api.InstanceFactory;
 import io.undertow.servlet.api.ServletContainerInitializerInfo;
 import io.undertow.servlet.handlers.DefaultServlet;
 import io.undertow.servlet.util.ImmediateInstanceFactory;
+import io.undertow.websockets.jsr.WebSocketDeploymentInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
@@ -76,7 +78,13 @@ public class UndertowServer implements InitializingBean, DisposableBean {
             .setDeploymentName(webAppName + "-war")
             .setResourceManager(new FileResourceManager(webAppRootFile, 0))
             .addServlet(Servlets.servlet("default", DefaultServlet.class));
+            //.addServletContextAttribute(WebSocketDeploymentInfo.ATTRIBUTE_NAME,
+            //new WebSocketDeploymentInfo()
+            //    .setBuffers(new DefaultByteBufferPool(true, 100))
+            //    .addEndpoint(ChatEndpoint.class));
     }
+
+    // private DeploymentInfo
 
     private PathHandler constructPathHandler(HttpHandler httpHandler) {
         // RedirectHandler defaultHandler = Handlers.redirect("/" + webAppName);

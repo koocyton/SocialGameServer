@@ -96,7 +96,9 @@ dependencies {
     // compile 'org.apache.commons:commons-lang3:+'
 
     // ...
-    runtime 'jstl:jstl:1.2'
+    // runtime 'jstl:jstl:1.2'
+    compile 'org.thymeleaf:thymeleaf:2.0.16'
+    compile 'org.thymeleaf:thymeleaf-spring4:3.0.7.RELEASE'
 
     // util
     compile 'org.apache.commons:commons-lang3:3.6'
