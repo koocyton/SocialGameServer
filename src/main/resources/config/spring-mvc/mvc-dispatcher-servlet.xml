@@ -9,7 +9,17 @@
        http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd">
 
     <context:annotation-config />
-    <context:component-scan base-package="com.doopp.gauss.api.controller, com.doopp.gauss.socket.controller"/>
+
+    <context:component-scan base-package="com.doopp.gauss.api.controller, com.doopp.gauss.socket.controller" >
+        <context:include-filter type="annotation"
+                                expression="org.springframework.stereotype.Controller" />
+        <context:include-filter type="annotation"
+                                expression="org.springframework.web.bind.annotation.ControllerAdvice" />
+    </context:component-scan>
+
+    <!--
+    <context:component-scan base-package="com.doopp.gauss.api.controller, com.doopp.gauss.socket.controller" use-default-filters="false" />
+    -->
 
     <mvc:annotation-driven>
         <mvc:async-support default-timeout="30000" task-executor="async-executor"/>
@@ -17,20 +27,14 @@
 
     <bean class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor" id="async-executor" />
 
-    <!-- <context:component-scan base-package="com.doopp.gauss.api.controller, com.doopp.gauss.socket.controller" use-default-filters="false">
-        <context:include-filter type="annotation"
-                                expression="org.springframework.stereotype.Controller" />
-        <context:include-filter type="annotation"
-                                expression="org.springframework.web.bind.annotation.ControllerAdvice" />
-    </context:component-scan> -->
 
-    <!-- 静态资源(js、image等)的访问 -->
-    <!-- <mvc:default-servlet-handler /> -->
+    <!-- 静态资源(js、image等)的访问-->
+    <!-- <mvc:default-servlet-handler />
+    <mvc:resources mapping="/**" location="/WEB-INF/static/" />
+    -->
 
-    <!-- 开启注解 -->
-    <!-- <mvc:annotation-driven /> -->
-
-    <!-- <mvc:resources mapping="/**" location="/WEB-INF/static/" /> -->
+    <!-- 开启注解
+    <mvc:annotation-driven /> -->
 
     <!--
     <mvc:resources mapping="/webjars/**" location="/WEB-INF/static/webjars/" />
@@ -38,13 +42,13 @@
 
     <!--ViewResolver 视图解析器-->
     <!--用于支持Servlet、JSP视图解析-->
-    <!-- <bean id="jspViewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+    <bean id="jspViewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
         <property name="viewClass" value="org.springframework.web.servlet.view.JstlView"/>
         <property name="prefix" value="/WEB-INF/jsp/"/>
         <property name="suffix" value=".jsp"/>
-    </bean> -->
+    </bean>
 
-    <!-- <mvc:annotation-driven>
+    <mvc:annotation-driven>
         <mvc:message-converters register-defaults="true" >
             <bean class="com.doopp.gauss.api.utils.MappingFastJsonHttpMessageConverter">
                 <property name="supportedMediaTypes">
@@ -60,7 +64,7 @@
                 </property>
             </bean>
         </mvc:message-converters>
-    </mvc:annotation-driven> -->
+    </mvc:annotation-driven>
 
     <!-- 强制使用CGLIB代理 -->
     <!--

@@ -79,7 +79,8 @@ public class UndertowServer implements InitializingBean, DisposableBean {
     private PathHandler constructPathHandler(HttpHandler httpHandler) {
         RedirectHandler defaultHandler = Handlers.redirect("/" + webAppName);
         PathHandler pathHandler = Handlers.path(defaultHandler);
-        pathHandler.addPrefixPath("/" + webAppName, httpHandler);
+        // pathHandler.addPrefixPath("/" + webAppName, httpHandler);
+        pathHandler.addPrefixPath("/", httpHandler);
         return pathHandler;
     }
 
