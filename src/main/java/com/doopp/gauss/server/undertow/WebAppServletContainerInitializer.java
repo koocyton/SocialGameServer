@@ -27,6 +27,10 @@ public class WebAppServletContainerInitializer implements ServletContainerInitia
     @Override
     public void onStartup(Set<Class<?>> c, ServletContext ctx) throws ServletException {
 
+        ctx.setInitParameter("log4jConfigLocation", "classpath:config/log4j/log4j.properties");
+        ctx.setInitParameter("log4jRefreshInterval", "6000");
+        ctx.addListener(org.springframework.web.util.Log4jConfigListener.class);
+
         // ctx.getResourcePaths("ab");
         // System.out.print(" 3 >>> " + ctx.getResource("/") + "\n");
         File classPath = null;
@@ -43,14 +47,14 @@ public class WebAppServletContainerInitializer implements ServletContainerInitia
         // ApplicationContext ctx = WebApplicationContextUtils.getWebApplicationContext(servletContext);
 
         XmlWebApplicationContext rootWebAppContext = new XmlWebApplicationContext();
-        rootWebAppContext.setConfigLocation("file:" + classPath + "/../resources/config/spring/applicationContext.xml");
+        rootWebAppContext.setConfigLocation("classpath:config/spring/applicationContext.xml");
         rootWebAppContext.setParent(applicationContext);
         ctx.addListener(new ContextLoaderListener(rootWebAppContext));
 
         FilterRegistration.Dynamic encodingFilter = ctx.addFilter("encoding-filter", CharacterEncodingFilter.class);
         encodingFilter.setInitParameter("encoding", "UTF-8");
         encodingFilter.setInitParameter("forceEncoding", "true");
-        encodingFilter.addMappingForServletNames(EnumSet.allOf(DispatcherType.class), false, "admin");
+        encodingFilter.addMappingForServletNames(EnumSet.allOf(DispatcherType.class), false, "/*");
 
         // FilterRegistration.Dynamic springSecurityFilterChain = ctx.addFilter("springSecurityFilterChain", DelegatingFilterProxy.class);
         // springSecurityFilterChain.addMappingForServletNames(EnumSet.allOf(DispatcherType.class), false, "admin");
@@ -62,7 +66,7 @@ public class WebAppServletContainerInitializer implements ServletContainerInitia
         ServletRegistration.Dynamic dispatcher = ctx.addServlet("mvc-dispatcher", dispatcherServlet);//DispatcherServlet.class);
         // dispatcher.setMultipartConfig("classpath:config/spring-mvc/mvc-dispatcher-servlet.xml");
         dispatcher.setLoadOnStartup(1);
-        dispatcher.addMapping("/chat-room");
+        dispatcher.addMapping("/*");
 
         // ServletRegistration.Dynamic dispatcher2 = ctx.addServlet("customer", DispatcherServlet.class);
         // dispatcher2.setLoadOnStartup(1);

@@ -1,12 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans
-	http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
 
     <bean id="undertowServer" class="com.doopp.gauss.server.undertow.UndertowServer">
         <property name="port" value="8080"/>
         <property name="webAppName" value="SocialGameServer"/>
-        <!-- <property name="webAppRoot" value="file:D:\project\SocialGameServer\src\main\java" /> -->
         <property name="webAppRoot" value="/" />
         <property name="servletContainerInitializer">
             <bean class="com.doopp.gauss.server.undertow.WebAppServletContainerInitializer">
@@ -18,5 +18,18 @@
     <bean id="dispatcherServlet" class="org.springframework.web.servlet.DispatcherServlet">
         <property name="contextConfigLocation" value="classpath:config/spring-mvc/mvc-dispatcher-servlet.xml"/>
     </bean>
+
+
+    <!-- <bean class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor" id="async-executor" />
+
+    <bean class="com.doopp.gauss.server.undertow.UndertowServlet">
+        <constructor-arg name="contextPath" value="" />
+        <constructor-arg name="deploymentName" value="mvc-dispatcher-servlet.war"/>
+        <constructor-arg name="servletName" value="mvc-dispatcher"/>
+        <constructor-arg name="contextConfigLocation" value="classpath:config/spring-mvc/mvc-dispatcher-servlet.xml"/>
+        <constructor-arg name="mapping" value="/*"/>
+        <constructor-arg name="host" value="localhost"/>
+        <constructor-arg name="port" value="8080"/>
+    </bean> -->
 
 </beans>
