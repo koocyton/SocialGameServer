@@ -154,9 +154,14 @@ jar {
             it.isDirectory() ? it : zipTree(it)
         }
     }
-    into('WEB-INF') {
-        from 'src/main/webapp/WEB-INF'
-    }
+    //into('WEB-INF') {
+    //    from 'src/main/webapp/WEB-INF'
+    //}
+}
+
+task copyWebINFOnRun(type:Copy){
+    from 'src/main/webapp/WEB-INF'
+    into('out/production/classes/WEB-INF')
 }
 
 //清除上次的编译过的文件
@@ -165,13 +170,13 @@ task clearPj(type:Delete){
 }
 
 task copyJar(type:Copy){
-    from configurations.runtime
-    into ('build/lib')
+    // from configurations.runtime
+    // into ('build/lib')
 }
 
 task copyWebINF(type:Copy){
-    // from 'src/main/webapp/WEB-INF/pages'
-    // into ( 'WEB-INF' )
+    from 'src/main/webapp/WEB-INF'
+    into('WEB-INF')
 }
 
 //把JAR复制到目标目录

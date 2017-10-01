@@ -4,8 +4,12 @@ import io.undertow.Handlers;
 import io.undertow.Undertow;
 import io.undertow.server.DefaultByteBufferPool;
 import io.undertow.server.HttpHandler;
+
+import static io.undertow.Handlers.path;
+
 import io.undertow.server.handlers.PathHandler;
 import io.undertow.server.handlers.RedirectHandler;
+import io.undertow.server.handlers.resource.ClassPathResourceManager;
 import io.undertow.server.handlers.resource.FileResourceManager;
 import io.undertow.servlet.Servlets;
 import io.undertow.servlet.api.DeploymentInfo;
@@ -14,7 +18,17 @@ import io.undertow.servlet.api.InstanceFactory;
 import io.undertow.servlet.api.ServletContainerInitializerInfo;
 import io.undertow.servlet.handlers.DefaultServlet;
 import io.undertow.servlet.util.ImmediateInstanceFactory;
+
+import static io.undertow.Handlers.resource;
+import static io.undertow.Handlers.websocket;
+
+import io.undertow.websockets.WebSocketConnectionCallback;
+import io.undertow.websockets.core.AbstractReceiveListener;
+import io.undertow.websockets.core.BufferedTextMessage;
+import io.undertow.websockets.core.WebSocketChannel;
+import io.undertow.websockets.core.WebSockets;
 import io.undertow.websockets.jsr.WebSocketDeploymentInfo;
+import io.undertow.websockets.spi.WebSocketHttpExchange;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
@@ -48,11 +62,12 @@ public class UndertowServer implements InitializingBean, DisposableBean {
         DeploymentInfo deploymentInfo = constructDeploymentInfo(sciInfo);
 
         manager = Servlets.defaultContainer().addDeployment(deploymentInfo);
-        logger.info("\n 2 >>> " + webAppRoot.getFile() + "\n");
         manager.deploy();
         HttpHandler httpHandler = manager.start();
 
-        PathHandler pathHandler = constructPathHandler(httpHandler);
+        HttpHandler webSocketHandle = this.webSocketHandler();
+
+        PathHandler pathHandler = constructPathHandler(httpHandler, webSocketHandle);
 
         server = Undertow.builder()
             .addHttpListener(port, "localhost")
@@ -78,21 +93,40 @@ public class UndertowServer implements InitializingBean, DisposableBean {
             .setDeploymentName(webAppName + "-war")
             .setResourceManager(new FileResourceManager(webAppRootFile, 0))
             .addServlet(Servlets.servlet("default", DefaultServlet.class));
-            //.addServletContextAttribute(WebSocketDeploymentInfo.ATTRIBUTE_NAME,
-            //new WebSocketDeploymentInfo()
-            //    .setBuffers(new DefaultByteBufferPool(true, 100))
-            //    .addEndpoint(ChatEndpoint.class));
+        //.addServletContextAttribute(WebSocketDeploymentInfo.ATTRIBUTE_NAME,
+        //new WebSocketDeploymentInfo()
+        //    .setBuffers(new DefaultByteBufferPool(true, 100))
+        //    .addEndpoint(ChatEndpoint.class));
     }
 
     // private DeploymentInfo
 
-    private PathHandler constructPathHandler(HttpHandler httpHandler) {
+    private PathHandler constructPathHandler(HttpHandler httpHandler, HttpHandler webSocketHandler) {
         // RedirectHandler defaultHandler = Handlers.redirect("/" + webAppName);
         RedirectHandler defaultHandler = Handlers.redirect("/");
         PathHandler pathHandler = Handlers.path(defaultHandler);
         // pathHandler.addPrefixPath("/" + webAppName, httpHandler);
         pathHandler.addPrefixPath("/", httpHandler);
+        pathHandler.addPrefixPath("/game-socket", webSocketHandler);
         return pathHandler;
+    }
+
+    private HttpHandler webSocketHandler() {
+
+        return websocket(new WebSocketConnectionCallback() {
+
+            @Override
+            public void onConnect(WebSocketHttpExchange exchange, WebSocketChannel channel) {
+                channel.getReceiveSetter().set(new AbstractReceiveListener() {
+
+                    @Override
+                    protected void onFullTextMessage(WebSocketChannel channel, BufferedTextMessage message) {
+                        WebSockets.sendText(message.getData(), channel, null);
+                    }
+                });
+                channel.resumeReceives();
+            }
+        });
     }
 
     @Override
