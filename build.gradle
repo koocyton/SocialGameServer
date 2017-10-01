@@ -140,42 +140,42 @@ dependencies {
 //apply plugin: 'org.springframework.boot'
 //apply plugin: 'io.spring.dependency-management'
 
-//
-//jar {
-//    manifest {
-//        attributes(
-//            "Manifest-Version": 1.0,
-//            "Main-Class": "com.doopp.gauss.server.undertow.KTApplication"
-//        )
-//    }
-//    from {
-//        configurations.compile.collect {
-//            it.isDirectory() ? it : zipTree(it)
-//        }
-//    }
-//    into('webapp/WEB-INF') {
-//        from 'WEB-INF'
-//    }
-//}
-//
-////清除上次的编译过的文件
-//task clearPj(type:Delete){
-//    delete 'build','target'
-//}
-//
-//task copyJar(type:Copy){
-//    from configurations.runtime
-//    into ('build/lib')
-//}
-//
-//task copyWebINF(type:Copy){
-//    from 'main/webapp'
-//    into ( 'WEB-INF' )
-//}
-//
-////把JAR复制到目标目录
-//// task release(type: Copy,dependsOn: [clearPj,copyJar]) {
-//task release(type: Copy,dependsOn: [clearPj, copyJar, copyWebINF, jar]) {
-//    // from  'webapp/WEB-INF'
-//    // into ('WEB-INF') // 目标位置
-//}
+
+jar {
+    manifest {
+        attributes(
+            "Manifest-Version": 1.0,
+            "Main-Class": "com.doopp.gauss.server.undertow.KTApplication"
+        )
+    }
+    from {
+        configurations.compile.collect {
+            it.isDirectory() ? it : zipTree(it)
+        }
+    }
+    into('webapp/WEB-INF') {
+        from 'WEB-INF'
+    }
+}
+
+//清除上次的编译过的文件
+task clearPj(type:Delete){
+    delete 'build','target'
+}
+
+task copyJar(type:Copy){
+    from configurations.runtime
+    into ('build/lib')
+}
+
+task copyWebINF(type:Copy){
+    from 'webapp/WEB-INF'
+    into ( 'WEB-INF' )
+}
+
+//把JAR复制到目标目录
+// task release(type: Copy,dependsOn: [clearPj,copyJar]) {
+task release(type: Copy,dependsOn: [clearPj, copyJar, copyWebINF, jar]) {
+    // from  'webapp/WEB-INF'
+    // into ('WEB-INF') // 目标位置
+}
