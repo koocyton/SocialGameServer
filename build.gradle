@@ -145,7 +145,8 @@ jar {
     manifest {
         attributes(
             "Manifest-Version": 1.0,
-            "Main-Class": "com.doopp.gauss.server.undertow.KTApplication"
+            "Main-Class": "com.doopp.gauss.server.undertow.KTApplication",
+            "Class-Path": "."
         )
     }
     from {
@@ -153,8 +154,8 @@ jar {
             it.isDirectory() ? it : zipTree(it)
         }
     }
-    into('webapp/WEB-INF') {
-        from 'WEB-INF'
+    into('WEB-INF') {
+        from 'src/main/webapp/WEB-INF'
     }
 }
 
@@ -169,8 +170,8 @@ task copyJar(type:Copy){
 }
 
 task copyWebINF(type:Copy){
-    from 'webapp/WEB-INF'
-    into ( 'WEB-INF' )
+    // from 'src/main/webapp/WEB-INF/pages'
+    // into ( 'WEB-INF' )
 }
 
 //把JAR复制到目标目录
