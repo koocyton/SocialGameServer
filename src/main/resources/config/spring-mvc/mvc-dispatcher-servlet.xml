@@ -26,8 +26,8 @@
 
 
     <!-- 静态资源(js、image等)的访问-->
-    <!-- <mvc:default-servlet-handler />
-    <mvc:resources mapping="/**" location="/WEB-INF/static" /> -->
+    <mvc:default-servlet-handler />
+    <mvc:resources mapping="/**" location="/WEB-INF/static/" />
 
     <!--
     <mvc:resources mapping="/webjars/**" location="/WEB-INF/static/webjars/" />

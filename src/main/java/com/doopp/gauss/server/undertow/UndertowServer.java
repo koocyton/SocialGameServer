@@ -121,6 +121,8 @@ public class UndertowServer implements InitializingBean, DisposableBean {
 
                     @Override
                     protected void onFullTextMessage(WebSocketChannel channel, BufferedTextMessage message) {
+                        logger.info( " >>> message " + message.getData());
+                        logger.info( " >>> channel " + channel.getUrl());
                         WebSockets.sendText(message.getData(), channel, null);
                     }
                 });
