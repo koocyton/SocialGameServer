@@ -113,6 +113,7 @@ dependencies {
     compile 'io.undertow:undertow-servlet:1.4.20.Final'
     compile 'io.undertow:undertow-websockets-jsr:1.4.20.Final'
 
+    // compile 'org.springframework.boot:spring-boot-gradle-plugin:1.5.7.RELEASE'
     // static resources, ref. http://www.webjars.org/
     // compile 'org.webjars:jquery:3.2.0'
     // compile 'org.webjars:bootstrap:3.3.5'
@@ -122,40 +123,59 @@ dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
 }
 
-jar {
-    manifest {
-        attributes(
-                "Manifest-Version": 1.0,
-                "Main-Class": "com.doopp.gauss.server.undertow.KTApplication.main")
-    }
-    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
-    into('WEB-INF') {
-        from 'WEB-INF'
-    }
-}
+//buildscript {
+//    ext {
+//        springBootVersion = '2.0.0.BUILD-SNAPSHOT'
+//    }
+//    repositories {
+//        mavenCentral()
+//        maven { url 'https://repo.spring.io/libs-snapshot' }
+//    }
+//    dependencies {
+//        classpath "org.springframework.boot:spring-boot-gradle-plugin:1.5.7.RELEASE"
+//    }
+//}
+//
+//apply plugin: 'java'
+//apply plugin: 'org.springframework.boot'
+//apply plugin: 'io.spring.dependency-management'
 
-//清除上次的编译过的文件
-task clearPj(type:Delete){
-    delete 'build','target'
-}
-
-task copyJar(type:Copy){
-    from configurations.runtime
-    into ('build/libs/lib')
-
-}
-
-task jar {
-    // from 'main/webapp'
-    webInf { from 'src/main/webapp/WEB-INF' }
-    //  classpath classpath() /
-    classpath configurations.runtime
-    webXml = file('src/main/webapp/WEB-INF/web.xml')
-}
-
-//把JAR复制到目标目录
-// task release(type: Copy,dependsOn: [build,copyJar]) {
-task release(type: Copy,dependsOn: [jar]) {
-//    from  'conf'
-//    into ('build/libs/eachend/conf') // 目标位置
-}
+//
+//jar {
+//    manifest {
+//        attributes(
+//            "Manifest-Version": 1.0,
+//            "Main-Class": "com.doopp.gauss.server.undertow.KTApplication"
+//        )
+//    }
+//    from {
+//        configurations.compile.collect {
+//            it.isDirectory() ? it : zipTree(it)
+//        }
+//    }
+//    into('webapp/WEB-INF') {
+//        from 'WEB-INF'
+//    }
+//}
+//
+////清除上次的编译过的文件
+//task clearPj(type:Delete){
+//    delete 'build','target'
+//}
+//
+//task copyJar(type:Copy){
+//    from configurations.runtime
+//    into ('build/lib')
+//}
+//
+//task copyWebINF(type:Copy){
+//    from 'main/webapp'
+//    into ( 'WEB-INF' )
+//}
+//
+////把JAR复制到目标目录
+//// task release(type: Copy,dependsOn: [clearPj,copyJar]) {
+//task release(type: Copy,dependsOn: [clearPj, copyJar, copyWebINF, jar]) {
+//    // from  'webapp/WEB-INF'
+//    // into ('WEB-INF') // 目标位置
+//}
