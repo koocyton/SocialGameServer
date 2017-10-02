@@ -13,23 +13,4 @@
         </websocket:handshake-interceptors>
     </websocket:handlers>
 
-    <!--
-    <bean id="chatSocket" class="com.doopp.gauss.socket.handler.ChatSocketHandler"/>
-    <websocket:handlers  allowed-origins="*">
-        <websocket:mapping path="/chat-socket" handler="chatSocket"/>
-        <websocket:handshake-interceptors>
-            <bean class="com.doopp.gauss.socket.utils.WebSocketHandshakeInterceptor" />
-        </websocket:handshake-interceptors>
-    </websocket:handlers>
-
-
-    <bean id="roomSocket" class="com.doopp.gauss.socket.handler.RoomSocketHandler"/>
-    <websocket:handlers  allowed-origins="*">
-        <websocket:mapping path="/room-socket" handler="roomSocket"/>
-        <websocket:handshake-interceptors>
-            <bean class="com.doopp.gauss.socket.utils.WebSocketHandshakeInterceptor" />
-        </websocket:handshake-interceptors>
-    </websocket:handlers>
-    //-->
-
 </beans>

@@ -7,20 +7,20 @@ import io.undertow.websockets.core.*;
 import io.undertow.websockets.spi.WebSocketHttpExchange;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 
 public class WebAppSocketConnectionCallback implements WebSocketConnectionCallback
 {
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
-    @Autowired
-    private WebAppSocketReceiveListener webAppSocketReceiveListener;
+    private WebAppSocketReceiveListener webAppSocketReceiveListener;// = new WebAppSocketReceiveListener();
 
-    private final RedisSessionHelper redisSessionHelper = new RedisSessionHelper();
+    private RedisSessionHelper redisSessionHelper = new RedisSessionHelper();
 
     @Override
-    public void onConnect(WebSocketHttpExchange exchange, WebSocketChannel channel)
-    {
+    public void onConnect(WebSocketHttpExchange exchange, WebSocketChannel channel)  {
+
+        logger.info(" >>> " + webAppSocketReceiveListener);
+
         String accessToken = null;
         String uriQuery = exchange.getQueryString();
         int beginOffset = uriQuery.indexOf("access-token=");
@@ -36,14 +36,19 @@ public class WebAppSocketConnectionCallback implements WebSocketConnectionCallba
             if (currentUser!=null) {
                 // 在当前连接上存放当前用户信息
                 channel.setAttribute("currentUser", currentUser);
-                // 这个用户的其他连接应该踢掉
-                webAppSocketReceiveListener.unConnectChannel(currentUser.getId());
-                // 保存 socket channel 的数组
-                webAppSocketReceiveListener.addChannel(channel);
+                // 新的 channel
+                // 1. 就要将 channel map 里此用户的旧连接断掉，
+                // 2. channel map 里此用户的连接从 map 里删除，
+                // 3. 并将此连接添加在 channel map 里
+                webAppSocketReceiveListener.newChannelConnect(channel);
                 // 正式连接
                 channel.getReceiveSetter().set(webAppSocketReceiveListener);
                 channel.resumeReceives();
             }
         }
+    }
+
+    public void setWebAppSocketReceiveListener(WebAppSocketReceiveListener webAppSocketReceiveListener) {
+        this.webAppSocketReceiveListener = webAppSocketReceiveListener;
     }
 }

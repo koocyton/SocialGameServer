@@ -11,6 +11,13 @@
         <property name="servletContainerInitializer">
             <bean class="com.doopp.gauss.server.undertow.WebAppServletContainerInitializer" />
         </property>
+        <property name="socketConnectionCallback">
+            <bean class="com.doopp.gauss.server.undertow.WebAppSocketConnectionCallback">
+                <property name="webAppSocketReceiveListener">
+                    <bean class="com.doopp.gauss.server.undertow.WebAppSocketReceiveListener" />
+                </property>
+            </bean>
+        </property>
     </bean>
 
     <!--

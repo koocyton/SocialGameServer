@@ -1,18 +1,21 @@
 package com.doopp.gauss.server.undertow;
 
+import com.alibaba.fastjson.JSONObject;
+import com.doopp.gauss.api.dao.UserDao;
+import com.doopp.gauss.api.entity.UserEntity;
+import com.doopp.gauss.api.service.UserService;
 import io.undertow.websockets.core.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-@Service
 public class WebAppSocketReceiveListener extends AbstractReceiveListener {
 
-    private static final Map<String, WebSocketChannel> allWebSocketChannels = new HashMap<>();
+    private static final Map<Long, WebSocketChannel> allWebSocketChannels = new HashMap<>();
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -34,11 +37,33 @@ public class WebAppSocketReceiveListener extends AbstractReceiveListener {
         super.onClose(webSocketChannel, channel);
     }
 
-    public void addChannel(WebSocketChannel channel) {
-        allWebSocketChannels.put(channel, channel.getAttribute("access-token"));
+    public void newChannelConnect(WebSocketChannel channel) {
+        UserEntity currentUser = (UserEntity) channel.getAttribute("currentUser");
+        Long userId = currentUser.getId();
+        WebSocketChannel oldChannel = allWebSocketChannels.get(userId);
+        if (oldChannel!=null) {
+            this.delChannel(channel);
+        }
+        this.addChannel(channel);
     }
 
-    public void delChannel(WebSocketChannel channel) {
+    private void addChannel(WebSocketChannel channel) {
+        UserEntity currentUser = (UserEntity) channel.getAttribute("currentUser");
+        Long userId = currentUser.getId();
+        allWebSocketChannels.put(userId, channel);
+    }
 
+    private void delChannel(WebSocketChannel channel) {
+        UserEntity currentUser = (UserEntity) channel.getAttribute("currentUser");
+        Long userId = currentUser.getId();
+        WebSocketChannel oldChannel = allWebSocketChannels.get(userId);
+        try {
+            logger.info(" >>> close channel : " + userId );
+            oldChannel.sendClose();
+        }
+        catch(Exception e) {
+            logger.info(" >>> no can close channel : " + userId );
+        }
+        allWebSocketChannels.remove(userId);
     }
 }

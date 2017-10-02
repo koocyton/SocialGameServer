@@ -19,21 +19,15 @@ import io.undertow.servlet.api.ServletContainerInitializerInfo;
 import io.undertow.servlet.handlers.DefaultServlet;
 import io.undertow.servlet.util.ImmediateInstanceFactory;
 
-import static io.undertow.Handlers.resource;
 import static io.undertow.Handlers.websocket;
 
 import io.undertow.websockets.WebSocketConnectionCallback;
-import io.undertow.websockets.core.AbstractReceiveListener;
-import io.undertow.websockets.core.BufferedTextMessage;
-import io.undertow.websockets.core.WebSocketChannel;
-import io.undertow.websockets.core.WebSockets;
-import io.undertow.websockets.jsr.WebSocketDeploymentInfo;
-import io.undertow.websockets.spi.WebSocketHttpExchange;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.core.io.Resource;
+import org.springframework.web.socket.WebSocketHandler;
 
 import javax.servlet.ServletContainerInitializer;
 import java.io.File;
@@ -48,6 +42,7 @@ public class UndertowServer implements InitializingBean, DisposableBean {
     private Resource webAppRoot;
     private int port = 8080;
     private ServletContainerInitializer servletContainerInitializer;
+    private WebSocketConnectionCallback socketConnectionCallback;
 
     private Undertow server;
     private DeploymentManager manager;
@@ -65,9 +60,7 @@ public class UndertowServer implements InitializingBean, DisposableBean {
         manager.deploy();
         HttpHandler httpHandler = manager.start();
 
-        HttpHandler webSocketHandle = this.webSocketHandler();
-
-        PathHandler pathHandler = constructPathHandler(httpHandler, webSocketHandle);
+        PathHandler pathHandler = constructPathHandler(httpHandler);
 
         server = Undertow.builder()
             .addHttpListener(port, "localhost")
@@ -101,19 +94,14 @@ public class UndertowServer implements InitializingBean, DisposableBean {
 
     // private DeploymentInfo
 
-    private PathHandler constructPathHandler(HttpHandler httpHandler, HttpHandler webSocketHandler) {
+    private PathHandler constructPathHandler(HttpHandler httpHandler) {
         // RedirectHandler defaultHandler = Handlers.redirect("/" + webAppName);
         RedirectHandler defaultHandler = Handlers.redirect("/");
         PathHandler pathHandler = Handlers.path(defaultHandler);
         // pathHandler.addPrefixPath("/" + webAppName, httpHandler);
         pathHandler.addPrefixPath("/", httpHandler);
-        pathHandler.addPrefixPath("/game-socket", webSocketHandler);
+        pathHandler.addPrefixPath("/game-socket", websocket(socketConnectionCallback));
         return pathHandler;
-    }
-
-    private HttpHandler webSocketHandler() {
-
-        return websocket(new WebAppSocketConnectionCallback());
     }
 
     @Override
@@ -139,6 +127,10 @@ public class UndertowServer implements InitializingBean, DisposableBean {
 
     public void setServletContainerInitializer(ServletContainerInitializer servletContainerInitializer) {
         this.servletContainerInitializer = servletContainerInitializer;
+    }
+
+    public void setSocketConnectionCallback(WebSocketConnectionCallback socketConnectionCallback) {
+        this.socketConnectionCallback = socketConnectionCallback;
     }
 }
 
