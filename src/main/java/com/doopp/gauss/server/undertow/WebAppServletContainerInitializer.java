@@ -26,7 +26,6 @@ public class WebAppServletContainerInitializer implements ServletContainerInitia
         ctx.setInitParameter("log4jRefreshInterval", "6000");
         ctx.addListener(org.springframework.web.util.Log4jConfigListener.class);
 
-
         // FilterRegistration.Dynamic springSecurityFilterChain = ctx.addFilter("springSecurityFilterChain", DelegatingFilterProxy.class);
         // springSecurityFilterChain.addMappingForServletNames(EnumSet.allOf(DispatcherType.class), false, "admin");
         FilterRegistration.Dynamic sessionFilter = ctx.addFilter("sessionFilter", SessionFilter.class);
