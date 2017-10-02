@@ -154,9 +154,9 @@ jar {
             it.isDirectory() ? it : zipTree(it)
         }
     }
-    //into('WEB-INF') {
-    //    from 'src/main/webapp/WEB-INF'
-    //}
+    into('WEB-INF') {
+       from 'src/main/webapp/WEB-INF'
+    }
 }
 
 task copyWebINFOnRun(type:Copy){
@@ -174,14 +174,9 @@ task copyJar(type:Copy){
     // into ('build/lib')
 }
 
-task copyWebINF(type:Copy){
-    from 'src/main/webapp/WEB-INF'
-    into('WEB-INF')
-}
-
 //把JAR复制到目标目录
 // task release(type: Copy,dependsOn: [clearPj,copyJar]) {
-task release(type: Copy,dependsOn: [clearPj, copyJar, copyWebINF, jar]) {
+task release(type: Copy,dependsOn: [clearPj, copyJar, jar]) {
     // from  'webapp/WEB-INF'
     // into ('WEB-INF') // 目标位置
 }

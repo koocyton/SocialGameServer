@@ -113,22 +113,7 @@ public class UndertowServer implements InitializingBean, DisposableBean {
 
     private HttpHandler webSocketHandler() {
 
-        return websocket(new WebSocketConnectionCallback() {
-
-            @Override
-            public void onConnect(WebSocketHttpExchange exchange, WebSocketChannel channel) {
-                channel.getReceiveSetter().set(new AbstractReceiveListener() {
-
-                    @Override
-                    protected void onFullTextMessage(WebSocketChannel channel, BufferedTextMessage message) {
-                        logger.info( " >>> message " + message.getData());
-                        logger.info( " >>> channel " + channel.getUrl());
-                        WebSockets.sendText(message.getData(), channel, null);
-                    }
-                });
-                channel.resumeReceives();
-            }
-        });
+        return websocket(new WebAppSocketConnectionCallback());
     }
 
     @Override
@@ -156,3 +141,53 @@ public class UndertowServer implements InitializingBean, DisposableBean {
         this.servletContainerInitializer = servletContainerInitializer;
     }
 }
+
+
+//public class UndertowServlet {
+//
+//    /**
+//     * Initialize, configure and start a server implementation.
+//     *
+//     * @param contextPath
+//     * @param deploymentName
+//     * @param servletName
+//     * @param contextConfigLocation
+//     * @param mapping
+//     * @param host
+//     * @param port
+//     */
+//    public UndertowServlet(final String contextPath, final String deploymentName, final String servletName, final String contextConfigLocation, final String mapping, final String host, final Integer port) {
+//
+//
+//        try {
+//
+//            final DeploymentInfo servletBuilder = deployment()
+//                .setClassLoader(KTApplication.class.getClassLoader())
+//                .setContextPath(contextPath)
+//                .setDeploymentName(deploymentName)
+//                .setMajorVersion(3)
+//                .setMinorVersion(0)
+//                .addInitParameter("contextConfigLocation", "classpath:config/spring/applicationContext.xml")
+//                .addListener(new ListenerInfo(ContextLoaderListener.class))
+//                .addServlet(
+//                    servlet(servletName, DispatcherServlet.class)
+//                        .addInitParam("contextConfigLocation", "classpath:config/spring-mvc/mvc-dispatcher-servlet.xml")
+//                        .addMapping(mapping)
+//                        .setLoadOnStartup(1)
+//                        .setAsyncSupported(true));
+//
+//            final DeploymentManager manager = defaultContainer().addDeployment(servletBuilder);
+//            manager.deploy();
+//
+//            final Undertow server = Undertow.builder()
+//                .addHttpListener(port, host)
+//                // .addListener(port, host)
+//                .setHandler(manager.start())
+//                .build();
+//
+//            server.start();
+//        } catch (ServletException e) {
+//            throw new RuntimeException(e);
+//        }
+//    }
+//}
