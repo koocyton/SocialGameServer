@@ -27,17 +27,17 @@ dependencies {
     compile 'javax.servlet:javax.servlet-api:3.0.1'
 
     // spring core
-    compile 'org.springframework:spring-core:4.3.7.RELEASE'
-    compile 'org.springframework:spring-aop:4.3.7.RELEASE'
-    compile 'org.springframework:spring-context:4.3.7.RELEASE'
-    compile 'org.springframework:spring-context-support:4.3.7.RELEASE'
-    compile 'org.springframework:spring-beans:4.3.7.RELEASE'
-    compile 'org.springframework:spring-web:4.3.7.RELEASE'
-    compile 'org.springframework:spring-webmvc:4.3.7.RELEASE'
-    compile 'org.springframework:spring-expression:4.3.7.RELEASE'
-    compile 'org.springframework:spring-tx:4.3.7.RELEASE'
-    compile 'org.springframework:spring-jdbc:4.3.7.RELEASE'
-    compile 'org.springframework:spring-test:4.3.7.RELEASE'
+    compile 'org.springframework:spring-core:4.3.8.RELEASE'
+    compile 'org.springframework:spring-aop:4.3.8.RELEASE'
+    compile 'org.springframework:spring-context:4.3.8.RELEASE'
+    compile 'org.springframework:spring-context-support:4.3.8.RELEASE'
+    compile 'org.springframework:spring-beans:4.3.8.RELEASE'
+    compile 'org.springframework:spring-web:4.3.8.RELEASE'
+    compile 'org.springframework:spring-webmvc:4.3.8.RELEASE'
+    compile 'org.springframework:spring-expression:4.3.8.RELEASE'
+    compile 'org.springframework:spring-tx:4.3.8.RELEASE'
+    compile 'org.springframework:spring-jdbc:4.3.8.RELEASE'
+    compile 'org.springframework:spring-test:4.3.8.RELEASE'
     compile 'commons-dbcp:commons-dbcp:1.4'
     compile 'commons-logging:commons-logging:1.2'
 
@@ -58,8 +58,8 @@ dependencies {
     // compile 'org.springframework.security.oauth:shiro-oauth2:2.1.1.RELEASE'
 
     // web socket
-    compile 'org.springframework:spring-websocket:4.3.7.RELEASE'
-    compile 'org.springframework:spring-messaging:4.3.7.RELEASE'
+    compile 'org.springframework:spring-websocket:4.3.8.RELEASE'
+    compile 'org.springframework:spring-messaging:4.3.8.RELEASE'
 
     // Ehcache
     compile 'org.ehcache:ehcache:3.3.1'
@@ -151,6 +151,9 @@ jar {
     }
     from {
         configurations.compile.collect {
+            it.isDirectory() ? it : zipTree(it)
+        }
+        configurations.runtime.collect {
             it.isDirectory() ? it : zipTree(it)
         }
     }

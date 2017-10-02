@@ -19,16 +19,12 @@ import io.undertow.servlet.api.ServletContainerInitializerInfo;
 import io.undertow.servlet.handlers.DefaultServlet;
 import io.undertow.servlet.util.ImmediateInstanceFactory;
 
-import static io.undertow.Handlers.websocket;
-
-import io.undertow.websockets.WebSocketConnectionCallback;
 import io.undertow.websockets.jsr.WebSocketDeploymentInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.core.io.Resource;
-import org.springframework.web.socket.WebSocketHandler;
 
 import javax.servlet.ServletContainerInitializer;
 import java.io.File;
@@ -52,6 +48,7 @@ public class UndertowServer implements InitializingBean, DisposableBean {
     public void afterPropertiesSet() throws Exception {
         // logger.info("Starting Undertow web server on port {}, serving web application '{}' having root at {}", port, webAppName, webAppRoot.getFile().getAbsolutePath());
 
+        // web servlet
         InstanceFactory<? extends ServletContainerInitializer> instanceFactory = new ImmediateInstanceFactory<>(servletContainerInitializer);
         ServletContainerInitializerInfo sciInfo = new ServletContainerInitializerInfo(WebAppServletContainerInitializer.class, instanceFactory, new HashSet<>());
         // System.out.print("\n 2 >>> " + sciInfo + "\n");
@@ -81,9 +78,6 @@ public class UndertowServer implements InitializingBean, DisposableBean {
     private DeploymentInfo constructDeploymentInfo(ServletContainerInitializerInfo sciInfo) throws IOException {
 
         File webAppRootFile = webAppRoot.getFile();
-        // System.out.print(" >>> " + webAppRoot + "\n");
-        // System.out.print(" >>> " + webAppRootFile + "\n");
-
         return Servlets.deployment()
             .addServletContainerInitalizer(sciInfo)
             .setClassLoader(UndertowServer.class.getClassLoader())
@@ -91,10 +85,6 @@ public class UndertowServer implements InitializingBean, DisposableBean {
             .setDeploymentName(webAppName + "-war")
             .setResourceManager(new FileResourceManager(webAppRootFile, 0))
             .addServlet(Servlets.servlet("default", DefaultServlet.class));
-        //.addServletContextAttribute(WebSocketDeploymentInfo.ATTRIBUTE_NAME,
-        //new WebSocketDeploymentInfo()
-        //    .setBuffers(new DefaultByteBufferPool(true, 100))
-        //    .addEndpoint(ChatEndpoint.class));
     }
 
     private PathHandler constructPathHandler(HttpHandler httpHandler) {
