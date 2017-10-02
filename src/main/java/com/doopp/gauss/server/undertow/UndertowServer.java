@@ -1,5 +1,6 @@
 package com.doopp.gauss.server.undertow;
 
+import com.doopp.gauss.api.utils.SessionFilter;
 import io.undertow.Handlers;
 import io.undertow.Undertow;
 import io.undertow.server.DefaultByteBufferPool;
@@ -27,6 +28,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.core.io.Resource;
 
 import javax.servlet.ServletContainerInitializer;
+import javax.websocket.Session;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashSet;

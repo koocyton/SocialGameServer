@@ -33,7 +33,7 @@ public class WebAppServletContainerInitializer implements ServletContainerInitia
 
         // load applicationContext
         XmlWebApplicationContext rootWebAppContext = new XmlWebApplicationContext();
-        rootWebAppContext.setConfigLocation("classpath*:config/spring/applicationContext.xml");
+        rootWebAppContext.setConfigLocation("classpath:config/spring/applicationContext.xml");
         rootWebAppContext.setParent(applicationContext);
         ctx.addListener(new ContextLoaderListener(rootWebAppContext));
 
@@ -49,7 +49,7 @@ public class WebAppServletContainerInitializer implements ServletContainerInitia
 
         // set spring mvc servlet
         DispatcherServlet dispatcherServlet = new DispatcherServlet();
-        dispatcherServlet.setContextConfigLocation("classpath*:config/spring-mvc/mvc-dispatcher-servlet.xml");
+        dispatcherServlet.setContextConfigLocation("classpath:config/spring-mvc/mvc-dispatcher-servlet.xml");
         ServletRegistration.Dynamic dispatcher = ctx.addServlet("mvc-dispatcher", dispatcherServlet);//DispatcherServlet.class);
         dispatcher.setLoadOnStartup(1);
         dispatcher.addMapping("/*");
