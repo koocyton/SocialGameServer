@@ -146,7 +146,7 @@ jar {
         attributes(
             "Manifest-Version": 1.0,
             "Main-Class": "com.doopp.gauss.server.undertow.KTApplication",
-            "Class-Path": "."
+            "Class-Path": "./"
         )
     }
     from {
