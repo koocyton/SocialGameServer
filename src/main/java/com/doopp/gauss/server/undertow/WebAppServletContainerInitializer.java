@@ -7,6 +7,7 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.context.support.XmlWebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
+import org.springframework.web.filter.DelegatingFilterProxy;
 import org.springframework.web.servlet.DispatcherServlet;
 
 import javax.servlet.*;
@@ -26,10 +27,9 @@ public class WebAppServletContainerInitializer implements ServletContainerInitia
         ctx.setInitParameter("log4jRefreshInterval", "6000");
         ctx.addListener(org.springframework.web.util.Log4jConfigListener.class);
 
-        // FilterRegistration.Dynamic springSecurityFilterChain = ctx.addFilter("springSecurityFilterChain", DelegatingFilterProxy.class);
-        // springSecurityFilterChain.addMappingForServletNames(EnumSet.allOf(DispatcherType.class), false, "admin");
-        FilterRegistration.Dynamic sessionFilter = ctx.addFilter("sessionFilter", SessionFilter.class);
-        sessionFilter.addMappingForServletNames(EnumSet.allOf(DispatcherType.class), false, "/*");
+        // session filter
+        FilterRegistration.Dynamic sessionFilter = ctx.addFilter("sessionFilter", DelegatingFilterProxy.class);
+        sessionFilter.addMappingForUrlPatterns(EnumSet.allOf(DispatcherType.class), false, "/*");
 
         // load applicationContext
         XmlWebApplicationContext rootWebAppContext = new XmlWebApplicationContext();
