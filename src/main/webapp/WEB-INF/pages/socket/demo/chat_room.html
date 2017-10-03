@@ -80,7 +80,7 @@
             catch(e) {;};
             ws = null;
             let accessToken = $("#access-token").val();
-            ws = new WebSocket("ws://127.0.0.1:8080/game-socket?access-token=" + accessToken);
+            ws = new WebSocket("ws://"+window.location.host+"/game-socket?access-token=" + accessToken);
             // Listen for the connection open event then call the sendMessage function
             ws.onopen = function(e) {
 
