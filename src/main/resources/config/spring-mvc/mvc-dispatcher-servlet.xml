@@ -34,8 +34,23 @@
 
     <!--ViewResolver 视图解析器-->
     <!--用于支持Servlet、JSP视图解析-->
+
+    <!-- freemarker 模版 -->
+    <!-- 配置freeMarker的模板路径 -->
+    <bean class="org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer">
+        <property name="templateLoaderPath" value="classpath:/template/pages/" />
+        <property name="defaultEncoding" value="UTF-8" />
+    </bean>
+    <!-- freemarker视图解析器 -->
+    <bean class="org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver">
+        <property name="suffix" value=".html" />
+        <property name="contentType" value="text/html;charset=UTF-8" />
+        <!-- 此变量值为pageContext.request, 页面使用方法：rc.contextPath -->
+        <property name="requestContextAttribute" value="rc" />
+    </bean>
+
     <!-- 使用thymeleaf解析 -->
-    <bean id="templateResolver"
+    <!-- <bean id="templateResolver"
           class="org.thymeleaf.spring4.templateresolver.SpringResourceTemplateResolver">
         <property name="prefix" value="classpath:/template/pages/"/>
         <property name="suffix" value=".html"/>
@@ -51,13 +66,16 @@
     <bean class="org.thymeleaf.spring4.view.ThymeleafViewResolver">
         <property name="templateEngine" ref="templateEngine"/>
         <property name="characterEncoding" value="UTF-8"/>
-    </bean>
-
-    <!-- <bean id="jspViewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
-        <property name="viewClass" value="org.springframework.web.servlet.view.JstlView"/>
-        <property name="prefix" value="classpath:/template/jsp/"/>
-        <property name="suffix" value=".jsp"/>
     </bean> -->
+
+    <!-- 使用 jsp -->
+    <!--
+    <bean id="jspViewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <property name="viewClass" value="org.springframework.web.servlet.view.JstlView"/>
+        <property name="prefix" value="/resources/template/jsp/"/>
+        <property name="suffix" value=".jsp"/>
+    </bean>
+    -->
 
     <mvc:annotation-driven>
         <mvc:message-converters register-defaults="true">
