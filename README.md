@@ -10,12 +10,11 @@
 *  Freemaker template
 *  Spring-boot-gradle-plugin create alone jar package . 
 
-` ``
+```
 // create package
-# > gradle clean realse
-
+gradle clean realse
 // run
-# > java -jar SocialGameServer-1.0.jar
-` ``
+java -jar SocialGameServer-1.0.jar
+```
 
 ###### http://j.doopp.com/chat-room
