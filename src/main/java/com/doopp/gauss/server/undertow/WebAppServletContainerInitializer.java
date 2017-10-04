@@ -23,9 +23,9 @@ public class WebAppServletContainerInitializer implements ServletContainerInitia
     public void onStartup(Set<Class<?>> c, ServletContext ctx) throws ServletException {
 
         // set log4j
-        ctx.setInitParameter("log4jConfigLocation", "classpath:config/log4j/log4j.properties");
-        ctx.setInitParameter("log4jRefreshInterval", "6000");
-        ctx.addListener(org.springframework.web.util.Log4jConfigListener.class);
+        //ctx.setInitParameter("log4jConfigLocation", "classpath:config/log4j/log4j.properties");
+        //ctx.setInitParameter("log4jRefreshInterval", "6000");
+        //ctx.addListener(org.springframework.web.util.Log4jConfigListener.class);
 
         // session filter
         FilterRegistration.Dynamic sessionFilter = ctx.addFilter("sessionFilter", DelegatingFilterProxy.class);

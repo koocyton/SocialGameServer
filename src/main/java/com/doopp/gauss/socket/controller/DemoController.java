@@ -20,9 +20,9 @@ public class DemoController {
     }
 
     @RequestMapping(value = "/chat-room")
-    public ModelAndView chatRoom() {
-        return new ModelAndView("socket/demo/chat_room");
-        // return "socket/demo/chat_room";
+    public String chatRoom() {
+        // return new ModelAndView("socket/demo/chat_room");
+        return "socket/demo/chat_room";
     }
 
     @RequestMapping(value = "/mchat-room")

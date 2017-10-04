@@ -26,7 +26,7 @@
 
     <!-- 静态资源(js、image等)的访问-->
     <mvc:default-servlet-handler />
-    <mvc:resources mapping="/**" location="/WEB-INF/static/" />
+    <mvc:resources mapping="/**" location="classpath:/static/" />
 
     <!--
     <mvc:resources mapping="/webjars/**" location="/WEB-INF/static/webjars/" />
@@ -37,7 +37,7 @@
     <!-- 使用thymeleaf解析 -->
     <bean id="templateResolver"
           class="org.thymeleaf.spring4.templateresolver.SpringResourceTemplateResolver">
-        <property name="prefix" value="/WEB-INF/pages/"/>
+        <property name="prefix" value="classpath:/template/pages/"/>
         <property name="suffix" value=".html"/>
         <property name="templateMode" value="HTML"/>
         <property name="cacheable" value="false"/>
@@ -50,13 +50,12 @@
 
     <bean class="org.thymeleaf.spring4.view.ThymeleafViewResolver">
         <property name="templateEngine" ref="templateEngine"/>
-        <!--解决中文乱码-->
         <property name="characterEncoding" value="UTF-8"/>
     </bean>
 
     <!-- <bean id="jspViewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
         <property name="viewClass" value="org.springframework.web.servlet.view.JstlView"/>
-        <property name="prefix" value="/WEB-INF/jsp/"/>
+        <property name="prefix" value="classpath:/template/jsp/"/>
         <property name="suffix" value=".jsp"/>
     </bean> -->
 
