@@ -3,7 +3,7 @@
 #### Spring mvc + Undertow + Mybatis(mysql) + Jedis(redis) + Ehcache
 
 *  Support multiple databases
-*  RedisTemplate & SharedJedis ( can not redis push :( )
+*  RedisTemplate & SharedJedis < SharedJedis can not redis push :( >
 *  Undertow Embedded Server
 *  Ehcache 
 *  WebSocket  
@@ -12,7 +12,8 @@
 
 ```
 // create package
-gradle clean realse
+gradle clean bootRepackage
+
 // run
 java -jar SocialGameServer-1.0.jar
 ```
