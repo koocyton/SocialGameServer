@@ -18,4 +18,4 @@ gradle clean bootRepackage
 java -jar SocialGameServer-1.0.jar
 ```
 
-###### http://j.doopp.com/chat-room
+###### http://home.doopp.com/chat-room
