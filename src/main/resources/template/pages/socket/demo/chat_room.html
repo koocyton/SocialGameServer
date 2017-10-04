@@ -339,9 +339,56 @@
     </tr>
 </table>
 
-<div>
-    nginx config
-    <pre>
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <b>Spring mvc + Undertow + Mybatis(mysql) + Jedis(redis) + Ehcache</b>
+    </div>
+    <div class="panel-body">
+        <ul>
+            <li>
+                Support multiple databases
+            </li>
+            <li>
+                RedisTemplate & SharedJedis < SharedJedis can not redis push :( >
+            </li>
+            <li>
+                Undertow Embedded Server
+            </li>
+            <li>
+                Ehcache
+            </li>
+            <li>
+                WebSocket
+            </li>
+            <li>
+                Freemaker template
+            </li>
+            <li>
+                Spring-boot-gradle-plugin create alone jar package .
+            </li>
+        </ul>
+    </div>
+</div>
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <b>download & build & run</b>
+    </div>
+    <div class="panel-body">
+        <b>user@ubuntu:~$</b> git clone https://github.com/koocyton/SocialGameServer.git
+        <br><b>user@ubuntu:~$</b> cd SocialGameServer
+        <br><b>user@ubuntu:~$</b> git checkout spring-undertow
+        <br><b>user@ubuntu:~$</b> gradle clean bootRepackage
+        <br><b>user@ubuntu:~$</b> java -jar build/libs/SocialGameServer-1.0.jar
+    </div>
+</div>
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <b>nginx config</b>
+    </div>
+    <div class="panel-body">
+        <pre>
 server {
     listen 80;
     listen [::]:80;
@@ -370,7 +417,8 @@ server {
         proxy_send_timeout   30s;
     }
 }
-    </pre>
+        </pre>
+    </div>
 </div>
 
 <script type="text/javascript">
