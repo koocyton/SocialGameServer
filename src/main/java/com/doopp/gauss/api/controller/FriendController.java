@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -43,10 +44,10 @@ public class FriendController {
     public JSONObject userFriendList(@RequestHeader("access-token") String accessToken) {
         // 当前用户
         UserEntity currentUser = userService.getUserByToken(accessToken);
-        List<Map<String, UserEntity>> friendList = userService.getUserFriendList(currentUser.getId());
-        for(Map tmp:friendList)
+        List<UserEntity> friendList = userService.getUserFriendList(currentUser.getId());
+        for(UserEntity friendUser : friendList)
         {
-            logger.info(tmp.toString());
+            logger.info(friendUser.toString());
         }
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("friendList", friendList);

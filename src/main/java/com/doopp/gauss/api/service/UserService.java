@@ -21,7 +21,7 @@ public interface UserService {
     UserEntity getUserInfo(String account);
 
     // 获取用户好友列表
-    List<Map<String, UserEntity>> getUserFriendList(Long userId);
+    List<UserEntity> getUserFriendList(Long userId);
 
     // 加为好友
     boolean applyFriend(UserEntity userEntity, Long userId);

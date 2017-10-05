@@ -25,13 +25,13 @@ public interface UserDao {
 
     UserEntity fetchById(long id);
 
-    List<Map<String, UserEntity>> fetchUserFriends(Long id);
+    List<UserEntity> fetchUserFriends(Long id);
 
-    List<Map<String, UserEntity>> fetchListByIds(@Param("ids") String ids, @Param("offset") int offset, @Param("limit") int limit);
+    List<UserEntity> fetchListByIds(@Param("ids") String ids, @Param("offset") int offset, @Param("limit") int limit);
 
     UserEntity fetchByAccount(String account);
 
-    List<Map<String, UserEntity>> fetchList(@Param("offset") int offset, @Param("limit") int limit);
+    List<UserEntity> fetchList(@Param("offset") int offset, @Param("limit") int limit);
 
-    List<Map<String, UserEntity>> fetchList(@Param("where") String where, @Param("offset") int offset, @Param("limit") int limit);
+    List<UserEntity> fetchList(@Param("where") String where, @Param("offset") int offset, @Param("limit") int limit);
 }

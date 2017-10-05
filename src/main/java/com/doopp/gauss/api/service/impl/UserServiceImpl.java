@@ -47,7 +47,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<Map<String, UserEntity>> getUserFriendList(Long userId) {
+    public List<UserEntity> getUserFriendList(Long userId) {
         UserEntity userEntity = userDao.fetchById(userId);
         if (userEntity!=null) {
             return userDao.fetchListByIds(userEntity.getFriends(), 0, 30);

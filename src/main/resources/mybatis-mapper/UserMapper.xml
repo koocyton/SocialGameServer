@@ -6,7 +6,7 @@
 
     <select id="fetchList" resultType="com.doopp.gauss.api.entity.UserEntity">
         SELECT
-          `gender`, `nickname`, `created_at`, `id`, `portrait`, `account`, `friends`
+          *
         FROM
             `user`
         <where>
@@ -48,7 +48,7 @@
 
     <select id="fetchListByIds" resultType="com.doopp.gauss.api.entity.UserEntity">
         SELECT
-            `gender`, `nickname`, `created_at`, `id`, `portrait`, `account`, `friends`
+            *
         FROM
             `user`
         WHERE
@@ -57,9 +57,9 @@
             #{offset,jdbcType=INTEGER}, #{limit,jdbcType=INTEGER}
     </select>
 
-    <select id="fetchUserFriends" parameterType="Long" resultType="java.util.Map">
+    <select id="fetchUserFriends" parameterType="Long" resultType="com.doopp.gauss.api.entity.UserEntity">
         SELECT
-            `id`, `account`, `nickname`, `gender`, `portrait`
+            *
         FROM
             `user`
         WHERE
