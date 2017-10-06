@@ -20,6 +20,9 @@
         </property> -->
     </bean>
 
+    <bean id="guessDrawGame" class="com.doopp.gauss.server.undertow.GuessDrawGame">
+    </bean>
+
     <!--
     <bean id="dispatcherServlet" class="org.springframework.web.servlet.DispatcherServlet">
         <property name="contextConfigLocation" value="classpath:config/spring-mvc/mvc-dispatcher-servlet.xml"/>
