@@ -23,7 +23,7 @@ public class DemoController {
 
     @RequestMapping(value = "/chat-room")
     public String chatRoom(HttpServletRequest request) {
-        return isMobileClient(request) ? "socket/demo/chat_room" : "socket/demo/mobile_chat_room";
+        return isMobileClient(request) ? "socket/demo/mobile_chat_room" : "socket/demo/chat_room";
     }
 
     private boolean isMobileClient(HttpServletRequest request) {
