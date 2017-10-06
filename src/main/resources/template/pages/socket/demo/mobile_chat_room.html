@@ -16,11 +16,15 @@
     <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
     <script src="/js/jquery-3.2.1.min.js"></script>
     <script src="/js/pixi-4.3.5.min.js"></script>
+
+    <script src="https://cdn.bootcss.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+    <link href="https://cdn.bootcss.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
+
     <style>
         * {
             margin: 0;
             padding: 0;
-            text-align: center;
+            text-align: left;
             vertical-align: middle;
         }
 
@@ -92,21 +96,99 @@
 </head>
 
 <body>
-<div class="body-content">
-    <div class="head-content">
-        <!-- <a href="mregist1.html"><span class="kt-icons">&#xf0c7;</span></a> -->
-        <h2>Spring mvc & Undertow</h2>
-    </div>
-    <div class="center-content">
-        <div class="message-layout"></div>
-        <div class="canvas-layout" game='lrs-replay' game-data="lrsReplayData1">
 
+<nav class="navbar navbar-inverse" role="navigation" style="background-color:rgba(0,0,0,0.68);">
+    <div class="container">
+        <div class="navbar-header">
+            <a href="javascript:void(0);" class="navbar-brand"> &nbsp; spring mvc / undertow / mybatis / jedis</a>
         </div>
+    </div><!-- /.container -->
+</nav><!-- /.navbar -->
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <b>Spring mvc + Undertow + Mybatis(mysql) + Jedis(redis) + Ehcache</b>
+    </div>
+    <div class="panel-body">
+        <ul>
+            <li>
+                Support multiple databases
+            </li>
+            <li>
+                RedisTemplate & SharedJedis < SharedJedis can not redis push :( >
+            </li>
+            <li>
+                Undertow Embedded Server
+            </li>
+            <li>
+                Ehcache
+            </li>
+            <li>
+                WebSocket
+            </li>
+            <li>
+                Freemaker template
+            </li>
+            <li>
+                Spring-boot-gradle-plugin create alone jar package .
+            </li>
+        </ul>
+    </div>
+</div>
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <b>download & build & run</b>
+    </div>
+    <div class="panel-body">
+        <b>user@ubuntu:~$</b> git clone https://github.com/koocyton/SocialGameServer.git
+        <br><b>user@ubuntu:~$</b> cd SocialGameServer
+        <br><b>user@ubuntu:~$</b> git checkout spring-undertow
+        <br><b>user@ubuntu:~$</b> gradle clean bootRepackage
+        <br><b>user@ubuntu:~$</b> java -jar build/libs/SocialGameServer-1.0.jar
+    </div>
+</div>
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <b>nginx config</b>
+    </div>
+    <div class="panel-body">
+        <pre>
+server {
+    listen 80;
+    listen [::]:80;
+    server_name home.doopp.com;
+    add_header Access-Control-Allow-Origin *;
+
+    location ~ .*\.(html|htm|gif|jpg|jpeg|bmp|png|ico|txt|js|css|xml)$ {
+        proxy_pass          http://127.0.0.1:8080$request_uri;
+        expires 1d;
+    }
+
+    location /game-socket {
+        proxy_pass http://127.0.0.1:8080/game-socket;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+    }
+
+    location / {
+        proxy_pass          http://127.0.0.1:8080$request_uri;
+        proxy_set_header    Host            "127.0.0.1:8080";
+        proxy_set_header    X-Real-IP       $remote_addr;
+        proxy_set_header    X-Forwarded-For $remote_addr;
+        proxy_http_version  1.1;
+        proxy_connect_timeout   30s;
+        proxy_send_timeout   30s;
+    }
+}
+        </pre>
     </div>
 </div>
 
 <script>
-    (function(){
+    (function () {
 
         let $ = jQuery;
 
@@ -118,33 +200,36 @@
             /**
              * a AJax request
              */
-            KTAjax: function(url, method, data, headers, success, error, complete) {
+            KTAjax: function (url, method, data, headers, success, error, complete) {
                 // stop before one ajax request
-                if (typeof(window.currentKTAjax)==="object") {
-                    try{window.currentKTAjax.abort()}catch(e){}
+                if (typeof(window.currentKTAjax) === "object") {
+                    try {
+                        window.currentKTAjax.abort()
+                    } catch (e) {
+                    }
                 }
                 // set headers
-                if ($.type(headers)!=="object" || $.isEmptyObject(headers)) {
+                if ($.type(headers) !== "object" || $.isEmptyObject(headers)) {
                     headers = {};
                 }
                 headers['access-token'] = "";
                 // set content type
-                let contentType = (method.toLowerCase()==="post" && !(data instanceof FormData)) ? "application/x-www-form-urlencoded; charset=UTF-8" : false;
+                let contentType = (method.toLowerCase() === "post" && !(data instanceof FormData)) ? "application/x-www-form-urlencoded; charset=UTF-8" : false;
                 // set ajax request
                 window.currentKTAjax = $.ajax({
-                    "url"  : url,
-                    "type" : method,
-                    "data" : data,
-                    "contentType" : contentType,
-                    "processData" : false,
-                    "headers" : headers,
-                    "success" : function(responseText) {
+                    "url": url,
+                    "type": method,
+                    "data": data,
+                    "contentType": contentType,
+                    "processData": false,
+                    "headers": headers,
+                    "success": function (responseText) {
                         if ($.isFunction(success)) success(responseText);
                     },
-                    "error" : function(XMLHttpRequest) {
+                    "error": function (XMLHttpRequest) {
                         if ($.isFunction(error)) error(XMLHttpRequest);
                     },
-                    "complete" : function(XMLHttpRequest) {
+                    "complete": function (XMLHttpRequest) {
                         if ($.isFunction(complete)) complete(XMLHttpRequest);
                     }
                 });
@@ -155,19 +240,19 @@
              */
             KTAnchor: {
                 // Ajax 正常返回
-                success : function(container, responseText) {
-                    if (typeof(responseText)==="object" && responseText.action!==null) {
+                success: function (container, responseText) {
+                    if (typeof(responseText) === "object" && responseText.action !== null) {
 
                     }
                     // 填充完后重新设定填充区域内的 KTLoader
                     $(container).KTLoader();
                 },
                 // Ajax 错误
-                error: function(container, XMLHttpRequest) {
+                error: function (container, XMLHttpRequest) {
 
                 },
                 // Ajax 处理完成
-                complete: function(container, XMLHttpRequest) {
+                complete: function (container, XMLHttpRequest) {
 
                 }
             }
@@ -178,30 +263,30 @@
          */
         $.fn.extend({
 
-            getHexBackgroundColor : function() {
+            getHexBackgroundColor: function () {
                 let rgb = $(this).css('background-color');
                 let pattern = /^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/;
-                if(pattern.test(rgb)) {
+                if (pattern.test(rgb)) {
                     let _match = rgb.match(pattern);
-                    let _hex = function(x) {
+                    let _hex = function (x) {
                         return ("0" + parseInt(x).toString(16)).slice(-2);
                     };
-                    rgb= "#" + _hex(_match[1]) + _hex(_match[2]) + _hex(_match[3]);
+                    rgb = "#" + _hex(_match[1]) + _hex(_match[2]) + _hex(_match[3]);
                 }
                 return rgb.substr(1);
             },
 
-            KTAnchor : function(success, error, begin, complete) {
+            KTAnchor: function (success, error, begin, complete) {
                 // 取得 某文档下 所有没有被标注为原生的 anchor
-                this.find("a").each(function(key, anchor){
+                this.find("a").each(function (key, anchor) {
                     // jQuery 对象
                     let $anchor = $(anchor);
                     // 给 <a native 标记不绑 ajax 请求
-                    if (typeof($anchor.attr('native'))!=="undefined") {
+                    if (typeof($anchor.attr('native')) !== "undefined") {
                         // 这个点归点，别冒泡，可能的多次遍历到时，只处理一次
-                        if ($anchor.data("native-click")===null) {
+                        if ($anchor.data("native-click") === null) {
                             // 不冒泡
-                            $anchor.bind("click", function(e){
+                            $anchor.bind("click", function (e) {
                                 e.stopPropagation();
                             });
                             // 标记
@@ -212,15 +297,15 @@
                     // 如果是 <a href="javascript:..." 也是不能去绑定
                     if (/^javascript:/.test($anchor.attr("href"))) return;
                     // 如果是 # 也是不能绑定
-                    if ($anchor.attr("href")==="#") return;
+                    if ($anchor.attr("href") === "#") return;
                     // 如果已经绑定过
-                    if ($anchor.data("ajax-click")!==null) return;
+                    if ($anchor.data("ajax-click") !== null) return;
 
                     // 绑定点击事件
-                    $anchor.on("click", function() {
+                    $anchor.on("click", function () {
                         // 如果有 confirm 属性
-                        if (typeof($anchor.attr("confirm"))!=="undefined" && $anchor.attr("confirm").length>1 && $anchor.data("confirm-click")===null) {
-                            $.confirm($anchor.attr("confirm"), function(){
+                        if (typeof($anchor.attr("confirm")) !== "undefined" && $anchor.attr("confirm").length > 1 && $anchor.data("confirm-click") === null) {
+                            $.confirm($anchor.attr("confirm"), function () {
                                 $anchor.data("confirm-click", "confirm-click");
                                 $anchor.trigger("click");
                             });
@@ -232,31 +317,31 @@
                         // 获取当前的地址
                         // let currentRef = window.location.href;
                         // 如果设置了 <a unpushstate ..> 那么不做 url pushState
-                        if (typeof($anchor.attr("unpushstate"))==="undefined") {
+                        if (typeof($anchor.attr("unpushstate")) === "undefined") {
                             window.history.pushState(null, "", requestUrl);
                         }
                         // 返回的内容填充到哪
                         let container = $.KTAnchor.response_container;
-                        if (typeof($anchor.attr("container"))!=="undefined" && $anchor.attr("container").length>1) {
+                        if (typeof($anchor.attr("container")) !== "undefined" && $anchor.attr("container").length > 1) {
                             container = $anchor.attr("container");
                         }
                         // set header
                         let header = null;
-                        if ($.type($anchor.attr("header"))==="string") {
+                        if ($.type($anchor.attr("header")) === "string") {
                             header = $.parseJSON($anchor.attr("header"));
                         }
                         // ajax 请求，并回调
                         $.KTAjax(requestUrl, "GET", null, header,
                             // 成功
-                            function(responseText){
+                            function (responseText) {
                                 $.isFunction(success) ? success(container, responseText) : $.KTAjax.success(container, responseText);
                             },
                             // 错误
-                            function(XMLHttpRequest){
+                            function (XMLHttpRequest) {
                                 $.isFunction(error) ? error(container, XMLHttpRequest) : $.KTAjax.error(container, XMLHttpRequest);
                             },
                             // 结束 ( 成功或失败后 )
-                            function(XMLHttpRequest){
+                            function (XMLHttpRequest) {
                                 $.isFunction(complete) ? complete(container, XMLHttpRequest) : $.KTAjax.complete(container, XMLHttpRequest);
                             }
                         );
@@ -270,29 +355,8 @@
                 return this;
             },
 
-            LrsReplayTagScan: function() {
-                // 取得 某文档下 所有没有被标注为原生的 anchor
-                this.find("div[game='lrs-replay']").each(function(key, _replayBox) {
-                    // 获取在哪个节点播放这个
-                    let replayBox = $(_replayBox);
-                    let replayDataKey = replayBox.attr("game-data");
-                    let replayData = window[replayDataKey];
-                    let messageBox = replayBox.prev()[0];
-                    // 开始一个新游戏
-                    new OneLRSGame({
-                        "messageBox" : messageBox,
-                        "replayBox" : replayBox,
-                        "width" : replayBox.width(),
-                        "height" : replayBox.height(),
-                        "backgroundColor" : replayBox.getHexBackgroundColor(),
-                        "playerList" : replayData.playerList,
-                        "playData" : replayData.playData
-                    });
-                });
-            },
-
-            KTLoader: function() {
-                this.KTAnchor().LrsReplayTagScan();
+            KTLoader: function () {
+                this.KTAnchor();
             }
         });
 
@@ -300,48 +364,9 @@
 
 
     // 文档加载完开始
-    $(document).ready(function(){
+    $(document).ready(function () {
         $(document.body).KTLoader();
     });
-
-
-    /*
-     * 一局
-     */
-    function OneLRSGame(config) {
-
-        console.log(config);
-
-        this.messageBox = config.messageBox;
-
-        this.replayBox = config.replayBox;
-
-        this.width = config.width;
-
-        this.height = config.height;
-
-        this.backgroundColor = config.backgroundColor;
-
-        this.playData = config.playData;
-
-        this.players = [];
-
-        // this.pixiApp = new PIXI.Application(this.width, this.height, {backgroundColor : "0x" + this.backgroundColor});
-        this.pixiApp = new PIXI.Application(this.width, this.height, {transparent:true});
-
-        this.replayBox.prepend(this.pixiApp.view);
-
-        this.init();
-
-//        let instantic = this;
-//        setTimeout(function(){
-//            instantic.loopPlay(instantic.playData, 0);
-//        }, 500);
-    }
-
-    OneLRSGame.prototype.init = function() {
-    };
-
 
 </script>
 
