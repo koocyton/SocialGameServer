@@ -3,6 +3,7 @@ package com.doopp.gauss.api.utils;
 import java.io.IOException;
 
 import javax.servlet.FilterChain;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -10,9 +11,11 @@ import javax.servlet.http.HttpServletResponse;
 import com.doopp.gauss.api.entity.UserEntity;
 import com.doopp.gauss.api.helper.RedisSessionHelper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 
 import com.doopp.gauss.api.service.RestResponseService;
+import org.springframework.web.context.support.WebApplicationContextUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import org.slf4j.Logger;
@@ -26,7 +29,7 @@ public class SessionFilter extends OncePerRequestFilter {
 
     private static final Logger logger = LoggerFactory.getLogger(SessionFilter.class);
 
-    private final RedisSessionHelper redisSessionHelper = new RedisSessionHelper();
+    // private final RedisSessionHelper redisSessionHelper = new RedisSessionHelper();
 
     /*
      * 登录验证过滤器
@@ -37,7 +40,10 @@ public class SessionFilter extends OncePerRequestFilter {
                                     FilterChain filterChain)
         throws ServletException, IOException {
 
-
+        // get bean
+        ServletContext context = request.getServletContext();
+        ApplicationContext ctx = WebApplicationContextUtils.getWebApplicationContext(context);
+        RedisSessionHelper redisSessionHelper = ctx.getBean(RedisSessionHelper.class);
 
         // 不过滤的uri
         String[] notFilters = new String[] {
@@ -45,7 +51,7 @@ public class SessionFilter extends OncePerRequestFilter {
             "/api/v1/login",
             "/api/v1/fast-login",
             "/api/v1/logout",
-            "/web-socket-demo",
+            "/mobile-chat-room",
             "/chat-room",
             "/game-socket",
             "/js",
