@@ -19,7 +19,8 @@ public class GuessDrawGame implements DisposableBean, Runnable {
 
     @Override
     public void run() {
-        while(runCondition) {
+        System.out.print(" >>> DEMO : run com.doopp.gauss.server.undertow.GuessDrawGame \n ");
+        /* while(runCondition) {
             try {
                 Thread.sleep(1000);
             }
@@ -28,7 +29,7 @@ public class GuessDrawGame implements DisposableBean, Runnable {
                 break;
             }
             System.out.print(" >>> " + userService + "\n     " + this.thread.getContextClassLoader() + "\n");
-        }
+        } */
     }
 
     @Override
