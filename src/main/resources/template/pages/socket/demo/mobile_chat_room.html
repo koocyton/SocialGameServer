@@ -14,100 +14,333 @@
     <meta http-equiv="Cache-Control" content="no-store">
     <meta http-equiv="Pragma" content="no-cache">
     <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
-    <script src="/js/jquery-3.2.1.min.js"></script>
+    <script src="/js/jquery-1.11.3.min.js"></script>
     <script src="/js/pixi-4.3.5.min.js"></script>
-
     <script src="https://cdn.bootcss.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
     <link href="https://cdn.bootcss.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
-
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            text-align: left;
-            vertical-align: middle;
+    <script>
+        var msg = [];
+        var addMsg = [];
+        let ws = null;
+        function onLogin() {
+            // let account = $("#form-account").val();
+            // let password = $("#form-password").val();
+            let $form = $("#login-form");
+            $.ajax({
+                "url"  : "/api/v1/fast-login",
+                "type" : "post",
+                "data" : $form.serialize(),
+                "contentType" : "application/x-www-form-urlencoded; charset=UTF-8",
+                "processData" : false,
+                "headers" : null,
+                "success" : function(responseText) {
+                    if (typeof(responseText)==="object" && typeof(responseText["access-token"])==="string") {
+                        $("#access-token").val(responseText["access-token"]);
+                        $("#socket-connect").css("display", "block");
+                        joinRoom();
+                    }
+                },
+                "error" : function(XMLHttpRequest) {
+                    //
+                },
+                "complete" : function(XMLHttpRequest) {
+                    //
+                }
+            });
+            return false;
         }
 
-        html, body {
+        function joinRoom() {
+
+            let accessToken = $("#access-token").val();
+
+            $.ajax({
+                "url"  : "/api/v1/user/random-room",
+                "type" : "get",
+                "data" : null,
+                "contentType" : "application/x-www-form-urlencoded; charset=UTF-8",
+                "processData" : false,
+                "headers" : {"access-token":accessToken},
+                "success" : function(responseText) {
+                    if (typeof(responseText)==="object" && typeof(responseText.data.id)==="number") {
+                        socketConnect();
+                    }
+                },
+                "error" : function(XMLHttpRequest) {
+                    //
+                },
+                "complete" : function(XMLHttpRequest) {
+                    //
+                }
+            });
+            return false;
+
         }
 
-        body {
-            background-color: #eeeeee;
-            font-size: 14px;
-            color: #5d656b;
+
+
+        function socketConnect() {
+            try {
+                ws.onclose = function(e) {console.log("Disconnected: " + e.reason);};
+                ws.close();
+            }
+            catch(e) {;};
+            ws = null;
+            let accessToken = $("#access-token").val();
+            ws = new WebSocket("ws://"+window.location.host+"/game-socket?access-token=" + accessToken);
+            // Listen for the connection open event then call the sendMessage function
+            ws.onopen = function(e) {
+
+                console.log("WebSocket Connected ...");
+                // let accessToken = document.getElementById("access-token").value;
+                // sendMessage({"access-token":accessToken})
+            };
+            // Listen for the close connection event
+            ws.onclose = function(e) {
+                socketConnect();
+                console.log("Disconnected: " + e.reason);
+            };
+            // Listen for connection errors
+            ws.onerror = function(e) {
+                console.log("Error ");
+            };
+            // Listen for new messages arriving at the client
+            ws.onmessage = function(e) {
+                let message = e.data;
+                console.log("Message received: " + message);
+                let showMsgElt = document.getElementById("chat-window");
+                let newMsg = document.createElement("div");
+                try {
+                    let obj = JSON.parse(e.data);
+                    if (typeof(obj.data.target)!=="undefined" && obj.data.target==="canvas-marquee") {
+
+                        console.log(obj);
+                        let canvas = document.getElementById('mycanvas');
+                        let marguess2d = canvas.getContext("2d");
+                        //设置字体样式
+                        marguess2d.font = "20px Courier New";
+                        //设置字体颜色
+                        marguess2d.strokeStyle = "blue";
+                        //从坐标点(50,50)开始绘制文字
+                        let fontX = 600;
+                        let fontY = Math.floor(Math.random() * 200 + 40);
+                        let message = obj.data.sender + " : " + obj.data.message;
+                        marguess2d.strokeText(message, fontX, fontY);
+                        //
+                        // setTimeout(marguess2d, 600, randomY);
+                        // console.log(randomY);
+                        // marguessMove(marguess2d, fontX, fontY);
+                        let nn = addMsg.length;
+                        // console.log(nn);
+                        let speed = Math.floor(Math.random() * 4);
+                        addMsg[nn] = {"ctx":marguess2d, "speed": speed, "x":fontX, "y":fontY, "message": message};
+                    }
+                    else if (typeof(obj.data.target)!=="undefined" && obj.data.target==="drawing-board") {
+                        if (obj.data.sender!==$("#form-account").val()) {
+                            let canvas = document.getElementById('mycanvas2');
+                            let cxt = canvas.getContext("2d");
+                            cxt.strokeStyle = "blue";
+                            cxt.lineTo(obj.data.x, obj.data.y);
+                            cxt.stroke();
+                        }
+                    }
+                    else if (typeof(obj.data.target)!=="undefined" && obj.data.target==="drawing-move") {
+                        if (obj.data.sender!==$("#form-account").val()) {
+                            let canvas = document.getElementById('mycanvas2');
+                            let cxt = canvas.getContext("2d");
+                            cxt.strokeStyle = "blue";
+                            cxt.moveTo(obj.data.x, obj.data.y);
+                            // cxt.lineTo(obj.data.x, obj.data.y);
+                            // cxt.stroke();
+                        }
+                    }
+                    else {
+                        newMsg.innerHTML = "<b style=\"font-size:15px;color:blue;\">" + obj.data.sender + " </b> &gt; " + obj.data.message;
+                    }
+                }
+                catch(e) {
+                    // console.log(e);
+                    newMsg.innerHTML = message;
+                }
+                let lastChild = showMsgElt.lastChild;// firstChild;
+                showMsgElt.insertBefore(newMsg, lastChild);
+                showMsgElt.scrollTop = showMsgElt.scrollHeight;
+            };
+            return false;
         }
 
-        a, button, input {
-            outline: 0 none;
-            text-decoration: none;
-            -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+        function cleanCanvas() {
+            let _canvas = document.getElementById('mycanvas2');
+            let ctx = _canvas.getContext("2d");
+            ctx.strokeStyle = "whitesmoke";
+            ctx.save();
+            ctx.beginPath();
+            ctx.rect(-10, -10, _canvas.width+20 , _canvas.height+20 );
+            ctx.clip();
+            ctx.clearRect(-10, -10, _canvas.width + 20, _canvas.height + 20);
+            ctx.restore();
+            // ctx.strokeStyle = "blue";
+
+
+            let _canvas2 = document.getElementById('mycanvas3');
+            let ctx2 = _canvas2.getContext("2d");
+            ctx2.strokeStyle = "whitesmoke";
+            ctx2.save();
+            ctx2.beginPath();
+            ctx2.rect(-10, -10, _canvas.width+20 , _canvas.height+20 );
+            ctx2.clip();
+            ctx2.clearRect(-10, -10, _canvas.width + 20, _canvas.height + 20);
+            ctx2.restore();
         }
 
-        input {
-            box-sizing: border-box;
+        function marguessMove() {
+            for(let ii=0; ii<msg.length; ii++) {
+                if (msg[ii].x < -1000) {
+                    msg[ii].ctx = null;
+                    msg[ii] = null;
+                    msg.splice(ii, 1);
+                }
+            }
+            for (let ii=0; ii<addMsg.length; ii++) {
+                let xx = msg.length;
+                msg[xx] = addMsg[ii];
+            }
+            // console.log(addMsg, msg);
+            addMsg = [];
+            for(let ii=0; ii<msg.length; ii++) {
+                if (ii==0) {
+                    msg[ii].ctx.save();
+                    msg[ii].ctx.beginPath();
+                    msg[ii].ctx.rect(-10, -10, msg[ii].ctx.canvas.width + 20, msg[ii].ctx.canvas.height + 20);
+                    msg[ii].ctx.clip();
+                    msg[ii].ctx.clearRect(-10, -10, msg[ii].ctx.canvas.width + 20, msg[ii].ctx.canvas.height + 20);
+                    msg[ii].ctx.restore();
+                }
+                msg[ii].ctx.strokeText(msg[ii].message, msg[ii].x, msg[ii].y);
+                msg[ii].x = msg[ii].x - msg[ii].speed;
+            }
+            setTimeout(function () {
+                marguessMove();
+            }, 10);
+        }
+        marguessMove();
+
+        function sendMessage() {
+            let elt = $("#new-message");
+            let msg = elt.val();
+            let json = "{\"action\":\"room-chat\", \"data\":{\"message\":\"" + msg + "\"}}";
+            ws.send(json);
+            elt.val("");
+            elt.focus();
+            // console.log("Message sent : " + json);
         }
 
-        .head-content {
-            position: relative;
-            left: 0;
-            top: 0;
-            width: 100%;
-            display: block;
-            height: 44px;
-            line-height: 44px;
-            background-color: #dddddd;
+        function sendMarquee() {
+            let elt = $("#new-marquee");
+            let msg = elt.val();
+            let json = "{\"action\":\"room-chat\", \"data\":{\"target\":\"canvas-marquee\", \"message\":\"" + msg + "\"}}";
+            ws.send(json);
+            elt.val("");
+            elt.focus();
+            // console.log("marquee sent : " + json);
         }
 
-        .body-content {
-            width: 100%;
-            text-align: center;
+        function sendDrawing(x, y) {
+            let elt = $("#new-marquee");
+            let msg = elt.val();
+            let json = "{\"action\":\"room-chat\", \"data\":{\"target\":\"drawing-board\", \"x\":\"" + x + "\", \"y\":\"" + y + "\"}}";
+            ws.send(json);
+            elt.val("");
+            elt.focus();
+            // console.log("marquee sent : " + json);
         }
 
-        .center-content, .message-layout, .canvas-layout {
-            top: 0;
-            left: 0;
-            height: 600px;
+        function sendDrawingMove(x, y) {
+            let elt = $("#new-marquee");
+            let msg = elt.val();
+            let json = "{\"action\":\"room-chat\", \"data\":{\"target\":\"drawing-move\", \"x\":\"" + x + "\", \"y\":\"" + y + "\"}}";
+            ws.send(json);
+            elt.val("");
+            elt.focus();
         }
-
-        .center-content {
-            position: relative;
-            margin: 0 auto;
-            max-width: 640px;
-            min-width: 320px;
-        }
-
-        .message-layout {
-            position: relative;
-            display: block;
-            width: 100%;
-            overflow-y: scroll;
-        }
-
-        .canvas-layout {
-            position: absolute;
-            width: 100%;
-        }
-
-        .message-layout div {
-            text-align: left;
-            margin: 5px 110px;
-        }
-    </style>
+    </script>
 </head>
 
 <body>
 
-<nav class="navbar navbar-inverse" role="navigation" style="background-color:rgba(0,0,0,0.68);">
+<nav class="navbar navbar-inverse" role="navigation" style="margin-bottom:0;background-color:rgba(0,0,0,0.68);">
     <div class="container">
         <div class="navbar-header">
-            <a href="javascript:void(0);" class="navbar-brand"> &nbsp; spring mvc / undertow / mybatis / jedis</a>
+            <a href="javascript:void(0);" class="navbar-brand">Spring mvc & undertow</a>
         </div>
     </div><!-- /.container -->
 </nav><!-- /.navbar -->
 
+
+<div class="panel-body">
+    <form action="/api/v1/fast-login" id="login-form" method="post" onsubmit="onLogin();return false;">
+        <div class="form-group" style="float:left;width:69%;margin-right:1%;margin-bottom:0;">
+            <input type="hidden" readonly="1" id="access-token" class="form-control" name="access-token" placeholder="Access Token" value="">
+            <input type="text" id="form-account" class="form-control" placeholder="昵称" name="account" value="">
+        </div>
+        <div class="form-group" style="float:left;width:30%;margin-bottom:0;">
+            <button class="btn btn-success" type="submit" style="width:100%;">登 &nbsp; 陆</button>
+        </div>
+    </form>
+</div>
+
+
+<div class="form-group">
+    <div id="chat-window" class="form-control" style="vertical-align:bottom; height:400px;display:block;padding:10px;border:1px solid #cccccc;overflow-y:scroll;">
+        <div style="height:1px;"></div>
+    </div>
+</div>
+
+<div class="panel-body">
+    <form action="#" onsubmit="sendMessage();return false;">
+        <div class="form-group" style="float:left;width:80%;margin-right:10px;">
+            <input type="text" id="new-message" class="form-control" name="access-token" onkeydown="" value="">
+        </div>
+        <div class="form-group" style="float:left;width:10%;">
+            <button type="submit" class="btn btn-success">发言</button>
+        </div>
+    </form>
+</div>
+
 <div class="panel panel-default">
     <div class="panel-heading">
-        <b>Spring mvc + Undertow + Mybatis(mysql) + Jedis(redis) + Ehcache</b>
+        <b>Spring mvc + Undertow + Mybatis(mysql) + Jedis(redis) + Ehcache + WebSocket</b>
+    </div>
+    <div class="panel-body">
+        <ul>
+            <li>
+                Support multiple databases
+            </li>
+            <li>
+                RedisTemplate & SharedJedis < SharedJedis can not redis push :( >
+            </li>
+            <li>
+                Undertow Embedded Server
+            </li>
+            <li>
+                Ehcache
+            </li>
+            <li>
+                WebSocket
+            </li>
+            <li>
+                Freemaker template
+            </li>
+            <li>
+                Spring-boot-gradle-plugin create alone jar package .
+            </li>
+        </ul>
+    </div>
+</div>
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <b>Spring mvc + Undertow + Mybatis(mysql) + Jedis(redis) + Ehcache + WebSocket</b>
     </div>
     <div class="panel-body">
         <ul>
@@ -196,6 +429,16 @@ server {
          * 非绑定给节点的方法，写在 $.extend 内
          */
         $.extend({
+
+            // print_r arguments
+            KTLog: function () {
+                if (window.console && window.console.log && arguments.length >= 1) {
+                    window.console.log("arguments.length : " + arguments.length);
+                    for (var ii = 0; ii < arguments.length; ii++) {
+                        window.console.log(arguments[ii]);
+                    }
+                }
+            },
 
             /**
              * a AJax request
@@ -361,7 +604,6 @@ server {
         });
 
     })(jQuery);
-
 
     // 文档加载完开始
     $(document).ready(function () {
