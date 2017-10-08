@@ -12,7 +12,7 @@ public class KTApplication {
         // final ApplicationContext ctx = new FileSystemXmlApplicationContext("classpath:config/spring-undertow.xml");
         final AbstractApplicationContext ctx = new FileSystemXmlApplicationContext("classpath:config/spring-undertow.xml");
 
-        // 执行自己的逻辑
+        // 执行自己的逻辑，这个不需要 spring 的支持
         Thread guessDrawThread = new Thread(ctx.getBean(GuessDrawGame.class));
         guessDrawThread.start();
 

@@ -1,10 +1,14 @@
 package com.doopp.gauss.server.undertow;
 
 import com.doopp.gauss.api.service.UserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class GuessDrawGame implements DisposableBean, Runnable {
+
+    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     private Thread thread;
 
@@ -19,7 +23,7 @@ public class GuessDrawGame implements DisposableBean, Runnable {
 
     @Override
     public void run() {
-        System.out.print(" >>> DEMO : run com.doopp.gauss.server.undertow.GuessDrawGame \n ");
+        logger.info(" >>> DEMO : run com.doopp.gauss.server.undertow.GuessDrawGame");
         /* while(runCondition) {
             try {
                 Thread.sleep(1000);
