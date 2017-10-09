@@ -92,7 +92,7 @@
     <!-- 登录验证过滤器 -->
     <filter>
         <filter-name>sessionFilter</filter-name>
-        <filter-class>com.doopp.gauss.api.utils.SessionFilter</filter-class>
+        <filter-class>com.doopp.gauss.server.filter.SessionFilter</filter-class>
     </filter>
     <filter-mapping>
         <filter-name>sessionFilter</filter-name>

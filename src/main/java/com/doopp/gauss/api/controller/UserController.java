@@ -4,7 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 
 import com.doopp.gauss.api.entity.RoomEntity;
 import com.doopp.gauss.api.entity.UserEntity;
-import com.doopp.gauss.api.helper.UploadFileHelper;
+import com.doopp.gauss.api.utils.UploadFileHelper;
 import com.doopp.gauss.api.service.RestResponseService;
 import com.doopp.gauss.api.service.RoomService;
 import com.doopp.gauss.api.service.UserService;

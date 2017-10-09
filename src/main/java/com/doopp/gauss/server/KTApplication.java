@@ -1,5 +1,6 @@
-package com.doopp.gauss.server.undertow;
+package com.doopp.gauss.server;
 
+import com.doopp.gauss.server.undertow.GuessDrawGame;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.FileSystemXmlApplicationContext;
 

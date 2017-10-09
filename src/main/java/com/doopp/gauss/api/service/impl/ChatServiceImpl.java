@@ -1,15 +1,13 @@
-package com.doopp.gauss.socket.service.impl;
+package com.doopp.gauss.api.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.doopp.gauss.api.entity.RoomEntity;
 import com.doopp.gauss.api.entity.UserEntity;
 import com.doopp.gauss.api.service.RoomService;
-import com.doopp.gauss.socket.service.ChatService;
-import com.doopp.gauss.socket.service.MessageService;
+import com.doopp.gauss.api.service.ChatService;
+import com.doopp.gauss.api.service.MessageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import javax.annotation.Resource;
 
 @Service("chatService")
 public class ChatServiceImpl implements ChatService {

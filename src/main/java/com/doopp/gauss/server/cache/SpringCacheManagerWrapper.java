@@ -1,4 +1,4 @@
-package com.doopp.gauss.api.utils;
+package com.doopp.gauss.server.cache;
 
 import org.apache.shiro.cache.Cache;
 import org.apache.shiro.cache.CacheException;

@@ -31,6 +31,7 @@ public class WolfKillGame {
                 catch (InterruptedException e) {
                     e.printStackTrace();
                 }
+                break;
             }
         }
 

@@ -2,23 +2,20 @@ package com.doopp.gauss.api.service.impl;
 
 import com.doopp.gauss.api.dao.UserDao;
 import com.doopp.gauss.api.entity.UserEntity;
-import com.doopp.gauss.api.helper.RedisSessionHelper;
+import com.doopp.gauss.api.utils.RedisSessionHelper;
 import com.doopp.gauss.api.service.LoginService;
-import com.doopp.gauss.api.helper.EncryHelper;
+import com.doopp.gauss.api.utils.EncryHelper;
 import com.doopp.gauss.api.service.UserService;
-import com.doopp.gauss.socket.service.MessageService;
+import com.doopp.gauss.api.service.MessageService;
 import org.apache.oltu.oauth2.as.issuer.MD5Generator;
 import org.apache.oltu.oauth2.as.issuer.OAuthIssuer;
 import org.apache.oltu.oauth2.as.issuer.OAuthIssuerImpl;
-import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import javax.naming.AuthenticationException;
-import javax.servlet.http.HttpSession;
 
 /**
  *

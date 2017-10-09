@@ -1,13 +1,13 @@
-package com.doopp.gauss.socket.service.impl;
+package com.doopp.gauss.api.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.doopp.gauss.api.dao.RoomDao;
 import com.doopp.gauss.api.entity.RoomEntity;
 import com.doopp.gauss.api.entity.UserEntity;
 import com.doopp.gauss.api.service.RestResponseService;
-import com.doopp.gauss.socket.service.ChatService;
-import com.doopp.gauss.socket.service.MessageService;
-import com.doopp.gauss.socket.handler.GameSocketHandler;
+import com.doopp.gauss.api.service.ChatService;
+import com.doopp.gauss.api.service.MessageService;
+import com.doopp.gauss.server.websocket.handler.GameSocketHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.socket.TextMessage;
@@ -23,7 +23,7 @@ import java.util.ArrayList;
 @Service("messageService")
 public class MessageServiceImpl implements MessageService {
 
-    // static Logger logger = LoggerFactory.getLogger(MessageService.class);
+    // public Logger logger = LoggerFactory.getLogger(MessageService.class);
 
     @Resource
     private GameSocketHandler gameSocketHandler;

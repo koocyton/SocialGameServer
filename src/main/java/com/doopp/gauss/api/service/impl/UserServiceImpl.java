@@ -2,14 +2,13 @@ package com.doopp.gauss.api.service.impl;
 
 import com.doopp.gauss.api.dao.UserDao;
 import com.doopp.gauss.api.entity.UserEntity;
-import com.doopp.gauss.api.helper.RedisSessionHelper;
+import com.doopp.gauss.api.utils.RedisSessionHelper;
 import com.doopp.gauss.api.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.List;
-import java.util.Map;
 
 /**
  *
@@ -18,7 +17,7 @@ import java.util.Map;
 @Service("userService")
 public class UserServiceImpl implements UserService {
 
-    // private static final Logger logger = LoggerFactory.getLogger(LoginServiceImpl.class);
+    // private public final Logger logger = LoggerFactory.getLogger(LoginServiceImpl.class);
 
     @Resource
     private UserDao userDao;

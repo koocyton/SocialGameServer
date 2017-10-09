@@ -111,7 +111,7 @@ dependencies {
     compile 'io.undertow:undertow-websockets-jsr:1.4.20.Final'
 
     // compile 'org.springframework.boot:spring-boot-gradle-plugin:1.5.7.RELEASE'
-    // static resources, ref. http://www.webjars.org/
+    // public resources, ref. http://www.webjars.org/
     // compile 'org.webjars:jquery:3.2.0'
     // compile 'org.webjars:bootstrap:3.3.5'
     // compile 'org.webjars:vue:2.1.3'

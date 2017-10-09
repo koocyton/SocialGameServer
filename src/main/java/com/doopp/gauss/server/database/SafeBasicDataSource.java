@@ -4,7 +4,7 @@
  * 所以需要自己指定
  */
 
-package com.doopp.gauss.api.utils;
+package com.doopp.gauss.server.database;
 
 import org.apache.commons.dbcp.BasicDataSource;
 

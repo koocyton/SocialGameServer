@@ -1,4 +1,4 @@
-package com.doopp.gauss.api.utils;
+package com.doopp.gauss.server.filter;
 
 import java.io.IOException;
 
@@ -9,8 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.doopp.gauss.api.entity.UserEntity;
-import com.doopp.gauss.api.helper.RedisSessionHelper;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.doopp.gauss.api.utils.RedisSessionHelper;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 

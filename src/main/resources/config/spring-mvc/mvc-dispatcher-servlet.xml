@@ -26,10 +26,10 @@
 
     <!-- 静态资源(js、image等)的访问-->
     <mvc:default-servlet-handler />
-    <mvc:resources mapping="/**" location="classpath:/static/" />
+    <mvc:resources mapping="/**" location="classpath:/public/" />
 
     <!--
-    <mvc:resources mapping="/webjars/**" location="/WEB-INF/static/webjars/" />
+    <mvc:resources mapping="/webjars/**" location="/WEB-INF/public/webjars/" />
     -->
 
     <!--ViewResolver 视图解析器-->
@@ -79,7 +79,7 @@
 
     <mvc:annotation-driven>
         <mvc:message-converters register-defaults="true">
-            <bean class="com.doopp.gauss.api.utils.MappingFastJsonHttpMessageConverter">
+            <bean class="com.doopp.gauss.server.json.MappingFastJsonHttpMessageConverter">
                 <property name="supportedMediaTypes">
                     <list>
                         <value>application/json;charset=UTF-8</value>
@@ -106,5 +106,12 @@
         <property name="securityManager" ref="securityManager"/>
     </bean>
     //-->
+
+    <!-- 支持上传文件 -->
+    <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+        <property name="defaultEncoding" value="UTF-8" />
+        <property name="maxUploadSize" value="5400000" />
+        <property name="uploadTempDir" value="file:/tmp" />
+    </bean>
 
 </beans>

@@ -1,4 +1,4 @@
-package com.doopp.gauss.socket.service;
+package com.doopp.gauss.api.service;
 
 import com.alibaba.fastjson.JSONObject;
 import com.doopp.gauss.api.entity.UserEntity;

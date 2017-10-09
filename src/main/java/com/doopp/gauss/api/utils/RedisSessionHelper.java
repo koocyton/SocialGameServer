@@ -1,4 +1,4 @@
-package com.doopp.gauss.api.helper;
+package com.doopp.gauss.api.utils;
 
 import com.doopp.gauss.api.entity.UserEntity;
 import com.doopp.gauss.api.service.impl.LoginServiceImpl;
@@ -40,7 +40,7 @@ public class RedisSessionHelper {
      * FileInputStream fileInputStream = new FileInputStream("/data/app/conf/tomcat.webapp.root.properties")
      * InputStream inputStream = new BufferedInputStream(fileInputStream);
      * properties.load(inputStream);
-     * String staticHost = properties.getProperty("static.host");
+     * String staticHost = properties.getProperty("public.host");
      */
 
     public void delUserSessionCache(String accessToken) {

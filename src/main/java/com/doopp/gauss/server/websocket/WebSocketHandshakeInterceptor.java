@@ -1,20 +1,14 @@
-package com.doopp.gauss.socket.utils;
+package com.doopp.gauss.server.websocket;
 
-import com.doopp.gauss.api.entity.RoomEntity;
 import com.doopp.gauss.api.entity.UserEntity;
-import com.doopp.gauss.api.helper.RedisSessionHelper;
-import com.doopp.gauss.socket.handler.GameSocketHandler;
+import com.doopp.gauss.api.utils.RedisSessionHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
-import org.springframework.http.server.ServletServerHttpRequest;
 import org.springframework.web.socket.WebSocketHandler;
-import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.server.support.HttpSessionHandshakeInterceptor;
 
-import javax.servlet.http.HttpSession;
-import java.util.List;
 import java.util.Map;
 
 /**

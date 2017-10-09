@@ -15,7 +15,7 @@ import java.util.ArrayList;
 public class RoomEntity implements Serializable {
 
     // 日志
-    // private static final Logger logger = LoggerFactory.getLogger(RoomServiceImpl.class);
+    // private public final Logger logger = LoggerFactory.getLogger(RoomServiceImpl.class);
 
     // 房间 ID
     private int id;

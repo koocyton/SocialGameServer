@@ -2,8 +2,8 @@ package com.doopp.gauss.api.service.impl;
 
 import com.doopp.gauss.api.dao.UserDao;
 import com.doopp.gauss.api.entity.UserEntity;
-import com.doopp.gauss.api.helper.EncryHelper;
-import com.doopp.gauss.api.helper.IdWorker;
+import com.doopp.gauss.api.utils.EncryHelper;
+import com.doopp.gauss.api.utils.IdWorker;
 import com.doopp.gauss.api.service.LoginService;
 import com.doopp.gauss.api.service.RegisterService;
 import org.springframework.beans.factory.annotation.Autowired;

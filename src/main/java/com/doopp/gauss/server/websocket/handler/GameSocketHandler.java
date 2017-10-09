@@ -1,4 +1,4 @@
-package com.doopp.gauss.socket.handler;
+package com.doopp.gauss.server.websocket.handler;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONException;
@@ -6,7 +6,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.doopp.gauss.api.entity.RoomEntity;
 import com.doopp.gauss.api.entity.UserEntity;
 import com.doopp.gauss.api.service.RoomService;
-import com.doopp.gauss.socket.service.MessageService;
+import com.doopp.gauss.api.service.MessageService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +31,7 @@ public class GameSocketHandler implements WebSocketHandler {
 
     private static final Logger logger = LoggerFactory.getLogger(GameSocketHandler.class);
 
-    // private static final ArrayList<WebSocketSession> users = new ArrayList<WebSocketSession>();
+    // private public final ArrayList<WebSocketSession> users = new ArrayList<WebSocketSession>();
 
     private static final Map<String, WebSocketSession> socketSessions = new HashMap<>();
 

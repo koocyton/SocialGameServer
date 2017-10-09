@@ -5,11 +5,11 @@
         http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
         http://www.springframework.org/schema/websocket http://www.springframework.org/schema/websocket/spring-websocket-4.3.xsd">
 
-    <bean id="gameSocketHandler" class="com.doopp.gauss.socket.handler.GameSocketHandler"/>
+    <bean id="gameSocketHandler" class="com.doopp.gauss.server.websocket.handler.GameSocketHandler"/>
     <websocket:handlers  allowed-origins="*">
         <websocket:mapping path="/game-socket" handler="gameSocketHandler"/>
         <websocket:handshake-interceptors>
-            <bean class="com.doopp.gauss.socket.utils.WebSocketHandshakeInterceptor" />
+            <bean class="com.doopp.gauss.server.websocket.WebSocketHandshakeInterceptor" />
         </websocket:handshake-interceptors>
     </websocket:handlers>
 

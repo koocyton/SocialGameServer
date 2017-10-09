@@ -1,4 +1,4 @@
-package com.doopp.gauss.socket.controller;
+package com.doopp.gauss.api.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import org.springframework.stereotype.Controller;
