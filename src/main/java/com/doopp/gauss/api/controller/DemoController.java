@@ -3,12 +3,13 @@ package com.doopp.gauss.api.controller;
 import com.alibaba.fastjson.JSONObject;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 
 @Controller
 public class DemoController {
+
+    // private static final Logger logger = LoggerFactory.getLogger(DemoController.class);
 
     @ResponseBody
     @RequestMapping(value = "/aaa", method = RequestMethod.GET)
@@ -23,6 +24,7 @@ public class DemoController {
 
     @RequestMapping(value = "/chat-room")
     public String chatRoom(HttpServletRequest request) {
+        // logger.info(" >>> " + JarToolUtil.getJarDir() );
         return isMobileClient(request) ? "socket/demo/mobile_chat_room" : "socket/demo/chat_room";
     }
 

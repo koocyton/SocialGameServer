@@ -28,13 +28,13 @@ public class WebAppServletContainerInitializer implements ServletContainerInitia
         //ctx.addListener(org.springframework.web.util.Log4jConfigListener.class);
 
         // springSecurityFilterChain
-        FilterRegistration.Dynamic shiroFilter = ctx.addFilter("shiroFilter", DelegatingFilterProxy.class);
+        //FilterRegistration.Dynamic shiroFilter = ctx.addFilter("shiroFilter", DelegatingFilterProxy.class);
         // springSecurityFilterChain.addMappingForServletNames(EnumSet.allOf(DispatcherType.class), false, "admin");
-        shiroFilter.addMappingForUrlPatterns(EnumSet.allOf(DispatcherType.class), false, "/*");
+        //shiroFilter.addMappingForUrlPatterns(EnumSet.allOf(DispatcherType.class), false, "/*");
 
         // session filter
-        //FilterRegistration.Dynamic sessionFilter = ctx.addFilter("sessionFilter", SessionFilter.class);
-        //sessionFilter.addMappingForUrlPatterns(EnumSet.allOf(DispatcherType.class), false, "/*");
+        FilterRegistration.Dynamic sessionFilter = ctx.addFilter("sessionFilter", SessionFilter.class);
+        sessionFilter.addMappingForUrlPatterns(EnumSet.allOf(DispatcherType.class), false, "/*");
 
         // load applicationContext
         XmlWebApplicationContext rootWebAppContext = new XmlWebApplicationContext();
