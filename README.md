@@ -2,12 +2,12 @@
 
 #### Spring mvc + Undertow + Mybatis(mysql) + Jedis(redis) + Ehcache
 
-*  Support multiple databases
-*  RedisTemplate & SharedJedis < SharedJedis can not redis push :( >
 *  Undertow Embedded Server
+*  Support multiple databases
+*  RedisTemplate &amp; SharedJedis ( SharedJedis can not redis push )
 *  Ehcache 
-*  WebSocket  
 *  Freemaker template
+*  Shiro ( OAuth2 )
 *  Spring-boot-gradle-plugin create alone jar package . 
 
 ```

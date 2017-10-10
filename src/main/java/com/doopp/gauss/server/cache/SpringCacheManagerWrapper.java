@@ -46,7 +46,7 @@ public class SpringCacheManagerWrapper implements CacheManager {
         @Override
         public Object get(Object key) throws CacheException {
             Object value = springCache.get(key);
-            logger.info(" >>> " + value);
+            logger.info(" >>> key: " + key + "\n     value: " + value);
             if (value instanceof SimpleValueWrapper) {
                 return ((SimpleValueWrapper) value).get();
             }
