@@ -24,7 +24,7 @@ import javax.annotation.Resource;
 @Service("loginService")
 public class LoginServiceImpl implements LoginService {
 
-    private static final Logger logger = LoggerFactory.getLogger(LoginServiceImpl.class);
+    // private final Logger logger = LoggerFactory.getLogger(getClass());
 
     @Resource
     private UserDao userDao;

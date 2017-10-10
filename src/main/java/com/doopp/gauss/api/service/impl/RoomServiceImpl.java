@@ -21,7 +21,7 @@ import java.util.ArrayList;
 @Service("roomService")
 public class RoomServiceImpl implements RoomService {
 
-    private static final Logger logger = LoggerFactory.getLogger(RoomServiceImpl.class);
+    // private final Logger logger = LoggerFactory.getLogger(getClass());
 
     @Resource
     private RoomDao roomDao;

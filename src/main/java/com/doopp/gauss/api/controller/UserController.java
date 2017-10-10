@@ -27,7 +27,7 @@ import java.io.IOException;
 @RequestMapping(value = "api/v1/")
 public class UserController {
 
-    private static final Logger logger = LoggerFactory.getLogger(UserController.class);
+    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     @Autowired
     private UserService userService;

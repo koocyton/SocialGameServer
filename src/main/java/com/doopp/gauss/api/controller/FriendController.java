@@ -28,7 +28,7 @@ import java.util.Map;
 @RequestMapping(value = "api/v1/")
 public class FriendController {
 
-    private static final Logger logger = LoggerFactory.getLogger(LoginServiceImpl.class);
+    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     @Autowired
     private UserService userService;

@@ -26,7 +26,7 @@ import org.slf4j.LoggerFactory;
 @Service
 public class SessionFilter extends OncePerRequestFilter {
 
-    private static final Logger logger = LoggerFactory.getLogger(SessionFilter.class);
+    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     // private final RedisSessionHelper redisSessionHelper = new RedisSessionHelper();
 

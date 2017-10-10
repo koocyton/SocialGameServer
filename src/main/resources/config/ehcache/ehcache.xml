@@ -14,7 +14,6 @@
     <!-- statistics：是否收集统计信息。如果需要监控缓存使用情况，应该打开这个选项。默认为关闭（统计会影响性能）。设置statistics="true"开启统计 -->
 
     <!-- 默认缓存 -->
-    <!--
     <defaultCache
         maxEntriesLocalHeap="10000"
         eternal="false"
@@ -23,7 +22,47 @@
         maxEntriesLocalDisk="10000000"
         diskExpiryThreadIntervalSeconds="120"
         memoryStoreEvictionPolicy="LRU" />
-    -->
+
+    <!-- shiro-activeSessionCache 缓存 -->
+    <cache name="shiro-activeSessionCache"
+           maxEntriesLocalHeap="2000"
+           maxElementsInMemory="10"
+           maxElementsOnDisk="10"
+           eternal="false"
+           timeToIdleSeconds="3600"
+           timeToLiveSeconds="0"
+           overflowToDisk="true"
+           statistics="true"
+           diskPersistent="false"
+           memoryStoreEvictionPolicy="LRU" />
+
+
+    <!-- password-retry-cache 缓存 -->
+    <cache name="password-retry-cache"
+           maxEntriesLocalHeap="2000"
+           maxElementsInMemory="10"
+           maxElementsOnDisk="10"
+           eternal="false"
+           timeToIdleSeconds="3600"
+           timeToLiveSeconds="0"
+           overflowToDisk="true"
+           statistics="true"
+           diskPersistent="false"
+           memoryStoreEvictionPolicy="LRU" />
+
+
+    <!-- access-token 缓存 -->
+    <cache name="access-token-cache"
+           maxEntriesLocalHeap="2000"
+           maxElementsInMemory="10"
+           maxElementsOnDisk="10"
+           eternal="false"
+           timeToIdleSeconds="3600"
+           timeToLiveSeconds="0"
+           overflowToDisk="true"
+           statistics="true"
+           diskPersistent="false"
+           memoryStoreEvictionPolicy="LRU" />
 
     <!-- 房间保存加入的用户 -->
     <cache name="room-cache"

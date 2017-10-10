@@ -16,19 +16,22 @@
                                 expression="org.springframework.web.bind.annotation.ControllerAdvice" />
     </context:component-scan>
 
-    <!-- 配置Spring缓存管理器 -->
+    <!-- import cache -->
     <import resource="classpath:config/ehcache/spring-cache.xml"/>
 
-    <!-- 配置 websocket -->
+    <!-- import websocket -->
     <import resource="classpath:config/websocket/spring-websocket.xml" />
 
-    <!-- 引入 spring-data-redis.xml -->
+    <!-- import spring-data-redis.xml -->
     <import resource="classpath:config/redis/spring-jedis.xml"/>
 
-    <!-- 引入 mybatis -->
+    <!-- import mybatis -->
     <import resource="classpath:config/mybatis/spring-mybatis.xml"/>
 
-    <!-- 引入 task -->
+    <!-- import task -->
     <import resource="classpath:config/task-executor/spring-task.xml"/>
+
+    <!-- import shiro -->
+    <import resource="classpath:config/shiro/spring-shiro.xml"/>
 
 </beans>

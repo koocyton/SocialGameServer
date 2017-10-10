@@ -8,6 +8,8 @@ import com.doopp.gauss.api.service.RestResponseService;
 import com.doopp.gauss.api.service.ChatService;
 import com.doopp.gauss.api.service.MessageService;
 import com.doopp.gauss.server.websocket.handler.GameSocketHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.socket.TextMessage;
@@ -23,7 +25,7 @@ import java.util.ArrayList;
 @Service("messageService")
 public class MessageServiceImpl implements MessageService {
 
-    // public Logger logger = LoggerFactory.getLogger(MessageService.class);
+    // private final Logger logger = LoggerFactory.getLogger(getClass());
 
     @Resource
     private GameSocketHandler gameSocketHandler;

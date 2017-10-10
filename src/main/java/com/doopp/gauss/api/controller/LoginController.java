@@ -25,7 +25,7 @@ import org.slf4j.LoggerFactory;
 @RequestMapping(value = "api/v1/")
 public class LoginController {
 
-    private static final Logger logger = LoggerFactory.getLogger(LoginController.class);
+    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     @Autowired
     private LoginService loginService;

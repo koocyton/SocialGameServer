@@ -21,7 +21,7 @@ import java.util.concurrent.TimeUnit;
 public class RedisSessionHelper {
 
 
-    private static final Logger logger = LoggerFactory.getLogger(LoginServiceImpl.class);
+    // private final Logger logger = LoggerFactory.getLogger(getClass());
 
     private static ApplicationContext applicationContext = new ClassPathXmlApplicationContext("config/redis/spring-jedis.xml");
 

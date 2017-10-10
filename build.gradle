@@ -37,15 +37,15 @@ dependencies {
 
     // spring security oauth2.0
     compile 'org.apache.oltu.oauth2:org.apache.oltu.oauth2.authzserver:1.0.2'
-    //compile 'org.apache.oltu.oauth2:org.apache.oltu.oauth2.resourceserver:1.0.2'
+    compile 'org.apache.oltu.oauth2:org.apache.oltu.oauth2.resourceserver:1.0.2'
+    compile 'org.apache.oltu.oauth2:org.apache.oltu.oauth2.client:1.0.2'
+    compile 'org.apache.oltu.oauth2:org.apache.oltu.oauth2.common:1.0.2'
 
-    //compile 'org.apache.oltu.oauth2:org.apache.oltu.oauth2.client:1.0.2'
-    //compile 'org.apache.oltu.oauth2:org.apache.oltu.oauth2.common:1.0.2'
-    // compile 'org.apache.shiro:shiro-core:1.4.0'
+    compile 'org.apache.shiro:shiro-core:1.4.0'
     compile 'org.apache.shiro:shiro-ehcache:1.4.0'
-    //compile 'org.apache.shiro:shiro-web:1.4.0'
-    //compile 'org.apache.shiro:shiro-quartz:1.4.0'
-    //compile 'org.apache.shiro:shiro-spring:1.4.0'
+    compile 'org.apache.shiro:shiro-web:1.4.0'
+    compile 'org.apache.shiro:shiro-quartz:1.4.0'
+    compile 'org.apache.shiro:shiro-spring:1.4.0'
 
     // compile 'org.springframework.security:shiro-config:4.2.2.RELEASE'
     // compile 'org.springframework.security:shiro-taglibs:4.2.2.RELEASE'
