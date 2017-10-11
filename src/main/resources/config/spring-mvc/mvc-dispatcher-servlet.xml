@@ -28,8 +28,9 @@
     <mvc:default-servlet-handler />
     <mvc:resources mapping="/**" location="classpath:/public/" />
 
+    <!-- webjar -->
     <!--
-    <mvc:resources mapping="/webjars/**" location="/WEB-INF/public/webjars/" />
+    <mvc:resources mapping="/webjars/**" location="classpath:/webjars/"/>
     -->
 
     <!--ViewResolver 视图解析器-->
