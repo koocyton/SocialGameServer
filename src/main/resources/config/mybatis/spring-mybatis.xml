@@ -66,7 +66,7 @@
 
     <!-- 慢SQL记录 -->
     <bean id="stat-filter" class="com.alibaba.druid.filter.stat.StatFilter">
-        <property name="slowSqlMillis" value="1" />
+        <property name="slowSqlMillis" value="200" />
         <property name="logSlowSql" value="true" />
     </bean>
 
