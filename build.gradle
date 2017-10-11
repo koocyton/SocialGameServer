@@ -84,6 +84,9 @@ dependencies {
     // uuid
     // compile 'com.twitter.service:snowflake:+'
 
+    // file upload
+    compile 'commons-fileupload:commons-fileupload:1.3.3'
+
     // Logging
     // compile 'ch.qos.logback:logback-classic:1.1.3'
     compile 'org.slf4j:slf4j-api:1.7.25'
@@ -98,10 +101,10 @@ dependencies {
     // compile 'org.thymeleaf:thymeleaf-spring4:3.0.7.RELEASE'
     compile 'org.freemarker:freemarker:2.3.23'
 
-    // util
-    compile 'org.apache.commons:commons-lang3:3.6'
-    compile 'org.apache.commons:commons-io:1.3.2'
-    compile 'commons-fileupload:commons-fileupload:1.3.3'
+    // Util
+    // compile 'com.google.guava:guava:+'
+    // compile 'org.modelmapper:modelmapper:+'
+    compileOnly 'org.projectlombok:lombok:1.16.18'
 
     // netty
     // compile 'io.netty:netty-all:4.1.15.Final'
@@ -111,10 +114,10 @@ dependencies {
     compile 'io.undertow:undertow-servlet:1.4.20.Final'
     compile 'io.undertow:undertow-websockets-jsr:1.4.20.Final'
 
-    // compile 'org.springframework.boot:spring-boot-gradle-plugin:1.5.7.RELEASE'
     // public resources, ref. http://www.webjars.org/
-    // compile 'org.webjars:jquery:3.2.0'
-    // compile 'org.webjars:bootstrap:3.3.5'
+    //compile 'org.webjars:jquery:1.11.3'
+    //compile 'org.webjars:bootstrap:3.3.7'
+    //compile 'org.webjars:webjars-locator:+'
     // compile 'org.webjars:vue:2.1.3'
 
     testCompile group: 'junit', name: 'junit', version: '4.11'

@@ -1,6 +1,7 @@
 package com.doopp.gauss.api.entity;
 
 import com.alibaba.fastjson.JSONObject;
+import lombok.Data;
 
 import java.io.Serializable;
 
@@ -9,6 +10,7 @@ import java.io.Serializable;
  * @author Administrator
  *
  */
+@Data
 public class UserEntity implements Serializable {
 
     // 编号
@@ -38,47 +40,6 @@ public class UserEntity implements Serializable {
     // 好友
     private String friends;
 
-
-    public Long getId() {
-        return this.id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getAccount() {
-        return this.account;
-    }
-
-    public void setAccount(String account) {
-        this.account = account;
-    }
-
-    public String getNickname() {
-        return this.nickname;
-    }
-
-    public void setNickname(String nickname) {
-        this.nickname = nickname;
-    }
-
-    public String getPortrait() {
-        return this.portrait;
-    }
-
-    public void setPortrait(String portrait) {
-        this.portrait = portrait;
-    }
-
-    public String getFriends() {
-        return this.friends;
-    }
-
-    public void setFriends(String friends) {
-        this.friends = friends;
-    }
-
     public boolean addFriend(Long friendId) {
         String _friends  = "," + this.friends + ",";
         String _friendId = "," + friendId + ",";
@@ -105,38 +66,6 @@ public class UserEntity implements Serializable {
             return true;
         }
         return false;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getSalt() {
-        return salt;
-    }
-
-    public void setSalt(String salt) {
-        this.salt = salt;
-    }
-
-    public int getGender() {
-        return gender;
-    }
-
-    public void setGender(int gender) {
-        this.gender = gender;
-    }
-
-    public int getCreate_at() {
-        return this.created_at;
-    }
-
-    public void setCreate_at(int created_at) {
-        this.created_at = created_at;
     }
 
     public JSONObject toJsonObject() {

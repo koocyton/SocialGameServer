@@ -1,6 +1,7 @@
 package com.doopp.gauss.api.entity;
 
 import com.doopp.gauss.api.service.impl.RoomServiceImpl;
+import lombok.Data;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,6 +13,7 @@ import java.util.ArrayList;
  *
  * Created by Henry on 2017/8/26.
  */
+@Data
 public class RoomEntity implements Serializable {
 
     // 日志
@@ -38,64 +40,12 @@ public class RoomEntity implements Serializable {
     // 房间是否可以围观
     private boolean canWatch = true;
 
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public int getSeatCount() {
-        return seatCount;
-    }
-
     public void setSeatCount(int seatCount) {
         this.seatCount = seatCount;
         // 先摆上空凳子
         for(int ii=0; ii<seatCount; ii++) {
             this.userList.add(null);
         }
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Long getRoomOwnerId() {
-        return roomOwnerId;
-    }
-
-    public void setRoomOwnerId(Long roomOwnerId) {
-        this.roomOwnerId = roomOwnerId;
-    }
-
-    public ArrayList<UserEntity> getUserList() {
-        return userList;
-    }
-
-    public void setUserList(ArrayList<UserEntity> userList) {
-        this.userList = userList;
-    }
-
-    public boolean isFreeSeat() {
-        return freeSeat;
-    }
-
-    public void setFreeSeat(boolean freeSeat) {
-        this.freeSeat = freeSeat;
-    }
-
-    public boolean isCanWatch() {
-        return canWatch;
-    }
-
-    public void setCanWatch(boolean canWatch) {
-        this.canWatch = canWatch;
     }
 
     /*

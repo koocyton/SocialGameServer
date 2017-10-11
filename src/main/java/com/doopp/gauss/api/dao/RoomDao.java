@@ -140,11 +140,7 @@ public class RoomDao {
         byte[] byteRoomKey = (roomPrefix + roomId).getBytes();
         byte[] byteRoom = shardedJedis.get(byteRoomKey);
         shardedJedis.close();
-        Object roomObject = jsrs.deserialize(byteRoom);
-        if (roomObject!=null) {
-            return (RoomEntity) roomObject;
-        }
-        return null;
+        return (RoomEntity) jsrs.deserialize(byteRoom);
     }
 
     // del room info

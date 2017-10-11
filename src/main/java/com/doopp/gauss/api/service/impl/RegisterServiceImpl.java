@@ -54,7 +54,7 @@ public class RegisterServiceImpl implements RegisterService {
             userEntity.setFriends("");
             userEntity.setPassword(loginService.hashPassword(userEntity, password));
             userEntity.setGender(0);
-            userEntity.setCreate_at(currentTime);
+            userEntity.setCreated_at(currentTime);
             // 创建
             userDao.create(userEntity);
         }
