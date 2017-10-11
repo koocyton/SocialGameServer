@@ -32,8 +32,9 @@ dependencies {
     compile 'org.springframework:spring-tx:4.3.11.RELEASE'
     compile 'org.springframework:spring-jdbc:4.3.11.RELEASE'
     compile 'org.springframework:spring-test:4.3.11.RELEASE'
-    compile 'commons-dbcp:commons-dbcp:1.4'
-    compile 'commons-logging:commons-logging:1.2'
+    // compile 'commons-dbcp:commons-dbcp:1.4'
+    // compile 'commons-logging:commons-logging:1.2'
+    compile 'com.alibaba:druid:1.1.4'
 
     // spring security oauth2.0
     compile 'org.apache.oltu.oauth2:org.apache.oltu.oauth2.authzserver:1.0.2'

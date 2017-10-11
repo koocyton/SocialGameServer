@@ -56,7 +56,8 @@ public class SessionFilter extends OncePerRequestFilter {
             "/js",
             "/image",
             "/css",
-            "/favicon.ico"
+            "/favicon.ico",
+            "/d/druid"
         };
 
 

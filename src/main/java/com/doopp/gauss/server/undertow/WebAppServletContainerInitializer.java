@@ -54,6 +54,10 @@ public class WebAppServletContainerInitializer implements ServletContainerInitia
         ServletRegistration.Dynamic dispatcher = ctx.addServlet("mvc-dispatcher", dispatcherServlet);//DispatcherServlet.class);
         dispatcher.setLoadOnStartup(1);
         dispatcher.addMapping("/*");
+
+        // 添加 druid sql 监控
+        ServletRegistration.Dynamic druidDispatcher = ctx.addServlet("DruidStatView", com.alibaba.druid.support.http.StatViewServlet.class);
+        druidDispatcher.addMapping("/d/*");
     }
 
     @Override
