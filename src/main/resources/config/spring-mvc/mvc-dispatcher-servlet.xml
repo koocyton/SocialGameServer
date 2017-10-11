@@ -30,7 +30,7 @@
 
     <!-- webjar -->
     <!--
-    <mvc:resources mapping="/webjars/**" location="classpath:/webjars/"/>
+    <mvc:resources mapping="/webjars/**" location="/public/webjars/" />
     -->
 
     <!--ViewResolver 视图解析器-->
