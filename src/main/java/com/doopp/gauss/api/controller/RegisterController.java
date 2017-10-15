@@ -22,14 +22,18 @@ import javax.servlet.http.HttpSession;
 @RequestMapping(value = "api/v1/")
 public class RegisterController {
 
-    @Autowired
-    private LoginService loginService;
+    private final LoginService loginService;
+
+    private final RegisterService registerService;
+
+    private final RestResponseService restService;
 
     @Autowired
-    private RegisterService registerService;
-
-    @Autowired
-    private RestResponseService restResponse;
+    public RegisterController(LoginService loginService, RegisterService registerService, RestResponseService restService) {
+        this.loginService = loginService;
+        this.registerService = registerService;
+        this.restService = restService;
+    }
 
     /*
      * 提交登录
@@ -41,21 +45,21 @@ public class RegisterController {
                                @RequestParam("password") String password)
     {
         if (!registerService.checkRegisterAccount(account)) {
-            return restResponse.error(response, 500, "account must is an email");
+            return restService.error(response, 500, "account must is an email");
         }
         if (!registerService.checkRegisterPassword(password)) {
-            return restResponse.error(response, 500, "The password must be eight bits long");
+            return restService.error(response, 500, "The password must be eight bits long");
         }
         // 注册一个用户
         if (!registerService.registerUser(account, password)) {
-            return restResponse.error(response, 500, "can not register account : " + account);
+            return restService.error(response, 500, "can not register account : " + account);
         }
         // 注册一个登录用户，生成 access token ，并缓存这个 key 对应的值 (account)
         String accessToken = loginService.registerLogin(account);
         if (accessToken==null) {
-            return restResponse.error(response, 500, "can not login");
+            return restService.error(response, 500, "can not login");
         }
         // 登录成功
-        return restResponse.loginSuccess(accessToken);
+        return restService.loginSuccess(accessToken);
     }
 }

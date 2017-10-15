@@ -1,20 +1,14 @@
 package com.doopp.gauss.api.controller;
 
 import com.alibaba.fastjson.JSONObject;
-import com.doopp.gauss.api.entity.UserEntity;
 import com.doopp.gauss.api.service.LoginService;
 import com.doopp.gauss.api.service.RegisterService;
 import com.doopp.gauss.api.service.RestResponseService;
-import com.doopp.gauss.api.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * 登录界面
@@ -25,16 +19,20 @@ import org.slf4j.LoggerFactory;
 @RequestMapping(value = "api/v1/")
 public class LoginController {
 
-    private final Logger logger = LoggerFactory.getLogger(getClass());
+    // private final Logger logger = LoggerFactory.getLogger(getClass());
+
+    private final LoginService loginService;
+
+    private final RegisterService registerService;
+
+    private final RestResponseService restService;
 
     @Autowired
-    private LoginService loginService;
-
-    @Autowired
-    private RegisterService registerService;
-
-    @Autowired
-    private RestResponseService restResponse;
+    public LoginController(LoginService loginService, RegisterService registerService, RestResponseService restService) {
+        this.loginService = loginService;
+        this.registerService = registerService;
+        this.restService = restService;
+    }
 
     /*
      * 提交登录
@@ -48,15 +46,15 @@ public class LoginController {
         // 校验用户名，密码
         if (!loginService.checkLoginRequest(account, password)) {
             // 告诉客户端密码错误
-            return restResponse.error(response, 404, "Account or password is failed");
+            return restService.error(response, 404, "Account or password is failed");
         }
         // 注册一个登录用户，生成 access token ，并缓存这个 key 对应的值 (account)
         String accessToken = loginService.registerLogin(account);
         if (accessToken==null) {
-            return restResponse.error(response, 500, "can not login");
+            return restService.error(response, 500, "can not login");
         }
         // 下发 access token
-        return restResponse.loginSuccess(accessToken);
+        return restService.loginSuccess(accessToken);
         // 登录成功
         // return restResponse.success();
     }
@@ -75,10 +73,10 @@ public class LoginController {
         // 清空 cookie
         if (!loginService.unregisterLogin(accessToken)) {
             // 退出登录失败
-            return restResponse.error(response, 500, "logout failed");
+            return restService.error(response, 500, "logout failed");
         }
         // 退出登录成功
-        return restResponse.success();
+        return restService.success();
     }
 
     /*
@@ -92,6 +90,6 @@ public class LoginController {
         // 登录这个用户
         String accessToken = loginService.registerLogin(account);
         // 下发 access token
-        return restResponse.loginSuccess(accessToken);
+        return restService.loginSuccess(accessToken);
     }
 }

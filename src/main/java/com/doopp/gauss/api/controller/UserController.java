@@ -10,8 +10,6 @@ import com.doopp.gauss.api.utils.UploadFileHelper;
 import com.doopp.gauss.api.service.RestResponseService;
 import com.doopp.gauss.api.service.RoomService;
 import com.doopp.gauss.api.service.UserService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -29,16 +27,20 @@ import java.io.IOException;
 @RequestMapping(value = "api/v1/")
 public class UserController {
 
-    private final Logger logger = LoggerFactory.getLogger(getClass());
+    // private final Logger logger = LoggerFactory.getLogger(getClass());
+
+    private final UserService userService;
+
+    private final RoomService roomService;
+
+    private final RestResponseService restService;
 
     @Autowired
-    private UserService userService;
-
-    @Autowired
-    private RoomService roomService;
-
-    @Autowired
-    private RestResponseService restResponse;
+    public UserController(UserService userService, RoomService roomService, RestResponseService restService) {
+        this.userService = userService;
+        this.roomService = roomService;
+        this.restService = restService;
+    }
 
     /*
      * 获取当前用户信息
@@ -92,9 +94,9 @@ public class UserController {
         // 创建了新房间
         RoomEntity roomEntity = roomService.userCreateRoom(currentUser);
         if (roomEntity==null) {
-            return restResponse.error(500, "Can`t create room !");
+            return restService.error(500, "Can`t create room !");
         }
-        return restResponse.data(roomEntity);
+        return restService.data(roomEntity);
     }
 
     /*
@@ -109,9 +111,9 @@ public class UserController {
         // 用户加入到指定 ID 的房间
         RoomEntity roomEntity = roomService.userJoinRoom(currentUser, roomId);
         if (roomEntity==null) {
-            return restResponse.error(500, "Can`t join room !");
+            return restService.error(500, "Can`t join room !");
         }
-        return restResponse.data(roomEntity);
+        return restService.data(roomEntity);
     }
 
     /*
@@ -127,9 +129,9 @@ public class UserController {
         RoomEntity roomEntity = roomService.userJoinFreeRoom(currentUser);
         // logger.info(" >>> roomEntity.toString() " + roomEntity.toString());
         if (roomEntity==null) {
-            return restResponse.error(500, "Can`t join room !");
+            return restService.error(500, "Can`t join room !");
         }
-        return restResponse.data(roomEntity);
+        return restService.data(roomEntity);
     }
 
     /*
@@ -144,8 +146,8 @@ public class UserController {
         RoomEntity roomEntity = roomService.userLeaveRoom(currentUser);
         //
         if (roomEntity==null) {
-            return restResponse.error(500, "Can`t leave room !");
+            return restService.error(500, "Can`t leave room !");
         }
-        return restResponse.data(roomEntity);
+        return restService.data(roomEntity);
     }
 }
