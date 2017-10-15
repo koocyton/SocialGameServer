@@ -4,6 +4,8 @@ import com.alibaba.fastjson.JSONObject;
 
 import com.doopp.gauss.api.entity.RoomEntity;
 import com.doopp.gauss.api.entity.UserEntity;
+import com.doopp.gauss.api.entity.dto.UserDTO;
+import com.doopp.gauss.api.utils.CommonUtils;
 import com.doopp.gauss.api.utils.UploadFileHelper;
 import com.doopp.gauss.api.service.RestResponseService;
 import com.doopp.gauss.api.service.RoomService;
@@ -43,11 +45,10 @@ public class UserController {
      */
     @ResponseBody
     @RequestMapping(value = "user/me", method = RequestMethod.GET)
-    public JSONObject me(@RequestHeader("access-token") String accessToken) {
+    public UserDTO me(@RequestHeader("access-token") String accessToken) {
         // 当前用户
         UserEntity currentUser = userService.getUserByToken(accessToken);
-        logger.info(" >>> " + currentUser);
-        return currentUser.toJsonObject();
+        return CommonUtils.modelMap(currentUser, UserDTO.class);
     }
 
     /*
@@ -55,7 +56,7 @@ public class UserController {
      */
     @ResponseBody
     @RequestMapping(value = "user/me", method = RequestMethod.POST)
-    public JSONObject updateMe(HttpServletRequest request,
+    public UserDTO updateMe(HttpServletRequest request,
                                @RequestParam("portrait") MultipartFile file,
                                @RequestHeader("access-token") String accessToken) throws IOException {
         // 当前用户
@@ -68,7 +69,7 @@ public class UserController {
             currentUser.setPortrait(portraitUrl);
         }
         // userDao.update(currentUser);
-        return currentUser.toJsonObject();
+        return CommonUtils.modelMap(currentUser, UserDTO.class);
     }
 
     /*
@@ -76,8 +77,8 @@ public class UserController {
      */
     @ResponseBody
     @RequestMapping(value = "user/{userId}", method = RequestMethod.GET)
-    public JSONObject userInfo(@PathVariable("userId") Long userId) {
-        return userService.getUserInfo(userId).toJsonObject();
+    public UserDTO userInfo(@PathVariable("userId") Long userId) {
+        return CommonUtils.modelMap(userService.getUserInfo(userId), UserDTO.class);
     }
 
     /*

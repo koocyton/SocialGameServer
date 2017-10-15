@@ -102,8 +102,8 @@ dependencies {
     compile 'org.freemarker:freemarker:2.3.23'
 
     // Util
-    // compile 'com.google.guava:guava:+'
-    // compile 'org.modelmapper:modelmapper:+'
+    compile 'com.google.guava:guava:+'
+    compile 'org.modelmapper:modelmapper:+'
     compileOnly 'org.projectlombok:lombok:1.16.18'
 
     // netty
