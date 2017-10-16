@@ -42,7 +42,7 @@ public class LoginController {
      */
     @ResponseBody
     @RequestMapping(value = "login", method = RequestMethod.POST)
-    public SessionKeyDTO login(HttpServletResponse response,
+    public JSONObject login(HttpServletResponse response,
                             @RequestParam("account") String account,
                             @RequestParam("password") String password) throws Exception {
 
@@ -56,7 +56,8 @@ public class LoginController {
             throw new Exception("can not login");
         }
         // 下发 access token
-        return CommonUtils.modelMap(accessToken, SessionKeyDTO.class);
+        // return CommonUtils.modelMap(accessToken, SessionKeyDTO.class);
+        return restService.loginSuccess(accessToken);
     }
 
     /*
@@ -84,12 +85,13 @@ public class LoginController {
      */
     @ResponseBody
     @RequestMapping(value = "fast-login", method = RequestMethod.POST)
-    public SessionKeyDTO fastLogin(@RequestParam("account") String account) {
+    public JSONObject fastLogin(@RequestParam("account") String account) {
         // 尝试注册一个用户
         registerService.registerUser(account, "a12345678");
         // 登录这个用户
         String accessToken = loginService.registerLogin(account);
         // 下发 access token
-        return CommonUtils.modelMap(accessToken, SessionKeyDTO.class);
+        // return CommonUtils.modelMap(accessToken, SessionKeyDTO.class);
+        return restService.loginSuccess(accessToken);
     }
 }

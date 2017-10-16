@@ -54,7 +54,7 @@
                 "processData" : false,
                 "headers" : {"access-token":accessToken},
                 "success" : function(responseText) {
-                    if (typeof(responseText)==="object" && typeof(responseText.data.id)==="number") {
+                    if (typeof(responseText)==="object" && typeof(responseText.id)==="number") {
                         socketConnect();
                     }
                 },
