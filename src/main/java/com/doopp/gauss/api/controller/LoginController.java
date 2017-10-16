@@ -1,9 +1,12 @@
 package com.doopp.gauss.api.controller;
 
 import com.alibaba.fastjson.JSONObject;
+import com.doopp.gauss.api.entity.dto.SessionKeyDTO;
+import com.doopp.gauss.api.entity.dto.UserDTO;
 import com.doopp.gauss.api.service.LoginService;
 import com.doopp.gauss.api.service.RegisterService;
 import com.doopp.gauss.api.service.RestResponseService;
+import com.doopp.gauss.api.utils.CommonUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -39,24 +42,21 @@ public class LoginController {
      */
     @ResponseBody
     @RequestMapping(value = "login", method = RequestMethod.POST)
-    public JSONObject login(HttpServletResponse response,
+    public SessionKeyDTO login(HttpServletResponse response,
                             @RequestParam("account") String account,
-                            @RequestParam("password") String password) {
+                            @RequestParam("password") String password) throws Exception {
 
         // 校验用户名，密码
         if (!loginService.checkLoginRequest(account, password)) {
-            // 告诉客户端密码错误
-            return restService.error(response, 404, "Account or password is failed");
+            throw new Exception("Account or password is failed");
         }
         // 注册一个登录用户，生成 access token ，并缓存这个 key 对应的值 (account)
         String accessToken = loginService.registerLogin(account);
         if (accessToken==null) {
-            return restService.error(response, 500, "can not login");
+            throw new Exception("can not login");
         }
         // 下发 access token
-        return restService.loginSuccess(accessToken);
-        // 登录成功
-        // return restResponse.success();
+        return CommonUtils.modelMap(accessToken, SessionKeyDTO.class);
     }
 
     /*
@@ -84,12 +84,12 @@ public class LoginController {
      */
     @ResponseBody
     @RequestMapping(value = "fast-login", method = RequestMethod.POST)
-    public JSONObject fastLogin(@RequestParam("account") String account) {
+    public SessionKeyDTO fastLogin(@RequestParam("account") String account) {
         // 尝试注册一个用户
         registerService.registerUser(account, "a12345678");
         // 登录这个用户
         String accessToken = loginService.registerLogin(account);
         // 下发 access token
-        return restService.loginSuccess(accessToken);
+        return CommonUtils.modelMap(accessToken, SessionKeyDTO.class);
     }
 }

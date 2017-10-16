@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 
 import com.doopp.gauss.api.entity.RoomEntity;
 import com.doopp.gauss.api.entity.UserEntity;
+import com.doopp.gauss.api.entity.dto.RoomDTO;
 import com.doopp.gauss.api.entity.dto.UserDTO;
 import com.doopp.gauss.api.utils.CommonUtils;
 import com.doopp.gauss.api.utils.UploadFileHelper;
@@ -58,9 +59,7 @@ public class UserController {
      */
     @ResponseBody
     @RequestMapping(value = "user/me", method = RequestMethod.POST)
-    public UserDTO updateMe(HttpServletRequest request,
-                               @RequestParam("portrait") MultipartFile file,
-                               @RequestHeader("access-token") String accessToken) throws IOException {
+    public UserDTO updateMe(HttpServletRequest request, @RequestParam("portrait") MultipartFile file, @RequestHeader("access-token") String accessToken) throws IOException {
         // 当前用户
         UserEntity currentUser = userService.getUserByToken(accessToken);
         // 更新昵称
@@ -88,15 +87,13 @@ public class UserController {
      */
     @ResponseBody
     @RequestMapping(value = "user/create-room", method = RequestMethod.GET)
-    public JSONObject createRoom(@RequestHeader("access-token") String accessToken) {
+    public RoomDTO createRoom(@RequestHeader("access-token") String accessToken) {
         // 当前用户
         UserEntity currentUser = userService.getUserByToken(accessToken);
         // 创建了新房间
         RoomEntity roomEntity = roomService.userCreateRoom(currentUser);
-        if (roomEntity==null) {
-            return restService.error(500, "Can`t create room !");
-        }
-        return restService.data(roomEntity);
+        //
+        return CommonUtils.modelMap(roomEntity, RoomDTO.class);
     }
 
     /*
@@ -104,16 +101,13 @@ public class UserController {
      */
     @ResponseBody
     @RequestMapping(value = "user/join-room/{roomId}", method = RequestMethod.GET)
-    public JSONObject joinRoom(@RequestHeader("access-token") String accessToken,
-                               @PathVariable("roomId") int roomId) {
+    public RoomDTO joinRoom(@RequestHeader("access-token") String accessToken, @PathVariable("roomId") int roomId) {
         // 当前用户
         UserEntity currentUser = userService.getUserByToken(accessToken);
         // 用户加入到指定 ID 的房间
         RoomEntity roomEntity = roomService.userJoinRoom(currentUser, roomId);
-        if (roomEntity==null) {
-            return restService.error(500, "Can`t join room !");
-        }
-        return restService.data(roomEntity);
+        // 用户进入房间
+        return CommonUtils.modelMap(roomEntity, RoomDTO.class);
     }
 
     /*
@@ -121,17 +115,14 @@ public class UserController {
      */
     @ResponseBody
     @RequestMapping(value = "user/random-room", method = RequestMethod.GET)
-    public JSONObject randomJoinRoom(@RequestHeader("access-token") String accessToken) {
+    public RoomDTO randomJoinRoom(@RequestHeader("access-token") String accessToken) {
         // 当前用户
         UserEntity currentUser = userService.getUserByToken(accessToken);
         // logger.info(" >>> " + currentUser);
         // 用户加入到指定 ID 的房间
         RoomEntity roomEntity = roomService.userJoinFreeRoom(currentUser);
-        // logger.info(" >>> roomEntity.toString() " + roomEntity.toString());
-        if (roomEntity==null) {
-            return restService.error(500, "Can`t join room !");
-        }
-        return restService.data(roomEntity);
+        //
+        return CommonUtils.modelMap(roomEntity, RoomDTO.class);
     }
 
     /*
@@ -139,15 +130,12 @@ public class UserController {
      */
     @ResponseBody
     @RequestMapping(value = "user/leave-room", method = RequestMethod.GET)
-    public JSONObject leaveRoom(@RequestHeader("access-token") String accessToken) {
+    public RoomDTO leaveRoom(@RequestHeader("access-token") String accessToken) {
         // 当前用户
         UserEntity currentUser = userService.getUserByToken(accessToken);
         // 用户离开房间
         RoomEntity roomEntity = roomService.userLeaveRoom(currentUser);
         //
-        if (roomEntity==null) {
-            return restService.error(500, "Can`t leave room !");
-        }
-        return restService.data(roomEntity);
+        return CommonUtils.modelMap(roomEntity, RoomDTO.class);
     }
 }

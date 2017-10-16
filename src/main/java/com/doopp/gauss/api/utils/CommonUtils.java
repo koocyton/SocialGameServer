@@ -7,6 +7,9 @@ import javax.servlet.http.HttpServletRequest;
 
 public class CommonUtils {
 
+    // Data Object to Out Object
+    private final static ModelMapper modelMapper = new ModelMapper();
+
     /**
      * Returns 是否是移动客户端
      *
@@ -58,7 +61,6 @@ public class CommonUtils {
     }
 
     public static <D> D modelMap(Object source, Class<D> destinationType) {
-        ModelMapper modelMapper = new ModelMapper();
         return modelMapper.map(source, destinationType);
     }
 }

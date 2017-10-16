@@ -29,7 +29,10 @@ public class RegisterController {
     private final RestResponseService restService;
 
     @Autowired
-    public RegisterController(LoginService loginService, RegisterService registerService, RestResponseService restService) {
+    public RegisterController(LoginService loginService,
+                              RegisterService registerService,
+                              RestResponseService restService) {
+        // setting
         this.loginService = loginService;
         this.registerService = registerService;
         this.restService = restService;
