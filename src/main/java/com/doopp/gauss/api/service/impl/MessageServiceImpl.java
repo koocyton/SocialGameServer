@@ -27,24 +27,25 @@ public class MessageServiceImpl implements MessageService {
 
     // private final Logger logger = LoggerFactory.getLogger(getClass());
 
-    @Resource
-    private GameSocketHandler gameSocketHandler;
+    private final GameSocketHandler gameSocketHandler;
+
+    private final ChatService chatService;
+
+    private final RoomDao roomDao;
 
     @Autowired
-    private RestResponseService restResponseService;
+    public MessageServiceImpl(GameSocketHandler gameSocketHandler,
+                              ChatService chatService,
+                              RoomDao roomDao) {
+        this.gameSocketHandler = gameSocketHandler;
+        this.chatService = chatService;
+        this.roomDao = roomDao;
+    }
 
-    @Autowired
-    ChatService chatService;
-
-    @Resource
-    RoomDao roomDao;
-
-    /*
     @Override
     public void sendStringToAll(String message){
         gameSocketHandler.sendMessageToAll(new TextMessage(message));
     }
-    */
 
     @Override
     public void sendStringToUser(String message, Long... targetUsersId){

@@ -20,16 +20,15 @@ import java.util.regex.Pattern;
 @Service("registerService")
 public class RegisterServiceImpl implements RegisterService {
 
-    @Resource
-    private UserDao userDao;
+    private final UserDao userDao;
+
+    private final LoginService loginService;
 
     @Autowired
-    private LoginService loginService;
-
-    //@Autowired
-    //public RegisterServiceImpl() {
-        // this.userDao = DBSession.getMapper(UserDao.class);
-    //}
+    public RegisterServiceImpl(UserDao userDao, LoginService loginService) {
+        this.userDao = userDao;
+        this.loginService = loginService;
+    }
 
     @Override
     public boolean registerUser(String account, String password) {

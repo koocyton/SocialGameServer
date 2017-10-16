@@ -4,12 +4,9 @@ import com.doopp.gauss.api.dao.UserDao;
 import com.doopp.gauss.api.entity.UserEntity;
 import com.doopp.gauss.api.utils.RedisSessionHelper;
 import com.doopp.gauss.api.service.UserService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
 import java.util.List;
 
 /**
@@ -21,15 +18,14 @@ public class UserServiceImpl implements UserService {
 
     // private final Logger logger = LoggerFactory.getLogger(getClass());
 
-    @Resource
-    private UserDao userDao;
+    private final UserDao userDao;
+
+    private final RedisSessionHelper redisSessionHelper;
 
     @Autowired
-    private RedisSessionHelper redisSessionHelper;
-
-    @Autowired
-    public UserServiceImpl() {
-        // this.userDao = DBSession.getMapper(UserDao.class);
+    public UserServiceImpl(UserDao userDao, RedisSessionHelper redisSessionHelper) {
+        this.userDao = userDao;
+        this.redisSessionHelper = redisSessionHelper;
     }
 
     @Override

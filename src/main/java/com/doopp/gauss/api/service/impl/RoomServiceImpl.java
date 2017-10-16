@@ -5,12 +5,8 @@ import com.doopp.gauss.api.entity.RoomEntity;
 import com.doopp.gauss.api.entity.UserEntity;
 import com.doopp.gauss.api.service.RoomService;
 import com.doopp.gauss.api.service.MessageService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
 import java.util.ArrayList;
 
 /**
@@ -21,16 +17,17 @@ import java.util.ArrayList;
 @Service("roomService")
 public class RoomServiceImpl implements RoomService {
 
-    // private final Logger logger = LoggerFactory.getLogger(getClass());
+    private final RoomDao roomDao;
 
-    @Resource
-    private RoomDao roomDao;
-
-    @Autowired
-    private MessageService messageService;
+    private final MessageService messageService;
 
     // 新开房间最小编号
     private int minRoomNumber = 1000;
+
+    public RoomServiceImpl(RoomDao roomDao, MessageService messageService) {
+        this.roomDao = roomDao;
+        this.messageService = messageService;
+    }
 
     // 初始化一个房间
     private RoomEntity nextRoom(int seatCount) {

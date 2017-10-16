@@ -6,17 +6,19 @@ import com.doopp.gauss.api.entity.UserEntity;
 import com.doopp.gauss.api.service.RoomService;
 import com.doopp.gauss.api.service.ChatService;
 import com.doopp.gauss.api.service.MessageService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service("chatService")
 public class ChatServiceImpl implements ChatService {
 
-    @Autowired
-    MessageService messageService;
+    private final MessageService messageService;
 
-    @Autowired
-    RoomService roomService;
+    private final RoomService roomService;
+
+    public ChatServiceImpl(MessageService messageService, RoomService roomService) {
+        this.messageService = messageService;
+        this.roomService = roomService;
+    }
 
     @Override
     public void roomChat(UserEntity currentUser, String action, JSONObject actionData) {

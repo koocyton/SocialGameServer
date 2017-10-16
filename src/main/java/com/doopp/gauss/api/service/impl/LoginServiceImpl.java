@@ -5,17 +5,13 @@ import com.doopp.gauss.api.entity.UserEntity;
 import com.doopp.gauss.api.utils.RedisSessionHelper;
 import com.doopp.gauss.api.service.LoginService;
 import com.doopp.gauss.api.utils.EncryHelper;
-import com.doopp.gauss.api.service.UserService;
 import com.doopp.gauss.api.service.MessageService;
 import org.apache.oltu.oauth2.as.issuer.MD5Generator;
 import org.apache.oltu.oauth2.as.issuer.OAuthIssuer;
 import org.apache.oltu.oauth2.as.issuer.OAuthIssuerImpl;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
 
 /**
  *
@@ -24,37 +20,20 @@ import javax.annotation.Resource;
 @Service("loginService")
 public class LoginServiceImpl implements LoginService {
 
-    // private final Logger logger = LoggerFactory.getLogger(getClass());
+    private final UserDao userDao;
 
-    @Resource
-    private UserDao userDao;
+    private final MessageService messageService;
 
-    @Autowired
-    private MessageService messageService;
+    private final RedisSessionHelper redisSessionHelper;
 
     @Autowired
-    private UserService userService;
-
-    @Autowired
-    private RedisSessionHelper redisSessionHelper;
-
-    //@Resource
-    //private EhCacheCacheManager ehCacheCacheManager;
-
-    //private Cache cache = ehCacheCacheManager.getCache("access-token-cache");
-
-    //private Cache cache;
-
-    //private String accessToken;
-
-    // private HttpServletRequest request;
-
-    //@Autowired
-    //public LoginServiceImpl(CacheManager cacheManager) {
-        //this.userDao = DBSession.getMapper(UserDao.class);
-        // this.cache   = cacheManager.getCache("access-token-cache");
-        // this.request = request;
-    //}
+    public LoginServiceImpl(UserDao userDao,
+                            MessageService messageService,
+                            RedisSessionHelper redisSessionHelper) {
+        this.userDao = userDao;
+        this.messageService = messageService;
+        this.redisSessionHelper = redisSessionHelper;
+    }
 
     @Override
     public boolean checkLoginRequest(String account, String password) {

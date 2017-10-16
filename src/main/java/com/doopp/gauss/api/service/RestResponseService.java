@@ -5,7 +5,6 @@ import com.alibaba.fastjson.JSONObject;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.Map;
 
 /**
  * 返回的 JSON Service 处理
