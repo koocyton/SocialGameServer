@@ -22,14 +22,14 @@ public class WebSocketConfig extends WebMvcConfigurerAdapter implements WebSocke
 
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-        // registry.addHandler(systemWebSocketHandler(),"/webSocketServer");
-        registry.addHandler(systemWebSocketHandler(),"/web-socket").setAllowedOrigins("*").withSockJS();
+        //registry.addHandler(webSocketHandshakeInterceptor(),"/game-socket");
+        //registry.addHandler(webSocketHandshakeInterceptor(),"/game-socket/socketjs").setAllowedOrigins("*").withSockJS();
         //registry.addHandler(systemWebSocketHandler(),"/webSocketServer").addInterceptors(new WebSocketHandshakeInterceptor());
         //registry.addHandler(systemWebSocketHandler(), "/sockjs/webSocketServer").addInterceptors(new WebSocketHandshakeInterceptor()).withSockJS();
         //registry.addHandler(systemWebSocketHandler(), "/webSocketServer/sockjs").withSockJS();
-         /*registry.addHandler(systemWebSocketHandler(),"/ws").addInterceptors(new WebSocketHandshakeInterceptor());
-            registry.addHandler(systemWebSocketHandler(), "/ws/sockjs").addInterceptors(new WebSocketHandshakeInterceptor())
-                    .withSockJS();*/
+        registry.addHandler(systemWebSocketHandler(),"/game-socket").addInterceptors(new WebSocketHandshakeInterceptor());
+        registry.addHandler(systemWebSocketHandler(),"/game-socket/sockjs").addInterceptors(new WebSocketHandshakeInterceptor())
+                    .withSockJS();
     }
 
     @Bean
