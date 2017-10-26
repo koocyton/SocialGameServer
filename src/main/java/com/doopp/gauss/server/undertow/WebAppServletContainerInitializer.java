@@ -46,7 +46,8 @@ public class WebAppServletContainerInitializer implements ServletContainerInitia
         FilterRegistration.Dynamic encodingFilter = ctx.addFilter("encoding-filter", CharacterEncodingFilter.class);
         encodingFilter.setInitParameter("encoding", "UTF-8");
         encodingFilter.setInitParameter("forceEncoding", "true");
-        encodingFilter.addMappingForServletNames(EnumSet.allOf(DispatcherType.class), false, "/*");
+        // encodingFilter.addMappingForServletNames(EnumSet.allOf(DispatcherType.class), false, "/*");
+        encodingFilter.addMappingForUrlPatterns(EnumSet.allOf(DispatcherType.class), false, "/*");
 
         // set spring mvc servlet
         DispatcherServlet dispatcherServlet = new DispatcherServlet();
