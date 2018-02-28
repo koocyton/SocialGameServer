@@ -14,7 +14,7 @@ public class KTApplication {
 
         public static void main(String[] args) throws Exception {
             String propertiesConfig = args[0];
-            Injector injector = Guice.createInjector(new NettyModule(propertiesConfig));
+            Injector injector = Guice.createInjector(new ApplicationModule(propertiesConfig));
             final UndertowServer server = injector.getInstance(UndertowServer.class);
             server.run();
         }
