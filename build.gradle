@@ -1,10 +1,15 @@
 group 'com.doopp.gauss'
-version '1.0'
+version '1.5'
 
 apply plugin: 'java'
 apply plugin: 'application'
 
 sourceCompatibility = 1.8
+
+ext {
+    springVersion = '5.0.4.RELEASE'
+    undertowVersion = '1.4.20.Final'
+}
 
 repositories {
     mavenLocal()
@@ -20,177 +25,73 @@ dependencies {
     // tomcat
     // compile 'javax.servlet:javax.servlet-api:3.0.1'
 
-    // spring core
-    compile 'org.springframework:spring-core:4.3.11.RELEASE'
-    compile 'org.springframework:spring-aop:4.3.11.RELEASE'
-    compile 'org.springframework:spring-context:4.3.11.RELEASE'
-    compile 'org.springframework:spring-context-support:4.3.11.RELEASE'
-    compile 'org.springframework:spring-beans:4.3.11.RELEASE'
-    compile 'org.springframework:spring-web:4.3.11.RELEASE'
-    compile 'org.springframework:spring-webmvc:4.3.11.RELEASE'
-    compile 'org.springframework:spring-expression:4.3.11.RELEASE'
-    compile 'org.springframework:spring-tx:4.3.11.RELEASE'
-    compile 'org.springframework:spring-jdbc:4.3.11.RELEASE'
-    compile 'org.springframework:spring-test:4.3.11.RELEASE'
-    // compile 'commons-dbcp:commons-dbcp:1.4'
-    // compile 'commons-logging:commons-logging:1.2'
-    compile 'com.alibaba:druid:1.1.4'
-
-    // spring security oauth2.0
-    compile 'org.apache.oltu.oauth2:org.apache.oltu.oauth2.authzserver:1.0.2'
-    compile 'org.apache.oltu.oauth2:org.apache.oltu.oauth2.resourceserver:1.0.2'
-    compile 'org.apache.oltu.oauth2:org.apache.oltu.oauth2.client:1.0.2'
-    compile 'org.apache.oltu.oauth2:org.apache.oltu.oauth2.common:1.0.2'
-
-    compile 'org.apache.shiro:shiro-core:1.4.0'
-    compile 'org.apache.shiro:shiro-ehcache:1.4.0'
-    compile 'org.apache.shiro:shiro-web:1.4.0'
-    compile 'org.apache.shiro:shiro-quartz:1.4.0'
-    compile 'org.apache.shiro:shiro-spring:1.4.0'
-
-    // compile 'org.springframework.security:shiro-config:4.2.2.RELEASE'
-    // compile 'org.springframework.security:shiro-taglibs:4.2.2.RELEASE'
-    // compile 'org.springframework.security.oauth:shiro-oauth2:2.1.1.RELEASE'
-
-    // web socket
-    compile 'org.springframework:spring-websocket:4.3.11.RELEASE'
-    compile 'org.springframework:spring-messaging:4.3.11.RELEASE'
+    // Guice core
+    compile 'com.google.inject:guice:4.1.0'
+    compile 'com.google.inject.extensions:guice-servlet:4.1.0'
 
     // Ehcache
-    compile 'org.ehcache:ehcache:3.3.1'
-    compile 'net.sf.ehcache:ehcache-core:2.6.11'
+    // compile 'net.sf.ehcache:ehcache-core:2.6.11'
 
     // JSON
     compile 'com.alibaba:fastjson:1.2.31'
-    // compile 'com.fasterxml.jackson.core:jackson-databind:2.4.1.3'
-    // compile 'com.fasterxml.jackson.core:jackson-annotations:2.4.1'
 
     // database
-    compile 'org.mybatis:mybatis:3.4.4'
-    compile 'org.mybatis:mybatis-spring:1.3.0'
+    // compile 'mysql:mysql-connector-java:6.0.6'
+    // compile 'com.zaxxer:HikariCP:2.7.7'
+    // compile 'com.alibaba:druid:1.1.4'
+    // compile 'org.mybatis:mybatis:3.4.4'
     // compile 'org.mybatis.caches:mybatis-ehcache:1.1.0'
-    compile 'mysql:mysql-connector-java:5.1.38'
-
-    // mybatis-generator
-    // compile 'org.mybatis.generator:mybatis-generator:1.3.5'
 
     // Redis
-    compile 'redis.clients:jedis:2.9.0'
-    compile 'org.springframework.data:spring-data-redis:1.8.6.RELEASE'
+    // compile 'redis.clients:jedis:2.9.0'
 
     // async http client
-    // compile 'org.asynchttpclient:async-http-client:2.0.31'
-
-    // uuid
-    // compile 'com.twitter.service:snowflake:+'
+    // compile 'com.ning:async-http-client:1.9.38'
 
     // file upload
-    compile 'commons-fileupload:commons-fileupload:1.3.3'
+    // compile 'commons-fileupload:commons-fileupload:1.3.3'
 
     // Logging
-    // compile 'ch.qos.logback:logback-classic:1.1.3'
     compile 'org.slf4j:slf4j-api:1.7.25'
     compile 'org.slf4j:slf4j-log4j12:1.7.25'
-    // compile 'org.apache.commons:commons-lang3:+'
 
-    // ...
-    // compile 'jstl:jstl:1.2'
-    // compile "org.thymeleaf:thymeleaf-spring4:3.0.7.RELEASE"
-    // compile "nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect:1.1.3"
-    // compile 'org.thymeleaf:thymeleaf:2.0.16'
-    // compile 'org.thymeleaf:thymeleaf-spring4:3.0.7.RELEASE'
-    compile 'org.freemarker:freemarker:2.3.23'
+    // template
+    // compile 'org.freemarker:freemarker:2.3.23'
 
     // Util
-    // compile 'com.google.guava:guava:+'
-    // compile 'org.modelmapper:modelmapper:+'
+    // compile 'org.mapstruct:mapstruct-jdk8:1.2.0.Final'
+    // compileOnly 'org.mapstruct:mapstruct-processor:1.2.0.Final'
     compileOnly 'org.projectlombok:lombok:1.16.18'
 
-    // netty
-    // compile 'io.netty:netty-all:4.1.15.Final'
-
     // undertow
-    compile 'io.undertow:undertow-core:1.4.20.Final'
-    compile 'io.undertow:undertow-servlet:1.4.20.Final'
-    compile 'io.undertow:undertow-websockets-jsr:1.4.20.Final'
+    compile "io.undertow:undertow-core:$undertowVersion"
+    compile "io.undertow:undertow-servlet:$undertowVersion"
+    compile "io.undertow:undertow-websockets-jsr:$undertowVersion"
 
-    // public resources, ref. http://www.webjars.org/
-    compile 'org.webjars:jquery:1.11.3'
-    compile 'org.webjars:bootstrap:3.3.7'
-    // compile 'org.webjars:webjars-locator:+'
-    // compile 'org.webjars:vue:2.1.3'
-
-    testCompile group: 'junit', name: 'junit', version: '4.11'
-    testCompile group: 'junit', name: 'junit', version: '4.12'
+    // testCompile group: 'junit', name: 'junit', version: '4.11'
+    // testCompile group: 'junit', name: 'junit', version: '4.12'
 }
 
-task copyWebINFOnRun(type:Copy){
-    // from 'src/main/webapp/WEB-INF'
-    // into('out/production/classes/WEB-INF')
-    // into('WEB-INF')
+tasks.withType(JavaCompile) {
+    options.encoding = "UTF-8"
 }
 
 jar {
     manifest {
         attributes(
                 "Manifest-Version": 1.0,
-                "Main-Class": "com.doopp.gauss.server.undertow.KTApplication",
-                "Class-Path": "lib/attoparser-2.0.4.RELEASE.jar lib/commons-codec-1.9.jar lib/commons-dbcp-1.4.jar lib/commons-fileupload-1.3.3.jar lib/commons-io-1.3.2.jar lib/commons-io-2.2.jar lib/commons-lang3-3.6.jar lib/commons-logging-1.2.jar lib/commons-pool-1.5.4.jar lib/commons-pool2-2.4.2.jar lib/ehcache-3.3.1.jar lib/ehcache-core-2.6.11.jar lib/fastjson-1.2.31.jar lib/javassist-3.20.0-GA.jar lib/jboss-annotations-api_1.2_spec-1.0.0.Final.jar lib/jboss-logging-3.2.1.Final.jar lib/jboss-servlet-api_3.1_spec-1.0.0.Final.jar lib/jboss-websocket-api_1.1_spec-1.1.0.Final.jar lib/jcl-over-slf4j-1.7.25.jar lib/jedis-2.9.0.jar lib/json-20140107.jar lib/log4j-1.2.17.jar lib/mybatis-3.4.4.jar lib/mybatis-spring-1.3.0.jar lib/mysql-connector-java-5.1.38.jar lib/ognl-3.1.12.jar lib/org.apache.oltu.oauth2.authzserver-1.0.2.jar lib/org.apache.oltu.oauth2.common-1.0.2.jar lib/shiro-cache-1.4.0.jar lib/shiro-ehcache-1.4.0.jar lib/shiro-lang-1.4.0.jar lib/slf4j-api-1.7.25.jar lib/slf4j-log4j12-1.7.25.jar lib/spring-aop-4.3.11.RELEASE.jar lib/spring-beans-4.3.11.RELEASE.jar lib/spring-context-4.3.11.RELEASE.jar lib/spring-context-support-4.3.11.RELEASE.jar lib/spring-core-4.3.11.RELEASE.jar lib/spring-data-commons-1.13.6.RELEASE.jar lib/spring-data-keyvalue-1.2.6.RELEASE.jar lib/spring-data-redis-1.8.6.RELEASE.jar lib/spring-expression-4.3.11.RELEASE.jar lib/spring-jdbc-4.3.11.RELEASE.jar lib/spring-messaging-4.3.11.RELEASE.jar lib/spring-oxm-4.3.10.RELEASE.jar lib/spring-test-4.3.11.RELEASE.jar lib/spring-tx-4.3.11.RELEASE.jar lib/spring-web-4.3.11.RELEASE.jar lib/spring-webmvc-4.3.11.RELEASE.jar lib/spring-websocket-4.3.11.RELEASE.jar lib/thymeleaf-3.0.7.RELEASE.jar lib/thymeleaf-spring4-3.0.7.RELEASE.jar lib/unbescape-1.1.5.RELEASE.jar lib/undertow-core-1.4.20.Final.jar lib/undertow-servlet-1.4.20.Final.jar lib/undertow-websockets-jsr-1.4.20.Final.jar lib/xnio-api-3.3.8.Final.jar lib/xnio-nio-3.3.8.Final.jar"
+                "Main-Class": "com.doopp.gauss.server.KTApplication",
+                "Class-Path": "./"
         )
     }
     from {
-        // configurations.compile.collect {
-        //    it.isDirectory() ? it : zipTree(it)
-        //}
-        // configurations.runtime.collect {
-        //     it.isDirectory() ? it : zipTree(it)
-        // }
+        configurations.compile.collect {
+            it.isDirectory() ? it : zipTree(it)
+        }
     }
-    //into('WEB-INF') {
-    //   from 'src/main/webapp/WEB-INF'
-    //}
-    //into ('lib') {
-    //    from configurations.runtime
-    // }
 }
-
-
-
-//清除上次的编译过的文件
-task clearPj(type:Delete){
+task clear(type:Delete){
     delete 'build','target'
 }
-
-task copyJar(type:Copy){
-    // from configurations.runtime
-    // into ('build/libs')
-}
-
-//把JAR复制到目标目录
-// task release(type: Copy,dependsOn: [clearPj,copyJar]) {
-task release(type: Copy,dependsOn: [clearPj, copyJar, jar]) {
-    // from  'webapp/WEB-INF'
-    // into ('WEB-INF') // 目标位置
-}
-
-
-apply plugin: 'idea'
-// apply plugin: 'eclipse'
-apply plugin: 'spring-boot'
-
-buildscript {
-
-    repositories {
-        mavenLocal()
-        jcenter()
-        mavenCentral()
-
-        maven { url "http://repo.spring.io/release" }
-        maven { url "http://repo.spring.io/milestone" }
-        // maven { url "http://repo.spring.io/snapshot" }
-    }
-
-    dependencies {
-        classpath "org.springframework.boot:spring-boot-gradle-plugin:1.5.7.RELEASE"
-    }
+task release(type: Copy,dependsOn: [clear, jar]) {
 }
